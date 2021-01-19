@@ -24,7 +24,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(function(req, res, next){
+/*app.use(function(req, res, next){
   var myToken = req.query.token || req.body.token;
   jwt.verify(myToken, 'PRI2020', function(e, payload){
     if(e) res.status(401).jsonp({error: 'Erro na verificação do token: ' + e})
@@ -33,7 +33,7 @@ app.use(function(req, res, next){
       next()
     } 
   })
-})
+})*/
 
 app.use('/', indexRouter);
 

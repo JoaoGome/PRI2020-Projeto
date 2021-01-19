@@ -48,5 +48,23 @@ Lista de coisas done:
 -> api server recebe direito o token para validar o user
 
 
+------------------------------------------------------------
 
+BD recursos:
+1 - admin
+2 - produtor
+3 - consumidor
 
+------------------------------------------------------------
+rotas:
+
+http://localhost:8000/recursos/tipos -> lista de tipos
+
+http://localhost:8000/recursos -> recursos
+http://localhost:8000/recursos?vis=2 -> recursos
+
+-- a partir daqui colocar sempre ?vis=1, vis=2 ou vis=3
+http://localhost:8000/recursos?vis=1&hashtag=0 -> recursos com determinado hashtag
+http://localhost:8000/recursos?vis=1&tipo=tese -> recursos com determinado tipo
+
+http://localhost:8000/recurso/06?vis=1 -> determinado recurso
