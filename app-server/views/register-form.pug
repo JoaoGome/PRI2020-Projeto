@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  .w3-container.w3-margin.w3-border
+    .w3-container.w3-blue
+        h3 Introduza as suas credenciais:
+    form.w3-container(action='/register' method='POST')
+        label Username:
+        input.w3-input(type="text" name="username")
+        label Password:
+        input.w3-input(type="password" name="password")
+        label level:
+        input.w3-input(type="text" name="level")
+        label Email:
+        input.w3-input(type="text" name="email")
+        label Filiação:
+        input.w3-input(type="text" name="filiacao")
+        input.w3-btn.w3-blue(type="submit" value="Enviar")
+    
