@@ -62,7 +62,9 @@ module.exports.listarRecHashtags = (v,h) => {
 
 // Insere recurso na bd
 module.exports.inserir = r => {
+    console.log("here")
     var novo = new Recurso(r)
+    
     return novo.save()
 }
 

@@ -30,6 +30,7 @@ app.use(function(req, res, next){
     if(e) res.status(401).jsonp({error: 'Erro na verificação do token: ' + e})
     else{
       req.user = { level: payload.level, username: payload.username }
+      console.log("token good verificado")
       next()
     } 
   })

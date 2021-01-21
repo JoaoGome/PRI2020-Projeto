@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
-var axios = require('axios')
+var axios = require('axios');
+var jwt = require('jsonwebtoken');
+const path = require('path');
 
 var fs = require('fs')
 
@@ -33,12 +35,12 @@ router.get('/register', function(req,res) {
     res.render('register-form')
 })
 
-router.get('/MainPage', function(req,res) {
-    res.render('dummy', {token: req.cookies.token})
+router.get('/mainPage', function(req,res) {
+    res.render('mainPage')
 })
 
 router.get('/files/upload', function(req,res) {
-  res.render(('upload'))
+  res.render('upload')
 })
 
 //POSTS
@@ -61,7 +63,16 @@ router.post('/register', function(req,res) {
     .catch(e => res.render('error', {error:e}))
 })
 
-router.post('/files/upload', upload.single('myFile'), function(req,res){
+router.post('/files/upload', upload.single('myFile'), function(req, res, next){
+  var myToken = req.cookies.token;
+  jwt.verify(myToken, 'PRI2020', function(e, payload){
+    if(e) res.status(401).jsonp({error: 'Erro na verificação do token: ' + e})
+    else{
+      req.user = { level: payload.level, username: payload.username }
+      next()
+    } 
+  })
+}, function(req,res){
   good = 1
   listaFicheiros = []
 
@@ -100,8 +111,34 @@ router.post('/files/upload', upload.single('myFile'), function(req,res){
   if (good == 1)
   {
       //zip valido
-      let quarantinePath = __dirname + '/' + req.file.path
-      let newPath = __dirname + '/public/fileStore/' + req.file.originalname
+      var parentDir = path.normalize(__dirname+"/..");
+      let quarantinePath = parentDir + '/' + req.file.path
+      let newPath = parentDir + '/public/fileStore/' + req.file.originalname
+
+      fs.rename(quarantinePath, newPath, function(err){
+        if(err){
+            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+            res.write('<p> Erro: ao mover o ficheiro da quarentena: ' + err + '</p>')
+            res.end()
+        }
+        else{
+            req.body.dataRegisto = new Date().toISOString().slice(0, 10)
+            req.body.id = req.file.originalname
+            req.body.fileName = req.file.orignalName
+            req.body.autor = req.user.username
+            newString = req.body.hashtags.replace(/\s+/g,' ').trim();
+            req.body.hashtags = newString.split(" ")
+
+            axios.post('http://localhost:8000/recursos?token=' + req.cookies.token,req.body)
+              .then(dados => {
+                res.render('mainPage')
+              })
+              .catch(e => res.render('error', {error: e}))
+            
+
+            
+        }
+    })
   } 
   else 
   {
