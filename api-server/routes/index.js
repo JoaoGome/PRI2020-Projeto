@@ -4,6 +4,10 @@ var Recurso = require('../controllers/recurso')
 
 /* GET home page. */
 
+router.get('/', function(req,res) {
+  res.send('<p>Hello user: </p>' + req.user.username);
+})
+
 // Listar todas os recursos
 router.get('/recursos', function(req, res) {
   if(req.query.vis)

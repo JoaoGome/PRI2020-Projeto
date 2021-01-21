@@ -8,7 +8,8 @@ var recursoSchema = new mongoose.Schema({
     dataRegisto: String,
     visibilidade: Number,
     autor: String,
-    hashtags: [String]
+    hashtags: String,
+    originalName: String
   });
 
 module.exports = mongoose.model('recurso', recursoSchema)
