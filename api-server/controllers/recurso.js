@@ -20,6 +20,12 @@ module.exports.listarRecPessoais = p => {
         .exec()
 }
 
+// Devolve determinado Recurso da pessoa
+module.exports.listarRecPessoal = (p, id) => {
+    return Recurso
+        .findOne({autor:p, id:id})
+        .exec()
+}
 
 // Devolve a lista de todos os Recursos conforme visibilidade
 module.exports.listarRec = v => {
@@ -45,8 +51,8 @@ module.exports.listarTipos = () => {
         .distinct('tipo')
 }
 
-//
-module.exports.listarProdutores = () => {
+// Devolve a lista de todos os Autores ----------> nao usado
+module.exports.listarAutores = () => {
     return Recurso
         .distinct('autor')
 }

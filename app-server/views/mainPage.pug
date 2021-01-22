@@ -23,18 +23,30 @@ block content
         div.w3-container.w3-display-container(class="lista", id="recursos", style="display:block")
             table.w3-table-all
                 tr.w3-theme-d3
-                    th(style="width:1000px;") Título
-                    th.w3-center Visibilidade
-                    th
+                    th(style="width:600px;") Título
+                    th(style="width:300px;") Autor
+                    th.w3-center Tipo
+                    th.w3-center Data Registo
+                    if produtores
+                        th.w3-center Visibilidade
+                        th.w3-center 
+                    
                 each r in recursos
                     tr
-                        td #{r.titulo}  
-                        if r.visibilidade == 1
-                            td.w3-center Privado
-                        else
-                            td.w3-center Público
-                        td.w3-center
-                            a(href=`/recurso/${r.id}/remover`) Eliminar
+                        td 
+                            a(href=`/recurso/${r.id}`) #{r.titulo}  
+                        td #{r.autor}
+                        td.w3-center #{r.tipo}
+                        td.w3-center #{r.dataRegisto}
+
+                        if produtores
+                            if r.visibilidade == 1
+                                td.w3-center Privado
+                            else
+                                td.w3-center Público
+                        
+                            td.w3-center
+                                a(href=`/recurso/${r.id}/remover`) Eliminar
 
         if produtores
             div(class="lista", id="users", style="display:none")
@@ -47,9 +59,17 @@ block content
 
                     if consumidores.length
                         table.w3-table-all
+                            tr.w3-theme-d3
+                                th(style="width:500px;") Username
+                                th Email
+                                th.w3-center(style="width:500px;") Afiliação
+                                th
+                                th
                             each c in consumidores
                                 tr
-                                    td(style="width:1300px;") #{c.username} 
+                                    td #{c.username} 
+                                    td= c.email 
+                                    td.w3-center= c.filiacao
                                     td
                                         a(href=`/user/${c.username}/upgrade`) Upgrade
                                     td
@@ -63,12 +83,16 @@ block content
 
                         table.w3-table-all
                             tr.w3-theme-d3
-                                th(style="width:1300px;") Username
+                                th(style="width:500px;") Username
+                                th Email
+                                th.w3-center(style="width:500px;") Afiliação
                                 th
                                 th
                             each pr in produtores
                                 tr
-                                    td #{pr.username}  
+                                    td #{pr.username}
+                                    td #{pr.email}
+                                    td.w3-center #{pr.filiacao}  
                                     td
                                         a(href=`/user/${pr.username}/downgrade`) Downgrade
                                     td
@@ -80,18 +104,32 @@ block content
         if pessoais
             div.w3-container.w3-display-container(class="lista pessoais", id="pessoais", style="display:none")
                 if pessoais.length
+                    
                     table.w3-table-all
-                            tr.w3-theme-d3
-                                th(style="width:1300px;") Username
-                                th
-                                th
-                            each p in pessoais
-                                tr
-                                    td #{p.titulo}  
-                                    td
-                                        a(href=`/user/${p._id}/editar`) Editar
-                                    td
-                                        a(href=`/user/${p._id}/remover`) Remover
+                        tr.w3-theme-d3
+                            th(style="width:600px;") Título
+                            th.w3-center(style="width:200px;") Tipo
+                            th.w3-center(style="width:200px;") Visibilidade
+                            th.w3-center(style="width:300px;") Data Registo
+                            th
+                            th
+                        each p in pessoais
+                            tr
+                                td 
+                                    a(href=`/recurso/meu/${p.id}`) #{p.titulo}
+                                td.w3-center #{p.tipo}
+                                
+                                if p.visibilidade == 1
+                                    td.w3-center Privado
+                                else
+                                    td.w3-center Público
+
+                                td.w3-center #{p.dataRegisto} 
+                               
+                                td
+                                    a(href=`/user/${p._id}/editar`) Editar
+                                td
+                                    a(href=`/user/${p._id}/remover`) Remover
                 else
                     p Não tem recursos.
 

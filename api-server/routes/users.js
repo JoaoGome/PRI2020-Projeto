@@ -15,17 +15,6 @@ router.get('/', function(req, res){
     res.status(500).jsonp({error: "Não autorizado"})
 })
 
-// Consultar os seus proprios recursos
-router.get('/produtor', function(req, res) {
-  if(req.user.level === "consumidor")
-    res.status(500).jsonp({error: "Não autorizado"})
-  else{
-    Recurso.listarRecPessoais(req.user.username)
-      .then(dados => res.status(200).jsonp(dados))
-      .catch(e => res.status(500).jsonp({error: e}))
-  }
-});
-
 
 // Remover user
 router.get('/:id/remover', function(req, res){

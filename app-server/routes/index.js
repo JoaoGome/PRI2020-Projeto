@@ -35,7 +35,7 @@ router.get('/mainPage', function(req,res) {
     .then(r =>{
 
         //Pedir recursos pessoais
-        axios.get("http://localhost:8000/users/produtor?token=" + myToken)
+        axios.get("http://localhost:8000/recursos/produtor?token=" + myToken)
           .then(p => {
 
             //Pedir lista de produtores
@@ -65,15 +65,11 @@ router.get('/mainPage', function(req,res) {
 
     })
     .catch(e => res.render('error', {error:e}))
-  });
+});
 
-// Eliminar um recurso
-router.get('/recurso/:id/remover', function(req,res) {
-  var myToken = req.cookies.token;
-  axios.delete('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
-    .then(res.redirect('/mainPage'))
-    .catch(e => res.render('error', {error:e}))
-})
+
+  
+  
 
 // Login and Register
 
@@ -176,7 +172,7 @@ router.post('/files/upload', upload.single('myFile'), function(req, res, next){
             newString = req.body.hashtags.replace(/\s+/g,' ').trim();
             req.body.hashtags = newString.split(" ")
 
-            axios.post('http://localhost:8000/recursos?token=' + req.cookies.token,req.body)
+            axios.post('http://localhost:8000/recurso?token=' + req.cookies.token,req.body)
               .then(dados => {
                 res.render('/mainPage?tab=3')
               })
