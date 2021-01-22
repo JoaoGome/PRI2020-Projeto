@@ -54,15 +54,6 @@ router.get('/produtor', function(req, res) {
 });
 
 
-// Listar users de nivel X
-router.get('/users', function(req, res){
-  if(req.user.vis == 1)
-    axios.get("http://localhost:8002/users/nivel?level=" + req.query.level)
-      .then(dados => res.status(200).jsonp(dados.data))
-      .catch(e => res.status(501).jsonp({error: e}))
-  else
-    res.status(500).jsonp({error: "Não autorizado"})
-})
 
 
 // Inserir um recurso

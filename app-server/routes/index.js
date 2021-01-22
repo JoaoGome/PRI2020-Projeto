@@ -24,13 +24,7 @@ router.get('/', function(req, res, next) {
     res.render('index');
 });
 
-router.get('/login', function(req,res) {
-    res.render('login-form', {user: "", pass: ""})
-});
 
-router.get('/register', function(req,res) {
-    res.render('register-form')
-})
 
 router.get('/mainPage', function(req,res) {
   var myToken = req.cookies.token;
@@ -44,12 +38,20 @@ router.get('/mainPage', function(req,res) {
           .then(p => {
 
             //Pedir lista de produtores
-            axios.get("http://localhost:8000/users?level=produtores&token=" + myToken)
-            .then(ps => {
-              console.log("admin")
-              res.render('mainPage', {recursos: r.data, produtores: ps.data, pessoais: p.data})
-            })
-            .catch(e => res.render('mainPage', {recursos: r.data, proprios: p.data}))
+            axios.get("http://localhost:8000/users?level=produtor&token=" + myToken)
+              .then(ps => {
+                
+                axios.get("http://localhost:8000/users?level=consumidor&token=" + myToken)
+                  .then(cs => {
+
+                    console.log("admin")
+                    res.render('mainPage', {recursos: r.data, produtores: ps.data, consumidores:cs.data, pessoais: p.data})
+                  
+                  })
+                  .catch(e => res.render('mainPage', {recursos: r.data, proprios: p.data, pessoais: p.data}))
+                  
+              })
+              .catch(e => res.render('mainPage', {recursos: r.data, proprios: p.data}))
 
           })
           .catch(e => res.render('mainPage', {recursos: r.data}))
@@ -59,11 +61,40 @@ router.get('/mainPage', function(req,res) {
   });
 
 
-router.get('/files/upload', function(req,res) {
-  res.render('upload')
+// Users section
+
+router.get('/user/:id/remover', function(req,res) {
+    var myToken = req.cookies.token;
+    axios.get("http://localhost:8000/users/" + req.params.id + "/remover?token=" + myToken)
+      .then(d => res.redirect('/mainPage'))
+      .catch(e => res.render('error', {error:e}))
 })
 
-//POSTS
+router.get('/user/:id/upgrade', function(req,res) {
+  var myToken = req.cookies.token;
+  axios.get("http://localhost:8000/users/" + req.params.id + "/upgrade?token=" + myToken)
+    .then(d => res.redirect('/mainPage'))
+    .catch(e => res.render('error', {error:e}))
+})
+
+router.get('/user/:id/downgrade', function(req,res) {
+  var myToken = req.cookies.token;
+  axios.get("http://localhost:8000/users/" + req.params.id + "/downgrade?token=" + myToken)
+    .then(d => res.redirect('/mainPage'))
+    .catch(e => res.render('error', {error:e}))
+})
+
+
+// Login and Register
+
+router.get('/login', function(req,res) {
+  res.render('login-form', {user: "", pass: ""})
+});
+
+router.get('/register', function(req,res) {
+  res.render('register-form')
+})
+
 router.post('/login', function(req, res) {
   axios.post('http://localhost:8002/users/login', req.body)
     .then(dados => {
@@ -81,6 +112,15 @@ router.post('/register', function(req,res) {
   axios.post('http://localhost:8002/users/registar', req.body)
     .then(res.redirect('/'))
     .catch(e => res.render('error', {error:e}))
+})
+
+
+
+
+//Files upload section
+
+router.get('/files/upload', function(req,res) {
+  res.render('upload')
 })
 
 router.post('/files/upload', upload.single('myFile'), function(req, res, next){

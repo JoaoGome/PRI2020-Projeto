@@ -24,6 +24,12 @@ module.exports.remove = uname => {
     return User.deleteOne({username: uname});
 }
 
+// alterar o level de um user
+module.exports.alterarLevel = (uname,l) => {
+    return User.findOneAndUpdate({username: uname},{$set: {level:l} });
+}
+
+
 // alterar a password de um user
 module.exports.alterarPwd = (uname,pwd) => {
     return User.findOneAndUpdate({username:uname},{$set: {password:pwd} });

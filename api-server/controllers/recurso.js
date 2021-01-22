@@ -65,13 +65,6 @@ module.exports.listarRecHashtags = (v,h) => {
         .exec()
 }
 
-// Devolve a lista dos recursos de determinada visibilidade
-/*module.exports.listarRecVisibilidade = v => {
-    return Recurso
-        .find({visibilidade: v})
-        .sort('titulo')
-        .exec()
-}*/
 
 
 //////////////////////////////////////////// Alterar bd
