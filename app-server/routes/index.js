@@ -67,7 +67,13 @@ router.get('/mainPage', function(req,res) {
     .catch(e => res.render('error', {error:e}))
   });
 
-
+// Eliminar um recurso
+router.get('/recurso/:id/remover', function(req,res) {
+  var myToken = req.cookies.token;
+  axios.delete('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
+    .then(res.redirect('/mainPage'))
+    .catch(e => res.render('error', {error:e}))
+})
 
 // Login and Register
 

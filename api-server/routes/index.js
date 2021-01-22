@@ -63,9 +63,12 @@ router.put('/recurso', function(req, res){
 
 // Remover um recurso 
 router.delete('/recurso/:id', function(req, res) {
-  Recurso.remover(req.params.id)
-    .then(dados => res.status(200).jsonp(dados))
-    .catch(e => res.status(500).jsonp({error: e}))
+  if(req.user.level === "admin")
+    Recurso.remover(req.params.id)
+      .then(dados => res.status(200).jsonp(dados))
+      .catch(e => res.status(500).jsonp({error: e}))
+  else
+    res.status(500).jsonp("Não autorizado")
 });
 
 module.exports = router;
