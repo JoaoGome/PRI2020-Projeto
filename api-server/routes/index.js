@@ -46,15 +46,6 @@ router.get('/recurso/:id', function(req, res) {
     .catch(e => res.status(500).jsonp({error: e}))
 });
 
-// Consultar os seus proprios recursos
-router.get('/produtor', function(req, res) {
-  Recurso.listarRecPessoais(req.user.username)
-    .then(dados => res.status(200).jsonp(dados))
-    .catch(e => res.status(500).jsonp({error: e}))
-});
-
-
-
 
 // Inserir um recurso
 router.post('/recursos', function(req, res){

@@ -1,19 +1,29 @@
 // Image display on client browserS
 
 function openDiv(evt, id) {
-    var i;
-    var x = document.getElementsByClassName("lista");
-    for (i = 0; i < x.length; i++) {
-      x[i].style.display = "none";  
-    }
-    tablinks = document.getElementsByClassName("tablink");
-    for (i = 0; i < x.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace("w3-theme-d3", "w3-theme-d4");
-    }
-    document.getElementById(id).style.display = "block"; 
-    evt.currentTarget.className = evt.currentTarget.className.replace("w3-theme-d4", "w3-theme-d3");
+  var i;
+  var x = document.getElementsByClassName("lista");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";  
+  }
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < x.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace("w3-theme-d3", "w3-theme-d4");
+  }
+
+  var botao = document.getElementsByClassName("botao");
+  botao[0].style.display="none"
+
+  var b_id = "botao_" + id
+  if(document.getElementById(b_id))
+    document.getElementById(b_id).style.display = "block";
+  document.getElementById(id).style.display = "block";
+  evt.currentTarget.className = evt.currentTarget.className.replace("w3-theme-d4", "w3-theme-d3");
 }
 
+function openTab(id){
+
+}
 
 function openUsers(evt, id) {
   var i;

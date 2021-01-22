@@ -28,13 +28,14 @@ router.get('/', function(req, res, next) {
 
 router.get('/mainPage', function(req,res) {
   var myToken = req.cookies.token;
-
+  var tab = 1
+  if(req.query.tab) tab = req.query.tab
   //Pedir lista de recursos
   axios.get("http://localhost:8000/recursos?token=" + myToken)
     .then(r =>{
 
         //Pedir recursos pessoais
-        axios.get("http://localhost:8000/produtor?token=" + myToken)
+        axios.get("http://localhost:8000/users/produtor?token=" + myToken)
           .then(p => {
 
             //Pedir lista de produtores
@@ -48,41 +49,24 @@ router.get('/mainPage', function(req,res) {
                     res.render('mainPage', {recursos: r.data, produtores: ps.data, consumidores:cs.data, pessoais: p.data})
                   
                   })
-                  .catch(e => res.render('mainPage', {recursos: r.data, proprios: p.data, pessoais: p.data}))
+                  .catch(e => res.render('mainPage', {recursos: r.data, pessoais: p.data}))
                   
               })
-              .catch(e => res.render('mainPage', {recursos: r.data, proprios: p.data}))
+              .catch(e =>{
+                console.log("produtor")
+                res.render('mainPage', {recursos: r.data, pessoais: p.data})
+              })
 
           })
-          .catch(e => res.render('mainPage', {recursos: r.data}))
+          .catch(e => {
+            console.log("consumidor")
+            res.render('mainPage', {recursos: r.data})
+          })
 
     })
     .catch(e => res.render('error', {error:e}))
   });
 
-
-// Users section
-
-router.get('/user/:id/remover', function(req,res) {
-    var myToken = req.cookies.token;
-    axios.get("http://localhost:8000/users/" + req.params.id + "/remover?token=" + myToken)
-      .then(d => res.redirect('/mainPage'))
-      .catch(e => res.render('error', {error:e}))
-})
-
-router.get('/user/:id/upgrade', function(req,res) {
-  var myToken = req.cookies.token;
-  axios.get("http://localhost:8000/users/" + req.params.id + "/upgrade?token=" + myToken)
-    .then(d => res.redirect('/mainPage'))
-    .catch(e => res.render('error', {error:e}))
-})
-
-router.get('/user/:id/downgrade', function(req,res) {
-  var myToken = req.cookies.token;
-  axios.get("http://localhost:8000/users/" + req.params.id + "/downgrade?token=" + myToken)
-    .then(d => res.redirect('/mainPage'))
-    .catch(e => res.render('error', {error:e}))
-})
 
 
 // Login and Register
@@ -188,7 +172,7 @@ router.post('/files/upload', upload.single('myFile'), function(req, res, next){
 
             axios.post('http://localhost:8000/recursos?token=' + req.cookies.token,req.body)
               .then(dados => {
-                res.render('mainPage')
+                res.render('/mainPage?tab=3')
               })
               .catch(e => res.render('error', {error: e}))
             

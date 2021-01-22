@@ -1,23 +1,37 @@
-doctype html
-html
-  head
-    title Recursos Upload
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    .w3-container.w3-w3-teal
-        h3 Recurso Upload:
+extends layout
 
-    form.w3-container(action='/files/upload' method='POST' enctype='multipart/form-data')
-        label Tipo:
-        input.w3-input(type="text" name="tipo")
-        label Titulo:
-        input.w3-input(type="text" name="titulo")
-        label Visibilidade:
-        input.w3-input(type="number" name="visibilidade")
-        label Hashtags:
-        input.w3-input(type="text" name="hashtags")
-        label Select File:
-        input.w3-input(type="file" name="myFile")
-        input.w3-btn.w3-blue(type="submit" value="Submit")
-    
+block content
+
+    .w3-light-grey
+        header.w3-container.w3-theme-d4.w3-text-white.w3-margin-bottom
+            h1 Upload Recurso
+        form.w3-container.w3-padding-large(action='/login' method='POST')
+
+            h5.w3-cell-row.w3-padding
+                label.w3-cell(style="width:100px") Tipo:
+                input.w3-input.w3-margin-left.w3-round.w3-cell(type="text" name="tipo" placeholder=`Introduza o tipo de recurso (artigo, tese, relatório...)`)
+            h5.w3-cell-row.w3-padding
+                label.w3-cell(style="width:100px") Titulo
+                input.w3-input.w3-margin-left(type="text" name="titulo" placeholder=`Introduza o titulo`)
+
+            h5.w3-cell-row.w3-padding
+                label.w3-cell(style="width:100px") Visibilidade:
+                select.w3-select.w3-margin-left(style="width:400px" name="visibilidade")
+                  option(value="" disabled selected) Escolha a visibilidade
+                  option(value="1") Privado
+                  option(value="2") Público
+
+            h5.w3-cell-row.w3-padding
+                label.w3-cell(style="width:100px") Hashtags: 
+                input.w3-input.w3-margin-left(type="text" name="hashtags" placeholder=`Introduza as hashtags separadas por espaços (exemplo: SD MachineLearning VisaoPorComputador)`)
+            
+            h5.w3-cell-row.w3-padding
+                label.w3-cell(style="width:100px") Ficheiro ZIP:
+                input.w3-input.w3-margin-left(type="file" name="myFile" placeholder=`Introduza o titulo`)
+
+            h5.w3-cell-row.w3-padding.w3-margin-top
+                input.w3-btn.w3-blue-grey.w3-round(type="submit" value="Enviar")
         
+        .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-margin-top.w3-padding-large
+            address 
+                a(href="/mainPage") Voltar

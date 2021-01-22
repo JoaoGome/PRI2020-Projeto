@@ -1,0 +1,23 @@
+doctype html
+html
+  head
+    title Recursos Upload
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    .w3-container.w3-w3-teal
+        h3 Recurso Upload:
+
+    form.w3-container(action='/files/upload' method='POST' enctype='multipart/form-data')
+        label Tipo:
+        input.w3-input(type="text" name="tipo")
+        label Titulo:
+        input.w3-input(type="text" name="titulo")
+        label Visibilidade:
+        input.w3-input(type="number" name="visibilidade")
+        label Hashtags:
+        input.w3-input(type="text" name="hashtags")
+        label Select File:
+        input.w3-input(type="file" name="myFile")
+        input.w3-btn.w3-blue(type="submit" value="Submit")
+    
+        
