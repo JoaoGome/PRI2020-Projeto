@@ -9,22 +9,24 @@ block content
 
             h5.w3-cell-row.w3-padding
                 label.w3-cell(style="width:100px") Username:
-                input.w3-input.w3-margin-left.w3-round.w3-cell(style="width:700px" type="text" name="username" placeholder=`Enter your username`)
+                input.w3-input.w3-margin-left.w3-round.w3-cell(style="width:700px" type="text" name="username" value=`${user}` placeholder=`Introduza o seu username` required)
             h5.w3-cell-row.w3-padding
                 label.w3-cell(style="width:100px") Password
-                input.w3-input.w3-margin-left(style="width:700px" type="password" name="password" placeholder=`Enter your password`)
+                input.w3-input.w3-margin-left(style="width:700px" type="password" name="password" placeholder=`Introduza a sua password` required)
             h5.w3-cell-row.w3-padding
                 label.w3-cell(style="width:100px") Email:
-                input.w3-input.w3-margin-left.w3-round(style="width:700px" type="text" name="email" placeholder=`Enter your email`)
+                input.w3-input.w3-margin-left.w3-round(style="width:700px" type="text" name="email" value=`${email}` placeholder=`Introduza o seu email`)
             h5.w3-cell-row.w3-padding
                 label.w3-cell(style="width:100px") Filiação:
-                input.w3-input.w3-margin-left(style="width:700px" type="text" name="filiacao" placeholder=`Enter your filiation`)
+                input.w3-input.w3-margin-left(style="width:700px" type="text" name="filiacao" value=`${fil}` placeholder=`Introduza a sua afiliação`)
             
             
             input.w3-input(type="hidden" name="level" value="consumidor")
 
             h5.w3-cell-row.w3-padding
                 input.w3-btn.w3-blue-grey.w3-round(type="submit" value="Enviar")
+                if erro
+                    span.w3-padding.w3-cell-middle.w3-opacity - Username já existe -
         
         .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-margin-top.w3-padding-large
             address 

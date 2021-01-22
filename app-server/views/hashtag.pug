@@ -1,0 +1,32 @@
+extends layout
+
+block content
+
+    .w3-light-grey
+        header.w3-container.w3-theme-d4.w3-text-white
+            h1.w3-opacity Gestor de Recursos
+        .w3-bar.w3-theme-d4
+            h3.w3-margin-left Hashtag #{hashtag}
+        
+        .w3-container
+            table.w3-table-all
+                tr.w3-theme-d3
+                    th(style="width:600px;") Título
+                    th(style="width:300px;") Autor
+                    th.w3-center Tipo
+                    th.w3-center Data Registo
+                    if produtores
+                        th.w3-center Visibilidade
+                        th.w3-center 
+                    
+                each r in recursos
+                    tr
+                        td 
+                            a(href=`/recurso/${r.id}`) #{r.titulo}  
+                        td #{r.autor}
+                        td.w3-center #{r.tipo}
+                        td.w3-center #{r.dataRegisto}
+        
+        .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-margin-top.w3-padding-large
+            address 
+                a(href="/mainPage") Voltar

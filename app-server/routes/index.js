@@ -68,17 +68,29 @@ router.get('/mainPage', function(req,res) {
 });
 
 
+// listar recursos determinada hashtag
+router.get('/recursos', function(req,res) {
+  var myToken = req.cookies.token;
+  if(req.query.hashtag)
+    axios.get('http://localhost:8000/recursos?hashtag=' + req.query.hashtag + '&token=' + myToken)
+      .then(dados => res.render('hashtag', {hashtag: req.query.hashtag, recursos: dados.data}))
+      .catch(e => res.render('error', {error:e}))
+  else 
+    res.redirect('/mainPage')
+})
+
   
-  
+
+
 
 // Login and Register
 
 router.get('/login', function(req,res) {
-  res.render('login-form', {user: "", pass: ""})
+  res.render('login-form', {user: ""})
 });
 
 router.get('/register', function(req,res) {
-  res.render('register-form')
+  res.render('register-form', {user: "", email: "", fil: ""})
 })
 
 router.post('/login', function(req, res) {
@@ -97,9 +109,8 @@ router.post('/login', function(req, res) {
 router.post('/register', function(req,res) {
   axios.post('http://localhost:8002/users/registar', req.body)
     .then(res.redirect('/'))
-    .catch(e => res.render('error', {error:e}))
+    .catch(e => res.render('register', {error:e, user: req.body.username, email: req.body.email, fil: req.body.filiacao}))
 })
-
 
 
 
