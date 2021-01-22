@@ -44,10 +44,17 @@ router.post('/registar', function(req,res) {
     console.log(req.body)
     req.body.dataRegisto = new Date().toISOString().slice(0, 10)
     req.body.dataLastAcess = ''
-    console.log(req.body)
-    User.inserir(req.body)
-      .then(dados => res.status(201).jsonp({dados: dados}))
-      .catch(e => res.status(500).jsonp({error: e}))
+    User.consultar(req.body.username)
+      .then(dados => {
+        if (dados == null)
+        {
+          User.inserir(req.body)
+            .then(dados => res.status(201).jsonp({dados: dados}))
+            .catch(e => res.status(500).jsonp({error: e}))
+        }
+        else res.status(500).jsonp("User ja existente")
+      }).catch( e => {console.log("catch"); res.status(500).jsonp({error: e})})
+    
 })
 
 
