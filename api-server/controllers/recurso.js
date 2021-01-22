@@ -12,8 +12,18 @@ module.exports.listar = () => {
         .exec()
 }
 
+// Devolve a lista de todos os Recursos da pessoa
+module.exports.listarRecPessoais = p => {
+    return Recurso
+        .find({autor:p})
+        .sort('titulo')
+        .exec()
+}
+
+
 // Devolve a lista de todos os Recursos conforme visibilidade
 module.exports.listarRec = v => {
+    console.log(v)
     return Recurso
         .find({visibilidade: {$gte: v}})
         .sort('titulo')
@@ -33,6 +43,12 @@ module.exports.listarRecursosTipo = (v,t) => {
 module.exports.listarTipos = () => {
     return Recurso
         .distinct('tipo')
+}
+
+//
+module.exports.listarProdutores = () => {
+    return Recurso
+        .distinct('autor')
 }
 
 // Devolve determinado recurso
@@ -62,7 +78,6 @@ module.exports.listarRecHashtags = (v,h) => {
 
 // Insere recurso na bd
 module.exports.inserir = r => {
-    console.log("here")
     var novo = new Recurso(r)
     
     return novo.save()

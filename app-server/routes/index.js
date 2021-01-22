@@ -15,20 +15,17 @@ const StreamZip = require('node-stream-zip');
 function existe (a,b) 
 {
   for (i = 0; i < b.length; i++)
-  {
     if (b[i] == a) return true
-  }
-
   return false
 }
 
 // GETS
 router.get('/', function(req, res, next) {
-    res.render('pagina-inicial');
+    res.render('index');
 });
 
 router.get('/login', function(req,res) {
-    res.render('login-form')
+    res.render('login-form', {user: "", pass: ""})
 });
 
 router.get('/register', function(req,res) {
@@ -36,8 +33,31 @@ router.get('/register', function(req,res) {
 })
 
 router.get('/mainPage', function(req,res) {
-    res.render('mainPage')
-})
+  var myToken = req.cookies.token;
+
+  //Pedir lista de recursos
+  axios.get("http://localhost:8000/recursos?token=" + myToken)
+    .then(r =>{
+
+        //Pedir recursos pessoais
+        axios.get("http://localhost:8000/produtor?token=" + myToken)
+          .then(p => {
+
+            //Pedir lista de produtores
+            axios.get("http://localhost:8000/users?level=produtores&token=" + myToken)
+            .then(ps => {
+              console.log("admin")
+              res.render('mainPage', {recursos: r.data, produtores: ps.data, pessoais: p.data})
+            })
+            .catch(e => res.render('mainPage', {recursos: r.data, proprios: p.data}))
+
+          })
+          .catch(e => res.render('mainPage', {recursos: r.data}))
+
+    })
+    .catch(e => res.render('error', {error:e}))
+  });
+
 
 router.get('/files/upload', function(req,res) {
   res.render('upload')
@@ -52,9 +72,9 @@ router.post('/login', function(req, res) {
         secure: false, // set to true if your using https
         httpOnly: true
       });
-      res.redirect('/MainPage')
+      res.redirect('/mainPage')
     })
-    .catch(e => res.render('error', {error: e}))
+    .catch(e => res.render('login-form', {erro: e, user: req.body.username}))
 });
 
 router.post('/register', function(req,res) {
@@ -99,10 +119,7 @@ router.post('/files/upload', upload.single('myFile'), function(req, res, next){
       }
     }
 
-    else 
-    {
-      good = 0;
-    }
+    else good = 0;
 
     zip.close()
   });

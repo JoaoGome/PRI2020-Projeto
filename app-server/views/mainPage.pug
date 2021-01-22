@@ -2,5 +2,39 @@ extends layout
 
 block content
 
-    p
-        a(href=`http://localhost:8001/files/upload`) Fazer upload de Ficheiro
+    .w3-light-grey
+        header.w3-container.w3-theme-d4.w3-text-white
+            h1.w3-opacity Gestor de Recursos
+        
+        .w3-bar.w3-theme-d4.w3-margin-bottom
+            h4
+                button.w3-bar-item.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'recursos');") Lista de Recursos
+                button.w3-bar-item.w3-hover-blue-grey.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'users');") Lista de Produtores
+                button.w3-bar-item.w3-hover-blue-grey.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'pessoais');") Os Meus Recursos
+
+        div.w3-container.w3-display-container(class="lista", id="recursos", style="display:block")
+            ul
+                each r in recursos
+                    li #{r.titulo}   
+        if produtores
+            div.w3-container.w3-display-container(class="lista", id="users", style="display:none")
+                if produtores.length
+                    ul
+                        each pr in produtores
+                            li #{pr.username} 
+                else
+                    span Não existem produtores.
+
+        if pessoais
+            div.w3-container.w3-display-container(class="lista", id="pessoais", style="display:none")
+                if pessoais.length
+                    ul
+                        each p in pessoais
+                            li #{p.titulo} 
+                            if produtores.length
+                else
+                    span Não tem recursos.
+        
+        .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-margin-top.w3-padding-large
+            address 
+                a(href="/") Voltar

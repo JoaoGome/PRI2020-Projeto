@@ -1,9 +1,19 @@
 extends layout
 
 block content
-  h1 Gestão de Tarefas
-  ul.w3-ul
-    li 
-      a(href='/login') Login
-    li
-      a(href='/tarefas') Lista de Tarefas
+
+  .w3-light-grey
+    header.w3-container.w3-theme-d4
+      h4
+        button.w3-margin-bottom.w3-right.w3-button.w3-round-large.w3-text-white
+          a(href='/login').w3-right Login
+        button.w3-margin-bottom.w3-right.w3-button.w3-round-large.w3-text-white
+          a(href='/register').w3-right Register
+
+    
+    .w3-container.w3-padding-64.w3-theme-d2.w3-margin-top.w3-text-white
+      h1.w3-center Gestão de Recursos
+
+    footer
+      .w3-container.w3-theme-d4.w3-margin-top
+        p.w3-text-white PRI2020

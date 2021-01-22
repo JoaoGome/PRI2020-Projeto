@@ -29,7 +29,11 @@ app.use(function(req, res, next){
   jwt.verify(myToken, 'PRI2020', function(e, payload){
     if(e) res.status(401).jsonp({error: 'Erro na verificação do token: ' + e})
     else{
-      req.user = { level: payload.level, username: payload.username }
+      if(payload.level === "admin")
+        req.user = { level: payload.level, username: payload.username, vis:1 }
+      else
+        req.user = { level: payload.level, username: payload.username, vis:2 }
+
       console.log("token good verificado")
       next()
     } 

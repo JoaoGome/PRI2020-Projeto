@@ -6,6 +6,13 @@ module.exports.consultar = uname => {
     .exec();
 }
 
+//listar utilizadores nivel X
+module.exports.listarLevel = l => {
+    return User.find({level: l})
+            .sort('-username')
+            .exec();
+}
+
 // insere um user novo
 module.exports.inserir = u => {
     var novo = new User(u);

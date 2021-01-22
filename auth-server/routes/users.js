@@ -5,6 +5,13 @@ var User = require('../controllers/user')
 var passport = require('passport')
 var jwt = require('jsonwebtoken')
 
+//listar users nivel X
+router.get('/nivel', function(req, res) {
+  User.listarLevel(req.query.level)
+    .then(dados => res.status(200).jsonp(dados))
+    .catch(e => res.status(500).jsonp({error: e}))
+})
+
 //login
 router.post('/login', passport.authenticate('local'), function(req,res) {
     console.log(req.user)

@@ -1,19 +1,31 @@
 extends layout
 
 block content
-  .w3-container.w3-margin.w3-border
-    .w3-container.w3-blue
-        h3 Introduza as suas credenciais:
-    form.w3-container(action='/register' method='POST')
-        label Username:
-        input.w3-input(type="text" name="username")
-        label Password:
-        input.w3-input(type="password" name="password")
-        label level:
-        input.w3-input(type="text" name="level")
-        label Email:
-        input.w3-input(type="text" name="email")
-        label Filiação:
-        input.w3-input(type="text" name="filiacao")
-        input.w3-btn.w3-blue(type="submit" value="Enviar")
-    
+
+    .w3-light-grey
+        header.w3-container.w3-theme-d4.w3-text-white.w3-margin-bottom
+            h1 Registar
+        form.w3-container.w3-padding-large(action='/register' method='POST')
+
+            h5.w3-cell-row.w3-padding
+                label.w3-cell(style="width:100px") Username:
+                input.w3-input.w3-margin-left.w3-round.w3-cell(style="width:700px" type="text" name="username" placeholder=`Enter your username`)
+            h5.w3-cell-row.w3-padding
+                label.w3-cell(style="width:100px") Password
+                input.w3-input.w3-margin-left(style="width:700px" type="password" name="password" placeholder=`Enter your password`)
+            h5.w3-cell-row.w3-padding
+                label.w3-cell(style="width:100px") Email:
+                input.w3-input.w3-margin-left.w3-round(style="width:700px" type="text" name="email" placeholder=`Enter your email`)
+            h5.w3-cell-row.w3-padding
+                label.w3-cell(style="width:100px") Filiação:
+                input.w3-input.w3-margin-left(style="width:700px" type="text" name="filiacao" placeholder=`Enter your filiation`)
+            
+            
+            input.w3-input(type="hidden" name="level" value="2")
+
+            h5.w3-cell-row.w3-padding
+                input.w3-btn.w3-blue-grey.w3-round(type="submit" value="Enviar")
+        
+        .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-margin-top.w3-padding-large
+            address 
+                a(href="/") Voltar
