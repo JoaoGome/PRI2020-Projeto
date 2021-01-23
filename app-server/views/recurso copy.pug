@@ -40,26 +40,10 @@ block content
                         a(href=`/recursos?hashtag=${h}`)
                             span #{h}
 
-            h5.w3-text-blue-grey
-                b Comentários:
-                button.w3-right.w3-button.w3-round-large.w3-text-blue-grey.w3-medium(onclick="addComentario()") 
-                    b + Adicionar Comentário
-            div(id="comentar" style="display:none")
-                form(action=`/recurso/${recurso.id}/comentario` method='POST')
-                    h5.w3-cell-row
-                        input.w3-input.w3-round.w3-cell(style="width:1300px" type="text" name="text" placeholder=`Introduza o seu comentário` required)
-                        input.w3-btn.w3-blue-grey.w3-round.w3-cell(type="submit" value="Enviar")
-
+            h5.w3-text-red
+                b Comentários
             table.w3-table-all
-                if comentarios.length
-                    each c in comentarios
-                        tr
-                            td
-                                b #{c.userID}:
-                            td= c.text
-                            td.w3-right= c.data
-                else
-                    span Não existem comentários
+                tr
 
             br     
         

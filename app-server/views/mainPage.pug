@@ -116,7 +116,7 @@ block content
                         each p in pessoais
                             tr
                                 td 
-                                    a(href=`/recurso/meu/${p.id}`) #{p.titulo}
+                                    a(href=`/recurso/${p.id}`) #{p.titulo}
                                 td.w3-center #{p.tipo}
                                 
                                 if p.visibilidade == 1
@@ -127,9 +127,9 @@ block content
                                 td.w3-center #{p.dataRegisto} 
                                
                                 td
-                                    a(href=`/user/${p._id}/editar`) Editar
+                                    a(href=`/recurso/${p.id}/editar`) Editar
                                 td
-                                    a(href=`/user/${p._id}/remover`) Remover
+                                    a(href=`/recurso/${p.id}/remover`) Remover
                 else
                     p Não tem recursos.
 

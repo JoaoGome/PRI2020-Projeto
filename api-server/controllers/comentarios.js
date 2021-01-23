@@ -8,7 +8,7 @@ var Comentario = require('../models/comentarios')
 module.exports.listarByRecurso= id => {
     return Comentario
         .find({recursoID: id})
-        .sort('data')
+        .sort({'data':-1})
         .exec()
 }
 
@@ -16,14 +16,13 @@ module.exports.listarByRecurso= id => {
 module.exports.listarByUser = id => {
     return Comentario
         .find({userID: id})
-        .sort('data')
+        .sort({'data':-1})
         .exec()
 }
 
 // Insere comentario na bd
 module.exports.inserir = c => {
     var novo = new Comentario(c)
-    
     return novo.save()
 }
 

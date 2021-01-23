@@ -21,10 +21,6 @@ function openDiv(evt, id) {
   evt.currentTarget.className = evt.currentTarget.className.replace("w3-theme-d4", "w3-theme-d3");
 }
 
-function openTab(id){
-
-}
-
 function openUsers(evt, id) {
   var i;
   var x = document.getElementsByClassName("users");
@@ -38,3 +34,10 @@ function openUsers(evt, id) {
   document.getElementById(id).style.display = "block"; 
   evt.currentTarget.className = evt.currentTarget.className.replace("w3-theme-d3", "w3-theme-d2");
 }
+
+
+
+function addComentario(){
+  document.getElementById("comentar").style.display = "block"; 
+}
+

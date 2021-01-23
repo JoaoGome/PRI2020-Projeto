@@ -108,8 +108,8 @@ router.post('/login', function(req, res) {
 
 router.post('/register', function(req,res) {
   axios.post('http://localhost:8002/users/registar', req.body)
-    .then(res.redirect('/'))
-    .catch(e => res.render('register', {error:e, user: req.body.username, email: req.body.email, fil: req.body.filiacao}))
+    .then(dados => res.redirect('/'))
+    .catch(e => res.render('register-form', {error:e, user: req.body.username, email: req.body.email, fil: req.body.filiacao}))
 })
 
 
