@@ -117,7 +117,7 @@ router.post('/login', function(req, res) {
   axios.post('http://localhost:8002/users/login', req.body)
     .then(dados => {
       res.cookie('token', dados.data.token, {
-        expires: new Date(Date.now() + '1d'),
+        maxAge : new Date(Date.now() + 3600000),
         secure: false, // set to true if your using https
         httpOnly: true
       });
