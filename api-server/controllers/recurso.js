@@ -87,6 +87,11 @@ module.exports.remover = function(id){
     return Recurso.deleteOne({id: id})
 }
 
+// Elimina recurso pessoal da bd
+module.exports.removerPessoal = function(id, a){
+    return Recurso.deleteOne({id: id, autor: a})
+}
+
 // Altera recurso da bd
 module.exports.alterar = function(r){
     return Recurso.findByIdAndUpdate({id: r.id}, r, {new: true})

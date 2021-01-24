@@ -28,64 +28,45 @@ router.get('/', function(req, res, next) {
 
 router.get('/mainPage', function(req,res) {
   var myToken = req.cookies.token;
-
-  //abrir na tab correta
   var tab = 1
-  var tab31 = "block"
-  var tab32 = "none"
-
+  if(req.query.tab) tab = req.query.tab
   //Pedir lista de recursos
   axios.get("http://localhost:8000/recursos?token=" + myToken)
-    .then(r  =>{
-        var nivel = r.data.level
-        var dados = r.data.dados
+    .then(r =>{
+        console.log(r.data.level)
 
-        if (nivel === "consumidor")
-          res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, recursos:dados})
+        //Pedir recursos pessoais
+        axios.get("http://localhost:8000/recursos/produtor?token=" + myToken)
+          .then(p => {
 
-        else
-          //abrir na tab correta
-          if(req.query.tab && req.query.tab != 3) tab = req.query.tab
-      
-          //Pedir recursos pessoais
-          axios.get("http://localhost:8000/recursos/produtor?token=" + myToken)
-            .then(p => {
-
-              if (nivel === "admin"){
-
-                //abrir na tab correta
-                if(req.query.tab) tab = req.query.tab
-                console.log(req.query.tab2)
-                if(req.query.tab2 && req.query.tab2 == 2){
-                  tab31 = "none"
-                  tab32 = "display"
-                }
-
-                //Pedir lista de produtores
-                axios.get("http://localhost:8000/users?level=produtor&token=" + myToken)
-                .then(ps => {
+            //Pedir lista de produtores
+            axios.get("http://localhost:8000/users?level=produtor&token=" + myToken)
+              .then(ps => {
                 
-                  //Pedir lista de consumidores
-                  axios.get("http://localhost:8000/users?level=consumidor&token=" + myToken)
-                    .then(cs => {
+                axios.get("http://localhost:8000/users?level=consumidor&token=" + myToken)
+                  .then(cs => {
 
-                      res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, recursos:dados, produtores:ps.data, consumidores:cs.data, pessoais:p.data})
-                    
-                    })
-                    .catch(e => res.render('error', {error:e}))
+                    console.log("admin")
+                    res.render('mainPage', {recursos: r.data, produtores: ps.data, consumidores:cs.data, pessoais: p.data})
                   
-                })
-                .catch(e => res.render('error', {error:e}))
-              }
-              else
-                res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, recursos:dados, pessoais:p.data})
-            })
-            .catch(e => res.render('error', {error:e}))
+                  })
+                  .catch(e => res.render('mainPage', {recursos: r.data, pessoais: p.data}))
+                  
+              })
+              .catch(e =>{
+                console.log("produtor")
+                res.render('mainPage', {recursos: r.data, pessoais: p.data})
+              })
+
+          })
+          .catch(e => {
+            console.log("consumidor")
+            res.render('mainPage', {recursos: r.data})
+          })
+
     })
     .catch(e => res.render('error', {error:e}))
 });
-
-
 
 
 // listar recursos determinada hashtag
@@ -205,7 +186,7 @@ router.post('/files/upload', upload.single('myFile'), function(req, res, next){
 
             axios.post('http://localhost:8000/recurso?token=' + req.cookies.token,req.body)
               .then(dados => {
-                res.render('/mainPage?tab=2')
+                res.render('/mainPage?tab=3')
               })
               .catch(e => res.render('error', {error: e}))
             

@@ -25,22 +25,46 @@ router.get('/produtor/:id', function(req, res) {
   }
 });
 
+
+// Comment Section
+
+
+// Consultar os comentários de um recurso
+router.get('/:id/comentarios', function(req, res) {
+  Comentario.listarByRecurso(req.params.id)
+    .then(dados => res.status(200).jsonp({dados:dados, nivel:req.user.level, user:req.user.username}))
+    .catch(e =>  res.status(500).jsonp({error: e}))
+});
+
 // Adicionar um comentário
 router.post('/:id/comentario', function(req, res) {
   req.body.userID = req.user.username
   req.body.recursoID = req.params.id
-  req.body.data =  new Date().toISOString().slice(0, 10)
+  req.body.data =  new Date().toISOString().slice(0, 16).split('T').join(' ')
   Comentario.inserir(req.body)
     .then(dados => res.status(200).jsonp(dados))
     .catch(e =>  res.status(500).jsonp({error: e}))
 });
 
-// Consultar os comentários de um recurso
-router.get('/:id/comentarios', function(req, res) {
-  Comentario.listarByRecurso(req.params.id)
-    .then(dados => res.status(200).jsonp(dados))
-    .catch(e =>  res.status(500).jsonp({error: e}))
-});
+// Eliminar comentario
+router.delete('/comentario/:c', function(req,res){
+  if (req.query.owner === "sim")
+    Comentario.removerPessoal(req.params.c, req.user.username)
+        .then(dados => res.status(200).jsonp(dados))
+        .catch(e =>  res.status(500).jsonp({error: e}))
+  else 
+    if (req.user.level === "admin")
+      Comentario.remover(req.params.c)
+        .then(dados => res.status(200).jsonp(dados))
+        .catch(e =>  res.status(500).jsonp({error: e}))
+    else
+      res.status(500).jsonp({error: "Não autorizado"})
+})
+
+
+
+
+
 
 // Inserir um recurso
 router.post('/', function(req, res){
@@ -62,7 +86,11 @@ router.delete('/:id', function(req, res) {
     Recurso.remover(req.params.id)
       .then(dados => res.status(200).jsonp(dados))
       .catch(e => res.status(500).jsonp({error: e}))
-  else
+  if(req.user.level === "produtor")
+    Recurso.remover(req.params.id, req.user.username)
+      .then(dados => res.status(200).jsonp(dados))
+      .catch(e => res.status(500).jsonp({error: e}))
+  if(req.user.level === "consumidor")
     res.status(500).jsonp("Não autorizado")
 });
 

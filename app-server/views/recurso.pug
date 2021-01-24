@@ -4,12 +4,20 @@ block content
 
     .w3-light-grey
         header.w3-container.w3-theme-d4.w3-text-white
-            h1.w3-opacity Gestor de Recursos
+            a(href="/mainPage" style="text-decoration: none")
+                h1.w3-opacity Gestor de Recursos
+
         .w3-bar.w3-theme-d4
-            h3.w3-margin-left Recurso #{recurso.id}
+            h3.w3-margin-left Recurso #{recurso.id}       
+                if nivel == "admin"
+                    - var eliminar = "sim"         
                 if eliminar
-                    button.w3-margin-right.w3-right.w3-button.w3-round-large.w3-text-white.w3-large.w3-hover-red
-                        a(href=`/recurso/${recurso.id}/remover`).w3-right Eliminar
+                    button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="addConfirmacao()") Eliminar
+
+                a(href="")
+                    button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Download
+                button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Preview
+                    
 
         .w3-container
             h5
@@ -42,11 +50,11 @@ block content
 
             h5.w3-text-blue-grey
                 b Comentários:
-                button.w3-right.w3-button.w3-round-large.w3-text-blue-grey.w3-medium(onclick="addComentario()") 
+                button.w3-right.w3-button.w3-round-large.w3-text-blue-grey.w3-medium(onclick="document.getElementById('comentar').style.display='block'") 
                     b + Adicionar Comentário
             div(id="comentar" style="display:none")
                 form(action=`/recurso/${recurso.id}/comentario` method='POST')
-                    h5.w3-cell-row
+                    span.w3-cell-row
                         input.w3-input.w3-round.w3-cell(style="width:1300px" type="text" name="text" placeholder=`Introduza o seu comentário` required)
                         input.w3-btn.w3-blue-grey.w3-round.w3-cell(type="submit" value="Enviar")
 
@@ -56,13 +64,42 @@ block content
                         tr
                             td
                                 b #{c.userID}:
-                            td= c.text
-                            td.w3-right= c.data
+                                span  #{c.text}
+                            
+                            
+
+                            if c.userID === user
+                                td.w3-right.w3-margin-right.w3-hover-text-red
+                                    a(href=`/recurso/${recurso.id}/remover/${c._id}?owner=sim`) Eliminar
+
+                            else 
+                                if nivel == "admin"
+                                    td.w3-right.w3-margin-right.w3-hover-text-red
+                                        a(href=`/recurso/${recurso.id}/remover/${c._id}?owner=nao`) Eliminar
+
+                            td.w3-right.w3-margin-right #{c.data}
+                            
+                            
                 else
                     span Não existem comentários
 
             br     
         
+
+        //- de certeza que queres eliminar?
+        div.w3-modal(id="confirmar" style="display:none")
+            div.w3-modal-content.w3-theme-d3.w3-round-large(style="width:450px")
+                div.w3-container.w3-padding-16
+                    h5.w3-center.w3-margin-bottom Tem a certeza que quer eliminar este recurso?
+                    h5.w3-center
+                        a(href=`/recurso/${recurso.id}/remover?tab=${tab}`)
+                            button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium
+                                i(class="fa fa-check")
+                        button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium.w3-margin-left(onclick="document.getElementById('confirmar').style.display='none'")
+                            i(class="fa fa-close")
+
+
+
         .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-margin-top.w3-padding-large
             address 
-                a(href="/mainPage") Voltar
+                a(href=`/mainPage?tab=${tab}`) Voltar

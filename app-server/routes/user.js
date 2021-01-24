@@ -21,24 +21,48 @@ function existe (a,b)
 
 // GETS
 
-router.get('/:id/remover', function(req,res) {
-    var myToken = req.cookies.token;
-    axios.get("http://localhost:8000/users/" + req.params.id + "/remover?token=" + myToken)
-      .then(d => res.redirect('/mainPage'))
-      .catch(e => res.render('error', {error:e}))
-})
-
-router.get('/:id/upgrade', function(req,res) {
+//Consultar um user
+router.get('/:id', function(req,res) {
   var myToken = req.cookies.token;
-  axios.get("http://localhost:8000/users/" + req.params.id + "/upgrade?token=" + myToken)
-    .then(d => res.redirect('/mainPage'))
+  axios.get("http://localhost:8000/users/" + req.params.id + "?token=" + myToken)
+    .then(dados =>{ 
+      var nivel = dados.data.nivel
+      var username = dados.data.username
+      axios.get("http://localhost:8000/users/" + req.params.id + "/comentarios?token=" + myToken)
+        .then(cmts =>{ 
+          if (cmts) cmts = cmts.data.reverse()
+          res.render('utilizador', {nivel: nivel, username: username, user: dados.data.dados, comentarios: cmts})})
+        .catch(e => res.render('error', {error:e}))
+    })
     .catch(e => res.render('error', {error:e}))
 })
 
+
+//Eliminar um user
+router.get('/:id/remover', function(req,res) {
+    var myToken = req.cookies.token
+    var tab = 1
+    var tab2 = 1
+    if (req.query.tab) tab = req.query.tab
+    if (req.query.tab2) tab2 = req.query.tab2
+    axios.get("http://localhost:8000/users/" + req.params.id + "/remover?token=" + myToken)
+      .then(d => res.redirect(`/mainPage?tab=${tab}&tab2=${tab2}`))
+      .catch(e => res.render('error', {error:e}))
+})
+
+//consumidor -> produtor
+router.get('/:id/upgrade', function(req,res) {
+  var myToken = req.cookies.token;
+  axios.get("http://localhost:8000/users/" + req.params.id + "/upgrade?token=" + myToken)
+    .then(d => res.redirect('/mainPage?tab=3'))
+    .catch(e => res.render('error', {error:e}))
+})
+
+//produtor -> consumidor
 router.get('/:id/downgrade', function(req,res) {
   var myToken = req.cookies.token;
   axios.get("http://localhost:8000/users/" + req.params.id + "/downgrade?token=" + myToken)
-    .then(d => res.redirect('/mainPage'))
+    .then(d => res.redirect('/mainPage?tab=3&tab2=2'))
     .catch(e => res.render('error', {error:e}))
 })
 

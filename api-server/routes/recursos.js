@@ -24,7 +24,7 @@ router.get('/', function(req, res) {
     // Listar todos os recursos
     else
       Recurso.listarRec(req.user.vis, req.query.hashtag)
-        .then(dados => res.status(200).jsonp(dados))
+        .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level}))
         .catch(e => res.status(500).jsonp({error: e}))
 
 });

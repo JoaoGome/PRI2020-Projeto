@@ -12,15 +12,27 @@ router.get('/nivel', function(req, res) {
     .catch(e => res.status(500).jsonp({error: e}))
 })
 
+//listar consultar user
+router.get('/:id', function(req, res) {
+  User.consultar(req.params.id)
+    .then(dados => res.status(200).jsonp(dados))
+    .catch(e => res.status(500).jsonp({error: e}))
+})
+
+
+
+//----------------------------------- Alterar BD
+
+
 //remover user
-router.get('/:uname/remover', function(req, res) {
+router.delete('/:uname', function(req, res) {
   User.remove(req.params.uname)
     .then(dados => res.status(200).jsonp(dados))
     .catch(e => res.status(500).jsonp({error: e}))
 })
 
 //alterar nivel user
-router.get('/:uname/level', function(req, res) {
+router.put('/:uname/level', function(req, res) {
   User.alterarLevel(req.params.uname, req.query.new)
     .then(dados => res.status(200).jsonp(dados))
     .catch(e => res.status(500).jsonp({error: e}))
@@ -60,3 +72,4 @@ router.post('/registar', function(req,res) {
 
 
 module.exports = router;
+

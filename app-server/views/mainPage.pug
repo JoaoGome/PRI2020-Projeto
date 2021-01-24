@@ -4,134 +4,187 @@ block content
     
     .w3-light-grey
         header.w3-container.w3-theme-d4.w3-text-white
-            h1.w3-opacity Gestor de Recursos
-                button.w3-margin-bottom.w3-right.w3-button.w3-round-large.w3-text-white.w3-large
-                    a(href='/').w3-right Logout
+            h1
+                a.w3-opacity(href="/mainPage" style="text-decoration: none") Gestor de Recursos
+                a(href='/')
+                    button.w3-margin-bottom.w3-right.w3-button.w3-round-large.w3-text-white.w3-large.w3-hover-opacity Logout
         
         .w3-bar.w3-theme-d4
             h4
-                button.w3-bar-item.w3-hover-blue-grey.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'recursos');") Lista de Recursos
-                if produtores
-                    button.w3-bar-item.w3-hover-blue-grey.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'users');") Lista de Utilizadores
-                if pessoais
-                    button.w3-bar-item.w3-hover-blue-grey.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'pessoais');") Os Meus Recursos
-                    div(class="botao", id="botao_pessoais" style="display:none")
-                        a(href='/files/upload').w3-right
-                            button.w3-right.w3-button.w3-round-xxlarge.w3-text-white.w3-large.w3-margin-right.w3-theme-d3
-                                span + Novo Recurso
+                if tab == 1
+                    button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'recursos');") Lista de Recursos
+                    - var tab1 = "block"
+                else
+                    button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'recursos');") Lista de Recursos
+                    - var tab1 = "none"
 
-        div.w3-container.w3-display-container(class="lista", id="recursos", style="display:block")
+                if nivel == "admin"
+                    if tab == 3
+                        button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'users');") Lista de Utilizadores
+                        - var tab3 = "block"
+                    else
+                        button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'users');") Lista de Utilizadores
+                        - var tab3 = "none"
+
+                if nivel != "consumidor"
+                    if tab == 2
+                        button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'pessoais');") Os Meus Recursos
+                        - var tab2 = "block"
+                    else
+                        button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'pessoais');") Os Meus Recursos
+                        - var tab2 = "none"
+                    div(class="botao", id="botao_pessoais" style=`display:${tab2}`)
+                        a(href='/files/upload').w3-right
+                            button.w3-right.w3-button.w3-round-xxlarge.w3-text-white.w3-large.w3-margin-right.w3-theme-d3.w3-hover-opacity
+                                span + Novo Recurso        
+
+                
+
+        //- Listar recursos
+        div.w3-container.w3-display-container.w3-margin-top(class="lista", id="recursos", style=`display:${tab1}`)
             table.w3-table-all
-                tr.w3-theme-d3
+                tr.w3-theme-d3.w3-mobile
+                    th ID
                     th(style="width:600px;") Título
                     th(style="width:300px;") Autor
                     th.w3-center Tipo
                     th.w3-center Data Registo
-                    if produtores
+                    if nivel == "admin"
                         th.w3-center Visibilidade
                         th.w3-center 
                     
                 each r in recursos
-                    tr
-                        td 
-                            a(href=`/recurso/${r.id}`) #{r.titulo}  
-                        td #{r.autor}
-                        td.w3-center #{r.tipo}
-                        td.w3-center #{r.dataRegisto}
+                    tr.w3-mobile
+                        td.w3-padding-large 
+                            a(href=`/recurso/${r.id}`) #{r.id} 
+                        td.w3-padding-large= r.titulo 
+                        td.w3-padding-large #{r.autor}
+                        td.w3-padding-large.w3-center #{r.tipo}
+                        td.w3-padding-large.w3-center #{r.dataRegisto}
 
-                        if produtores
+                        if nivel == "admin"
                             if r.visibilidade == 1
-                                td.w3-center Privado
+                                td.w3-padding-large.w3-center Privado
                             else
-                                td.w3-center Público
+                                td.w3-padding-large.w3-center Público
                         
-                            td.w3-center
-                                a(href=`/recurso/${r.id}/remover`) Eliminar
+                            td
+                                button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('recurso', '/recurso/${r.id}/remover?tab=1');`) 
+                                    u Eliminar
 
-        if produtores
-            div(class="lista", id="users", style="display:none")
+        //- Listar os recursos pessoais
+        if nivel != "consumidor"
+            div.w3-container.w3-display-container.w3-margin-top(class="lista pessoais", id="pessoais", style=`display:${tab2}`)
+                if pessoais.length
+                    
+                    table.w3-table-all
+                        tr.w3-theme-d3.w3-mobile
+                            th(style="width:100px;") ID
+                            th(style="width:600px;") Título
+                            th.w3-center Tipo
+                            th.w3-center Visibilidade
+                            th.w3-center Data Registo
+                            th
+                        each p in pessoais
+                            tr.w3-mobile
+                                td.w3-padding-large 
+                                    a(href=`/recurso/meu/${p.id}`) #{p.id}
+                                td.w3-padding-large= p.titulo
+                                td.w3-padding-large.w3-center #{p.tipo}
+                                
+                                if p.visibilidade == 1
+                                    td.w3-padding-large.w3-center Privado
+                                else
+                                    td.w3-padding-large.w3-center Público
+
+                                td.w3-padding-large.w3-center #{p.dataRegisto} 
+                               
+                                td  
+                                    button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('recurso', '/recurso/${p.id}/remover?tab=2');`) 
+                                        u Eliminar
+                                    button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-blue-grey.w3-right.w3-margin-right 
+                                        a(href=`/recurso/${p.id}/editar`) Editar
+                                    
+                else
+                    p Não tem recursos.
+
+
+        //- Listar os utilizadores
+        if nivel == "admin"
+            div(class="lista", id="users", style=`display:${tab3}`)
                 .w3-bar.w3-theme-d3.w3-margin-bottom.w3-padding
                     span
-                        button.w3-bar-item.w3-padding(class="w3-theme-d2 2tab", onclick="openUsers(event, 'consumidores');") Lista de Consumidores
-                        button.w3-bar-item.w3-hover-blue-grey.w3-padding(class="w3-theme-d3 2tab", onclick="openUsers(event, 'produtores');") Lista de Produtores
+                        if tab31 == "block"
+                            button.w3-bar-item.w3-padding(class="w3-theme-d2 2tab", onclick="openUsers(event, 'consumidores');") Lista de Consumidores
+                            button.w3-bar-item.w3-hover-blue-grey.w3-padding(class="w3-theme-d3 2tab", onclick="openUsers(event, 'produtores');") Lista de Produtores
+                        else
+                            button.w3-bar-item.w3-padding(class="w3-theme-d3 2tab", onclick="openUsers(event, 'consumidores');") Lista de Consumidores
+                            button.w3-bar-item.w3-hover-blue-grey.w3-padding(class="w3-theme-d2 2tab", onclick="openUsers(event, 'produtores');") Lista de Produtores
 
-                div.w3-container.w3-display-container(class="users", id="consumidores", style="display:block")
+                div.w3-container.w3-display-container(class="users", id="consumidores", style=`display:${tab31}`)
 
                     if consumidores.length
                         table.w3-table-all
-                            tr.w3-theme-d3
+                            tr.w3-theme-d3.w3-mobile
                                 th(style="width:500px;") Username
                                 th Email
                                 th.w3-center(style="width:500px;") Afiliação
                                 th
-                                th
                             each c in consumidores
-                                tr
-                                    td #{c.username} 
-                                    td= c.email 
-                                    td.w3-center= c.filiacao
+                                tr.w3-mobile
+                                    td.w3-padding-large 
+                                        a(href=`/user/${c.username}`) #{c.username} 
+                                    td.w3-padding-large= c.email 
+                                    td.w3-padding-large.w3-center= c.filiacao
                                     td
-                                        a(href=`/user/${c.username}/upgrade`) Upgrade
-                                    td
-                                        a(href=`/user/${c.username}/remover`) Eliminar
+                                        button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('utilizador', '/user/${c.username}/remover?tab=3');`) 
+                                            u Eliminar
+                                        button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-blue-grey.w3-right.w3-margin-right
+                                            a(href=`/user/${c.username}/upgrade`) Upgrade
+                                        
                     else
                         span Não existem consumidores.
 
-                div.w3-container.w3-display-container(class="users", id="produtores", style="display:none")
+                div.w3-container.w3-display-container(class="users", id="produtores", style=`display:${tab32}`)
 
                     if produtores.length
 
                         table.w3-table-all
-                            tr.w3-theme-d3
+                            tr.w3-theme-d3.w3-mobile
                                 th(style="width:500px;") Username
                                 th Email
                                 th.w3-center(style="width:500px;") Afiliação
                                 th
-                                th
                             each pr in produtores
-                                tr
-                                    td #{pr.username}
-                                    td #{pr.email}
-                                    td.w3-center #{pr.filiacao}  
+                                tr.w3-mobile
+                                    td.w3-padding-large
+                                        a(href=`/user/${pr.username}`)  #{pr.username}
+                                    td.w3-padding-large #{pr.email}
+                                    td.w3-padding-large.w3-center #{pr.filiacao}  
                                     td
-                                        a(href=`/user/${pr.username}/downgrade`) Downgrade
-                                    td
-                                        a(href=`/user/${pr.username}/remover`) Eliminar
+                                        button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('utilizador', '/user/${pr.username}/remover?tab=3&tab2=2');`) 
+                                            u Eliminar
+                                        button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-blue-grey.w3-right.w3-margin-right
+                                            a(href=`/user/${pr.username}/downgrade`) Downgrade
 
                     else
                         p Não existem produtores.
 
-        if pessoais
-            div.w3-container.w3-display-container(class="lista pessoais", id="pessoais", style="display:none")
-                if pessoais.length
-                    
-                    table.w3-table-all
-                        tr.w3-theme-d3
-                            th(style="width:600px;") Título
-                            th.w3-center(style="width:200px;") Tipo
-                            th.w3-center(style="width:200px;") Visibilidade
-                            th.w3-center(style="width:300px;") Data Registo
-                            th
-                            th
-                        each p in pessoais
-                            tr
-                                td 
-                                    a(href=`/recurso/${p.id}`) #{p.titulo}
-                                td.w3-center #{p.tipo}
-                                
-                                if p.visibilidade == 1
-                                    td.w3-center Privado
-                                else
-                                    td.w3-center Público
 
-                                td.w3-center #{p.dataRegisto} 
-                               
-                                td
-                                    a(href=`/recurso/${p.id}/editar`) Editar
-                                td
-                                    a(href=`/recurso/${p.id}/remover`) Remover
-                else
-                    p Não tem recursos.
+        //- de certeza que queres eliminar?
+        div.w3-modal(id="confirmar" style="display:none")
+            div.w3-modal-content.w3-theme-d3.w3-round-large(style="width:450px")
+                div.w3-container.w3-padding-16
+                    h5.w3-center.w3-margin-bottom(id="questao_recurso") Tem a certeza que quer eliminar este recurso?
+                    h5.w3-center.w3-margin-bottom(id="questao_user") Tem a certeza que quer eliminar este utilizador?
+                    h5.w3-center
+                        a(id="ref" href="")
+                            button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium
+                                i(class="fa fa-check")
+                        button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium.w3-margin-left(onclick="document.getElementById('confirmar').style.display='none'")
+                            i(class="fa fa-close")
+
+
 
         .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-margin-top.w3-padding-large
             span PRI2020

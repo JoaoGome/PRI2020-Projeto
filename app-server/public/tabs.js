@@ -41,3 +41,17 @@ function addComentario(){
   document.getElementById("comentar").style.display = "block"; 
 }
 
+
+function addConfirmacao(s, ref){ 
+  document.getElementById("confirmar").style.display='block'
+  if(s==="recurso"){
+    document.getElementById("questao_recurso").style.display = 'block'
+    document.getElementById("questao_user").style.display = 'none'
+  }
+  else{
+    document.getElementById("questao_recurso").style.display = 'none'
+    document.getElementById("questao_user").style.display = 'block'
+  }
+  document.getElementById("ref").href = ref; 
+}
+

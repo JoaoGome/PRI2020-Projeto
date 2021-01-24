@@ -8,7 +8,7 @@ var Comentario = require('../models/comentarios')
 module.exports.listarByRecurso= id => {
     return Comentario
         .find({recursoID: id})
-        .sort({'data':-1})
+        .sort({'data':1})
         .exec()
 }
 
@@ -16,7 +16,7 @@ module.exports.listarByRecurso= id => {
 module.exports.listarByUser = id => {
     return Comentario
         .find({userID: id})
-        .sort({'data':-1})
+        .sort({'data':1})
         .exec()
 }
 
@@ -29,6 +29,11 @@ module.exports.inserir = c => {
 // Elimina comentario da bd
 module.exports.remover = function(id){
     return Comentario.deleteOne({_id: id})
+}
+
+// Elimina comentario pessoal da bd
+module.exports.removerPessoal = function(id, u){
+    return Comentario.deleteOne({_id: id, userID:u})
 }
 
 // Altera texto do comentario
