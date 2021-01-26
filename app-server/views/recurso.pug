@@ -63,7 +63,8 @@ block content
                     each c in comentarios
                         tr
                             td
-                                b #{c.userID}:
+                                a(href=`/user/${c.userID}` style="text-decoration: none")
+                                    b #{c.userID}:
                                 span  #{c.text}
                             
                             
@@ -103,3 +104,5 @@ block content
         .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-margin-top.w3-padding-large
             address 
                 a(href=`/mainPage?tab=${tab}`) Voltar
+                span.w3-right Produtor: 
+                    a(href=`/user/${recurso.owner}`) #{recurso.owner}

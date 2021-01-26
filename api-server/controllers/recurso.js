@@ -15,7 +15,7 @@ module.exports.listar = () => {
 // Devolve a lista de todos os Recursos da pessoa
 module.exports.listarRecPessoais = p => {
     return Recurso
-        .find({autor:p})
+        .find({owner:p})
         .sort('titulo')
         .exec()
 }
@@ -23,7 +23,7 @@ module.exports.listarRecPessoais = p => {
 // Devolve determinado Recurso da pessoa
 module.exports.listarRecPessoal = (p, id) => {
     return Recurso
-        .findOne({autor:p, id:id})
+        .findOne({owner:p, id:id})
         .exec()
 }
 
@@ -89,7 +89,7 @@ module.exports.remover = function(id){
 
 // Elimina recurso pessoal da bd
 module.exports.removerPessoal = function(id, a){
-    return Recurso.deleteOne({id: id, autor: a})
+    return Recurso.deleteOne({id: id, owner: a})
 }
 
 // Altera recurso da bd

@@ -47,7 +47,12 @@ router.post('/login', passport.authenticate('local'), function(req,res) {
               level:  req.user.level,
               sub: 'Projeto PRI2020'}, "PRI2020", function(e,token) {
                 if(e) res.status(500).jsonp({error: "Erro na geração do token: " + e}) 
-                else res.status(201).jsonp({token: token})
+                else{
+                  var d = new Date().toISOString().slice(0, 10)
+                  User.alterarLastAcess(req.body.username, d)
+                    .then(res.status(201).jsonp({token: token}))
+                    .catch(e => res.status(500).jsonp({error: "Erro updating last acess: " + e}) )
+                }
               })
 })
 

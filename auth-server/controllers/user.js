@@ -36,10 +36,9 @@ module.exports.alterarPwd = (uname,pwd) => {
 }
 
 // alterar a data de ultima acesso de um user
-module.exports.alterarData = (uname,date) => {
+module.exports.alterarLastAcess = (uname,date) => {
     return User.findOneAndUpdate({username: uname}, {$set: {dataLastAcess: date}});
 }
-
 
 
 

@@ -55,7 +55,6 @@ router.get('/mainPage', function(req,res) {
 
                 //abrir na tab correta
                 if(req.query.tab) tab = req.query.tab
-                console.log(req.query.tab2)
                 if(req.query.tab2 && req.query.tab2 == 2){
                   tab31 = "none"
                   tab32 = "display"

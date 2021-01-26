@@ -25,13 +25,13 @@ router.get('/:id', function(req, res, next) {
         .then(dados =>{ 
           if(dados.data == null)
             axios.get('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
-              .then(d => res.render('recurso', {tab:tab, nivel:nivel, user:user, recurso: d.data, comentarios: cmt.reverse()}))
+              .then(d =>res.render('recurso', {tab:tab, nivel:nivel, user:user, recurso: d.data, comentarios: cmt.reverse()}))
               .catch(e => res.render('error', {error:e}))       
           else
             res.render('recurso', {tab:tab, eliminar:"sim", nivel:nivel, user:user, recurso: dados.data, comentarios: cmt.reverse()})})
         .catch(e => 
           axios.get('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
-              .then(d => res.render('recurso', {tab:tab, nivel:nivel, user:user, recurso: d.data.reverse, comentarios: cmt.reverse()}))
+              .then(d => res.render('recurso', {tab:tab, nivel:nivel, user:user, recurso: d.data, comentarios: cmt.reverse()}))
               .catch(e => res.render('error', {error:e}))
       )}
     )

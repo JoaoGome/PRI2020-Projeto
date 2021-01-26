@@ -10,15 +10,6 @@ var multer = require('multer')
 var upload = multer({dest: 'uploads/'})
 const StreamZip = require('node-stream-zip');
 
-// funçoes auxiliares
-
-function existe (a,b) 
-{
-  for (i = 0; i < b.length; i++)
-    if (b[i] == a) return true
-  return false
-}
-
 // GETS
 
 //Consultar um user

@@ -41,21 +41,25 @@ block content
 
             table.w3-table-all
                 if comentarios.length
+                    tr.w3-theme-d3.w3-mobile
+                        td Recurso
+                        td Texto
+                        td.w3-right.w3-margin-right
+
                     each c in comentarios
                         tr
                             td
-                                b #{c.recursoID}:
+                                a(href=`/recurso/${c.recursoID}`) #{c.recursoID}
+                            td
                                 span  #{c.text}
                             
-                            
-
-                            if c.username === user
-                                td.w3-right.w3-margin-right
+                            if c.userID === username
+                                td.w3-right.w3-margin-right.w3-hover-text-red
                                     a(href=`/user/${user.id}/remover`) Eliminar
 
                             else 
                                 if nivel == "admin"
-                                    td.w3-right.w3-margin-right
+                                    td.w3-right.w3-margin-right.w3-hover-text-red
                                         a(href=`/user/${user.id}/remover`) Eliminar
 
                             td.w3-right.w3-margin-right #{c.data}

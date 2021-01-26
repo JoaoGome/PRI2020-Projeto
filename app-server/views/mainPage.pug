@@ -46,7 +46,7 @@ block content
                 tr.w3-theme-d3.w3-mobile
                     th ID
                     th(style="width:600px;") Título
-                    th(style="width:300px;") Autor
+                    th(style="width:300px;") Produtor
                     th.w3-center Tipo
                     th.w3-center Data Registo
                     if nivel == "admin"
@@ -58,7 +58,8 @@ block content
                         td.w3-padding-large 
                             a(href=`/recurso/${r.id}`) #{r.id} 
                         td.w3-padding-large= r.titulo 
-                        td.w3-padding-large #{r.autor}
+                        td.w3-padding-large
+                            a(href=`/user/${r.owner}`) #{r.owner}
                         td.w3-padding-large.w3-center #{r.tipo}
                         td.w3-padding-large.w3-center #{r.dataRegisto}
 
@@ -127,15 +128,15 @@ block content
                         table.w3-table-all
                             tr.w3-theme-d3.w3-mobile
                                 th(style="width:500px;") Username
-                                th Email
                                 th.w3-center(style="width:500px;") Afiliação
+                                th Último acesso
                                 th
                             each c in consumidores
                                 tr.w3-mobile
                                     td.w3-padding-large 
                                         a(href=`/user/${c.username}`) #{c.username} 
-                                    td.w3-padding-large= c.email 
                                     td.w3-padding-large.w3-center= c.filiacao
+                                    td.w3-padding-large= c.dataLastAcess 
                                     td
                                         button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('utilizador', '/user/${c.username}/remover?tab=3');`) 
                                             u Eliminar
@@ -152,15 +153,15 @@ block content
                         table.w3-table-all
                             tr.w3-theme-d3.w3-mobile
                                 th(style="width:500px;") Username
-                                th Email
                                 th.w3-center(style="width:500px;") Afiliação
+                                th Último Acesso
                                 th
                             each pr in produtores
                                 tr.w3-mobile
                                     td.w3-padding-large
                                         a(href=`/user/${pr.username}`)  #{pr.username}
-                                    td.w3-padding-large #{pr.email}
                                     td.w3-padding-large.w3-center #{pr.filiacao}  
+                                    td.w3-padding-large= pr.dataLastAcess 
                                     td
                                         button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('utilizador', '/user/${pr.username}/remover?tab=3&tab2=2');`) 
                                             u Eliminar
