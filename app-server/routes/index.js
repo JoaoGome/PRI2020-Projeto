@@ -12,12 +12,6 @@ const StreamZip = require('node-stream-zip');
 
 // funçoes auxiliares
 
-function existe (a,b) 
-{
-  for (i = 0; i < b.length; i++)
-    if (b[i] == a) return true
-  return false
-}
 
 // GETS
 router.get('/', function(req, res, next) {
@@ -40,44 +34,50 @@ router.get('/mainPage', function(req,res) {
         var nivel = r.data.level
         var dados = r.data.dados
 
-        if (nivel === "consumidor")
-          res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, recursos:dados})
+        // pedir lista de tipos
+        axios.get("http://localhost:8000/recursos/tipos?token=" + myToken)
+          .then(tipos =>{
 
-        else
-          //abrir na tab correta
-          if(req.query.tab && req.query.tab != 3) tab = req.query.tab
-      
-          //Pedir recursos pessoais
-          axios.get("http://localhost:8000/recursos/produtor?token=" + myToken)
-            .then(p => {
+            if (nivel === "consumidor")
+              res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos.data, recursos:dados})
 
-              if (nivel === "admin"){
+            else
+              //abrir na tab correta
+              if(req.query.tab && req.query.tab != 3) tab = req.query.tab
+          
+              //Pedir recursos pessoais
+              axios.get("http://localhost:8000/recursos/pessoais?token=" + myToken)
+                .then(p => {
 
-                //abrir na tab correta
-                if(req.query.tab) tab = req.query.tab
-                if(req.query.tab2 && req.query.tab2 == 2){
-                  tab31 = "none"
-                  tab32 = "display"
-                }
+                  if (nivel === "admin"){
 
-                //Pedir lista de produtores
-                axios.get("http://localhost:8000/users?level=produtor&token=" + myToken)
-                .then(ps => {
-                
-                  //Pedir lista de consumidores
-                  axios.get("http://localhost:8000/users?level=consumidor&token=" + myToken)
-                    .then(cs => {
+                    //abrir na tab correta
+                    if(req.query.tab) tab = req.query.tab
+                    if(req.query.tab2 && req.query.tab2 == 2){
+                      tab31 = "none"
+                      tab32 = "display"
+                    }
 
-                      res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, recursos:dados, produtores:ps.data, consumidores:cs.data, pessoais:p.data})
+                    //Pedir lista de produtores
+                    axios.get("http://localhost:8000/users?level=produtor&token=" + myToken)
+                    .then(ps => {
                     
+                      //Pedir lista de consumidores
+                      axios.get("http://localhost:8000/users?level=consumidor&token=" + myToken)
+                        .then(cs => {
+
+                          res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos.data, recursos:dados, produtores:ps.data, consumidores:cs.data, pessoais:p.data})
+                        
+                        })
+                        .catch(e => res.render('error', {error:e}))
+                      
                     })
                     .catch(e => res.render('error', {error:e}))
-                  
+                  }
+                  else
+                    res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos.data, recursos:dados, pessoais:p.data})
                 })
                 .catch(e => res.render('error', {error:e}))
-              }
-              else
-                res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, recursos:dados, pessoais:p.data})
             })
             .catch(e => res.render('error', {error:e}))
     })
@@ -131,93 +131,6 @@ router.post('/register', function(req,res) {
     .catch(e => res.render('register-form', {error:e, user: req.body.username, email: req.body.email, fil: req.body.filiacao}))
 })
 
-
-
-//Files upload section
-
-router.get('/files/upload', function(req,res) {
-  res.render('upload')
-})
-
-router.post('/files/upload', upload.single('myFile'), function(req, res, next){
-  var myToken = req.cookies.token;
-  jwt.verify(myToken, 'PRI2020', function(e, payload){
-    if(e) res.status(401).jsonp({error: 'Erro na verificação do token: ' + e})
-    else{
-      req.user = { level: payload.level, username: payload.username }
-      next()
-    } 
-  })
-}, function(req,res){
-  good = 1
-  listaFicheiros = []
-
-  const zip = new StreamZip({
-    file:req.file.path,
-    storeEntries: true
-  })
-
-  zip.on('ready', () => {
-    // Take a look at the files
-    
-    for (const entry of Object.values(zip.entries())) {
-      //zipDotTxtContents = zip.entryDataSync(entry).toString('utf8');
-      listaFicheiros.push(entry.name)
-    }
-    if (existe("manifesto.txt",listaFicheiros))
-    {
-      data = zip.entryDataSync("manifesto.txt").toString('utf8');
-      partida = data.split(" ")
-      
-      for (i in partida)
-      {
-        if (existe(partida[i],listaFicheiros) == false) good = 0;
-      }
-    }
-
-    else good = 0;
-
-    zip.close()
-  });
-  
-
-  if (good == 1)
-  {
-      //zip valido
-      var parentDir = path.normalize(__dirname+"/..");
-      let quarantinePath = parentDir + '/' + req.file.path
-      let newPath = parentDir + '/public/fileStore/' + req.file.originalname
-
-      fs.rename(quarantinePath, newPath, function(err){
-        if(err){
-            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
-            res.write('<p> Erro: ao mover o ficheiro da quarentena: ' + err + '</p>')
-            res.end()
-        }
-        else{
-            req.body.dataRegisto = new Date().toISOString().slice(0, 10)
-            req.body.id = req.file.originalname
-            req.body.fileName = req.file.orignalName
-            req.body.autor = req.user.username
-            newString = req.body.hashtags.replace(/\s+/g,' ').trim();
-            req.body.hashtags = newString.split(" ")
-
-            axios.post('http://localhost:8000/recurso?token=' + req.cookies.token,req.body)
-              .then(dados => {
-                res.render('/mainPage?tab=2')
-              })
-              .catch(e => res.render('error', {error: e}))
-            
-
-            
-        }
-    })
-  } 
-  else 
-  {
-    // zip invalido  
-  }
-})
 
 
 

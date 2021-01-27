@@ -55,3 +55,31 @@ function addConfirmacao(s, ref){
   document.getElementById("ref").href = ref; 
 }
 
+function showGeneros(event, gen){
+
+  var x = document.getElementsByClassName(gen)
+  
+  if(event.currentTarget.value === "checked"){
+    event.currentTarget.value = "unchecked"
+    for (i = 0; i < x.length; i++)
+      x[i].style.display = "none"
+  }
+  else{
+    event.currentTarget.value = "checked"
+    for (i = 0; i < x.length; i++)
+      x[i].style.display = ""
+  }
+}
+
+function limparGeneros(){
+
+  var rec = document.getElementsByClassName("recurso")
+  for (i = 0; i < rec.length; i++)
+    rec[i].style.display = "none"
+
+  var x = document.getElementsByClassName("check")
+  for (i = 0; i < x.length; i++){
+    x[i].value = "unchecked"  
+    x[i].removeAttribute("checked")
+  }
+}

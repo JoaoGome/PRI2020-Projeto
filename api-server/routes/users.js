@@ -8,8 +8,8 @@ const Comentario = require('../controllers/comentarios');
 
 // Listar users de nivel X
 router.get('/', function(req, res){
-  if(req.user.vis == 1)
-    axios.get("http://localhost:8002/users/nivel?level=" + req.query.level)
+  if(req.user.level === "admin")
+    axios.get("http://localhost:8002/users/nivel/" + req.query.level)
       .then(dados => res.status(200).jsonp(dados.data))
       .catch(e => res.status(501).jsonp({error: e}))
   else
@@ -23,18 +23,35 @@ router.get('/:id', function(req, res){
     .catch(e => res.status(501).jsonp({error: e}))
 })
 
+/*
 // Consultar user comentarios
-router.get('/:id/comentarios', function(req, res){
-  Comentario.listarByUser(req.params.id)
+router.get('/:user/comentarios', function(req, res){
+  Comentario.listarByUser(req.params.user)
     .then(dados => res.status(200).jsonp(dados))
     .catch(e => res.status(501).jsonp({error: e}))
 })
+
+// Remover user comentarios
+router.delete('/:user/comentarios/remover', function(req, res){
+  Comentario.removerUser(req.params.user)
+    .then(dados => res.status(200).jsonp(dados))
+    .catch(e => res.status(501).jsonp({error: e}))
+})
+
+// Passar user a [deleted] nos comentarios
+router.put('/:user/comentarios/deleted', function(req, res){
+  Comentario.deletedUser(req.params.user)
+    .then(dados => res.status(200).jsonp(dados))
+    .catch(e => res.status(501).jsonp({error: e}))
+})
+
+*/
 
 
 //----------------------------------- Alterar users BD
 
 // Remover user
-router.get('/:id/remover', function(req, res){
+router.delete('/:id', function(req, res){
   if(req.user.vis == 1)
     axios.delete("http://localhost:8002/users/" + req.params.id )
       .then(dados => res.status(200).jsonp(dados.data))
@@ -44,9 +61,9 @@ router.get('/:id/remover', function(req, res){
 })
 
 // Upgrade user: Consumidor -> Produtor
-router.get('/:uname/upgrade', function(req, res){
+router.put('/:uname/upgrade', function(req, res){
   if(req.user.vis == 1){
-    axios.put("http://localhost:8002/users/" + req.params.uname + "/level?new=produtor")
+    axios.put("http://localhost:8002/users/" + req.params.uname + "?level=produtor")
       .then(dados => res.status(200).jsonp(dados.data))
       .catch(e => res.status(501).jsonp({error: e}))
   }
@@ -55,9 +72,9 @@ router.get('/:uname/upgrade', function(req, res){
 })
 
 // Downgrade user: Produtor -> Consumidor
-router.get('/:uname/downgrade', function(req, res){
+router.put('/:uname/downgrade', function(req, res){
   if(req.user.vis == 1){
-    axios.put("http://localhost:8002/users/" + req.params.uname + "/level?new=consumidor")
+    axios.put("http://localhost:8002/users/" + req.params.uname + "?level=consumidor")
       .then(dados => res.status(200).jsonp(dados.data))
       .catch(e => res.status(501).jsonp({error: e}))
   }

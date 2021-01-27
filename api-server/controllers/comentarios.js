@@ -36,6 +36,21 @@ module.exports.removerPessoal = function(id, u){
     return Comentario.deleteOne({_id: id, userID:u})
 }
 
+// Elimina todos os comentarios de um determinado user da bd
+module.exports.removerUser = function(u){
+    return Comentario.delete({userID: u})
+}
+
+// Elimina todos os comentarios de um determinado user da bd
+module.exports.deletedUser = function(u){
+    return Comentario.findAndUpdate({userID:u},{$set: {userID:"[deleted]"} })
+}
+
+// Elimina todos os comentarios de um determinado recurso da bd
+module.exports.removerRecurso = function(r){
+    return Comentario.delete({recursoID: r})
+}
+
 // Altera texto do comentario
 module.exports.alterar = (id, conteudo) => {
     return User.findOneAndUpdate({_id:id},{$set: {texto:conteudo} });

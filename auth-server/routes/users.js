@@ -5,21 +5,20 @@ var User = require('../controllers/user')
 var passport = require('passport')
 var jwt = require('jsonwebtoken')
 
-//listar users nivel X
-router.get('/nivel', function(req, res) {
-  User.listarLevel(req.query.level)
-    .then(dados => res.status(200).jsonp(dados))
-    .catch(e => res.status(500).jsonp({error: e}))
-})
 
-//listar consultar user
+//consultar user
 router.get('/:id', function(req, res) {
   User.consultar(req.params.id)
     .then(dados => res.status(200).jsonp(dados))
     .catch(e => res.status(500).jsonp({error: e}))
 })
 
-
+//listar users nivel X
+router.get('/nivel/:level', function(req, res) {
+  User.listarLevel(req.params.level)
+    .then(dados => res.status(200).jsonp(dados))
+    .catch(e => res.status(500).jsonp({error: e}))
+})
 
 //----------------------------------- Alterar BD
 
@@ -32,10 +31,11 @@ router.delete('/:uname', function(req, res) {
 })
 
 //alterar nivel user
-router.put('/:uname/level', function(req, res) {
-  User.alterarLevel(req.params.uname, req.query.new)
-    .then(dados => res.status(200).jsonp(dados))
-    .catch(e => res.status(500).jsonp({error: e}))
+router.put('/:uname', function(req, res) {
+  if(req.query.level)
+    User.alterarLevel(req.params.uname, req.query.level)
+      .then(dados => res.status(200).jsonp(dados))
+      .catch(e => res.status(500).jsonp({error: e}))
 })
 
 

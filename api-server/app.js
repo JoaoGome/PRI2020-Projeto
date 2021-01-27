@@ -6,6 +6,7 @@ var jwt = require('jsonwebtoken')
 var recsRouter = require('./routes/recursos');
 var recRouter = require('./routes/recurso');
 var usersRouter = require('./routes/users');
+var comRouter = require('./routes/comentarios');
 
 var mongoose = require('mongoose');
 
@@ -45,6 +46,7 @@ app.use(function(req, res, next){
 app.use('/recursos', recsRouter);
 app.use('/recurso', recRouter);
 app.use('/users', usersRouter);
+app.use('/comentarios', comRouter);
 
 
 

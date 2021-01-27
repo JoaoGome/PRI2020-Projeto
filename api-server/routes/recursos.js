@@ -38,7 +38,7 @@ router.get('/tipos', function(req, res) {
 
 
 // Consultar os seus proprios recursos
-router.get('/produtor', function(req, res) {
+router.get('/pessoais', function(req, res) {
   if(req.user.level === "consumidor")
     res.status(500).jsonp({error: "Não autorizado"})
   else{
@@ -47,5 +47,6 @@ router.get('/produtor', function(req, res) {
       .catch(e => res.status(500).jsonp({error: e}))
   }
 });
+
 
 module.exports = router;

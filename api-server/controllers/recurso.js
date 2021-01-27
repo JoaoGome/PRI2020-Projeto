@@ -64,6 +64,14 @@ module.exports.consultar = (v,id) => {
         .exec()
 }
 
+// Devolve determinado recurso
+module.exports.consultarOwner = (id) => {
+    return Recurso
+        .findOne({id:id})
+        .select('owner')
+        .exec()
+}
+
 // Devolve recursos com determinada hashtag
 module.exports.listarRecHashtags = (v,h) => {
     return Recurso
