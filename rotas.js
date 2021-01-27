@@ -32,6 +32,7 @@ PUT /users/:uname/downgrade                             // Downgrade user: Produ
 GET /recursos                                           // Listar todos os recursos (conforme o visualizaçao)
 GET /recursos?hashtag=X                                 // Listar todos os recursos com hashtag X (conforme o visualizaçao)
 GET /recursos?tipo=X                                    // Listar todos os recursos com tipo X (conforme o visualizaçao)
+GET /recursos?procurar=X                                // Listar todos os recursos com X no título (conforme o visualizaçao)
 GET /recursos/tipos                                     // Listar os tipos existentes
 GET /recursos/pessoais                                  // Consultar os seus proprios recursos (apenas para produtor ou admin)
 
@@ -65,7 +66,10 @@ GET /mainPage?tab=t&tab2=t2                             // Main Page aberto na t
     GET /users?level=consumidor
 
 GET /recursos?hashtag=X                                 // Listar recursos com hashtag X
-
+POST /recursos/procurar
+    GET /recursos?procurar=X
+    GET /recursos=hashtag=X
+    GET /recursos/tipos
 
 GET /recurso/meu/:rec                                   // Consultar recurso pessoal
 GET /recurso/:rec                                       // Consultar um recurso

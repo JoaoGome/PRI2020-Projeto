@@ -17,9 +17,15 @@ router.get('/', function(req, res) {
 
     // Listar todos os recursos com determinado tipo
     else if(req.query.tipo)
-    Recurso.listarRecursosTipo(req.user.vis, req.query.tipo)
-      .then(dados => res.status(200).jsonp(dados))
-      .catch(e => res.status(500).jsonp({error: e}))
+      Recurso.listarRecursosTipo(req.user.vis, req.query.tipo)
+        .then(dados => res.status(200).jsonp(dados))
+        .catch(e => res.status(500).jsonp({error: e}))
+
+    // Listar todos os recursos
+    else if(req.query.procurar)
+      Recurso.listarRecursosTitulo(req.user.vis, req.query.procurar)
+        .then(dados => res.status(200).jsonp(dados))
+        .catch(e => res.status(500).jsonp({error: e}))
 
     // Listar todos os recursos
     else

@@ -98,7 +98,23 @@ router.get('/recursos', function(req,res) {
     res.redirect('/mainPage')
 })
 
-  
+
+// procurar recursos com determinado texto
+router.post('/recursos/procurar', function(req,res) {
+  var myToken = req.cookies.token;
+  axios.get("http://localhost:8000/recursos?procurar=" + req.body.search + "&token=" + myToken)
+    .then(recTitulo =>{
+      var ht = req.body.search.replace(/\s*/g,'');
+      axios.get('http://localhost:8000/recursos?hashtag=' + ht + '&token=' + myToken)
+        .then(recHashtag =>{
+          axios.get('http://localhost:8000/recursos/tipos?token=' + myToken)
+            .then(tipos => res.render('procurar', {tab:"tab1", procura:req.body.search, tipos:tipos.data, recHashtag: recHashtag.data, recTitulo: recTitulo.data}))
+            .catch(e => res.render('error', {error:e}))
+        })
+        .catch(e => res.render('error', {error:e}))
+    })
+    .catch(e => res.render('error', {error:e}))
+})
 
 
 

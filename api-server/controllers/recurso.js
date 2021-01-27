@@ -36,6 +36,13 @@ module.exports.listarRec = v => {
         .exec()
 }
 
+// Devolve a lista dos recursos de determinado tipo
+module.exports.listarRecursosTitulo = (v,t) => {
+    return Recurso
+        .find({visibilidade: {$gte: v}, titulo: { "$regex":t }})
+        .sort('titulo')
+        .exec()
+}
 
 // Devolve a lista dos recursos de determinado tipo
 module.exports.listarRecursosTipo = (v,t) => {

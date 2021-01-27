@@ -4,8 +4,9 @@
       "titulo": "ok01",
       "dataCriação": "2017-01-23", 
       "dataRegisto": "2019-03-23",
-      "visibilidade": 3, 
-      "autor": "A", 
+      "visibilidade": 2, 
+      "autor": "Augusto", 
+      "owner": "A",
       "hashtags": ["ok", "0", "1"]
     },
     {
@@ -15,7 +16,8 @@
       "dataCriação": "2007-10-02", 
       "dataRegisto": "2020-10-02",
       "visibilidade": 1, 
-      "autor": "B", 
+      "owner": "B",
+      "autor": "Bernardo", 
       "hashtags": ["ok", "0", "2"]
     },
     {
@@ -24,8 +26,9 @@
       "titulo": "ok03",
       "dataCriação": "2018-05-22", 
       "dataRegisto": "2018-06-12",
-      "visibilidade": 3, 
-      "autor": "C", 
+      "visibilidade": 2, 
+      "owner": "C",
+      "autor": "Bernardo", 
       "hashtags": ["ok", "0", "3"]
     },
     {
@@ -35,7 +38,8 @@
       "dataCriação": "2019-12-01", 
       "dataRegisto": "2019-12-11",
       "visibilidade": 2, 
-      "autor": "A", 
+      "owner": "A",
+      "autor": "Augusto", 
       "hashtags": ["ok", "0", "4"]
     },
     {
@@ -45,7 +49,8 @@
       "dataCriação": "2019-02-21", 
       "dataRegisto": "2019-12-11",
       "visibilidade": 2, 
-      "autor": "B", 
+      "owner": "B",
+      "autor": "Bruno", 
       "hashtags": ["ok", "0", "5"]
     },
     {
@@ -55,7 +60,8 @@
       "dataCriação": "2019-02-11", 
       "dataRegisto": "2019-12-11",
       "visibilidade": 1, 
-      "autor": "C", 
+      "owner": "C",
+      "autor": "Cesar", 
       "hashtags": ["ok", "0", "6"]
     },
     {
@@ -64,8 +70,9 @@
       "titulo": "ok07",
       "dataCriação": "2010-07-14", 
       "dataRegisto": "2019-06-11",
-      "visibilidade": 3, 
-      "autor": "A", 
+      "visibilidade": 2, 
+      "owner": "A",
+      "autor": "João", 
       "hashtags": ["ok", "0", "7"]
     },
     {
@@ -75,7 +82,8 @@
       "dataCriação": "2016-08-08", 
       "dataRegisto": "2019-03-14",
       "visibilidade": 2, 
-      "autor": "B", 
+      "owner": "B",
+      "autor": "Pedro", 
       "hashtags": ["ok", "0", "8"]
     },
     {
@@ -84,8 +92,9 @@
       "titulo": "ok09",
       "dataCriação": "2019-04-01", 
       "dataRegisto": "2019-07-17",
-      "visibilidade": 3, 
-      "autor": "C", 
+      "visibilidade": 2, 
+      "owner": "C",
+      "autor": "Cesar", 
       "hashtags": ["ok", "0", "9"]
     },
     {
@@ -95,7 +104,8 @@
       "dataCriação": "2015-05-15", 
       "dataRegisto": "2019-10-16",
       "visibilidade": 1, 
-      "autor": "A", 
+      "owner": "A",
+      "autor": "Afonso", 
       "hashtags": ["ok", "1", "0"]
     },
     {
@@ -105,7 +115,8 @@
       "dataCriação": "2019-12-01", 
       "dataRegisto": "2020-01-11",
       "visibilidade": 2, 
-      "autor": "C", 
+      "owner": "C",
+      "autor": "Vitor", 
       "hashtags": ["ok", "1", "1"]
     },
     {
@@ -114,8 +125,9 @@
       "titulo": "ok12",
       "dataCriação": "2020-01-05", 
       "dataRegisto": "2020-01-24",
-      "visibilidade": 3, 
-      "autor": "B", 
+      "visibilidade": 2, 
+      "owner": "B",
+      "autor": "Bruno", 
       "hashtags": ["ok", "1", "2"]
     }
 ]

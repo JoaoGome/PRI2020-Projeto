@@ -7,6 +7,7 @@ var recursoSchema = new mongoose.Schema({
     dataRegisto: String,
     visibilidade: Number,
     autor: String,
+    owner: String,
     hashtags: [String],
     fileName: String
   });

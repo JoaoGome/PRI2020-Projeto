@@ -110,7 +110,7 @@ router.get('/remover/:c', function(req,res) {
 // Eliminar os comentarios de um recurso
 router.get('/:rec/remover/comentarios', function(req,res) {
   var myToken = req.cookies.token
-  axios.get('http://localhost:8000/recurso/' + req.params.rec + '/owner?token=' + myToken)
+  axios.get('http://localhost:8000/recurso/' + req.params.rec + '?token=' + myToken)
     .then(
       axios.delete('http://localhost:8000/comentarios/recurso/' + req.params.rec +'/owner/' + req.params.owner + '?token=' + myToken)
         .then(dados =>{ 
@@ -203,7 +203,7 @@ router.post('/upload', upload.single('myFile'), function(req, res, next){
 
             axios.post('http://localhost:8000/recurso?token=' + req.cookies.token,req.body)
               .then(dados => {
-                res.render('/mainPage?tab=2')
+                res.redirect('/mainPage?tab=2')
               })
               .catch(e => res.render('error', {error: e}))
             

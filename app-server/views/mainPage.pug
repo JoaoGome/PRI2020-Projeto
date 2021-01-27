@@ -12,26 +12,26 @@ block content
         .w3-bar.w3-theme-d4
             h4
                 if tab == 1
-                    button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'recursos');") Lista de Recursos
+                    button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'recursos', 'sim');") Lista de Recursos
                     - var tab1 = "block"
                 else
-                    button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'recursos');") Lista de Recursos
+                    button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'recursos', 'sim');") Lista de Recursos
                     - var tab1 = "none"
 
                 if nivel == "admin"
                     if tab == 3
-                        button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'users');") Lista de Utilizadores
+                        button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'users', 'sim');") Lista de Utilizadores
                         - var tab3 = "block"
                     else
-                        button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'users');") Lista de Utilizadores
+                        button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'users', 'sim');") Lista de Utilizadores
                         - var tab3 = "none"
 
                 if nivel != "consumidor"
                     if tab == 2
-                        button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'pessoais');") Os Meus Recursos
+                        button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'pessoais', 'sim');") Os Meus Recursos
                         - var tab2 = "block"
                     else
-                        button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'pessoais');") Os Meus Recursos
+                        button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'pessoais', 'sim');") Os Meus Recursos
                         - var tab2 = "none"
                     div(class="botao", id="botao_pessoais" style=`display:${tab2}`)
                         a(href='/recurso/upload').w3-right
@@ -49,6 +49,9 @@ block content
                         input.w3-check.w3-opacity.w3-margin-left(style="height:20px" type="checkbox" value="checked" class="check" onclick=`showGeneros(event, '${t}')` checked)
                         label  #{t}
                     button.w3-opacity.w3-round.w3-button.w3-right.w3-padding-small(onclick="limparGeneros()") Limpar
+                form(action='/recursos/procurar' method='POST')
+                    h5.w3-margin-left Procurar: 
+                        input.w3-opacity.w3-round(name="search")
 
             table.w3-table-all
                 tr.w3-theme-d3.w3-mobile
@@ -138,7 +141,7 @@ block content
                             tr.w3-theme-d3.w3-mobile
                                 th(style="width:500px;") Username
                                 th.w3-center(style="width:500px;") Afiliação
-                                th Último acesso
+                                th Último Acesso
                                 th
                             each c in consumidores
                                 tr.w3-mobile

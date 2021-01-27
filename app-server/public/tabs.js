@@ -1,6 +1,6 @@
 // Image display on client browserS
 
-function openDiv(evt, id) {
+function openDiv(evt, id, bt) {
   var i;
   var x = document.getElementsByClassName("lista");
   for (i = 0; i < x.length; i++) {
@@ -11,12 +11,15 @@ function openDiv(evt, id) {
     tablinks[i].className = tablinks[i].className.replace("w3-theme-d3", "w3-theme-d4");
   }
 
-  var botao = document.getElementsByClassName("botao");
-  botao[0].style.display="none"
+  if (bt === "sim"){
+    var botao = document.getElementsByClassName("botao");
+    botao[0].style.display="none"
 
-  var b_id = "botao_" + id
-  if(document.getElementById(b_id))
-    document.getElementById(b_id).style.display = "block";
+    var b_id = "botao_" + id
+    if(document.getElementById(b_id))
+      document.getElementById(b_id).style.display = "block";
+  }
+  
   document.getElementById(id).style.display = "block";
   evt.currentTarget.className = evt.currentTarget.className.replace("w3-theme-d4", "w3-theme-d3");
 }

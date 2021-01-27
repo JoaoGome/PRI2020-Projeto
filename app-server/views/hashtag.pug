@@ -13,7 +13,7 @@ block content
             table.w3-table-all
                 tr.w3-theme-d3
                     th(style="width:600px;") Título
-                    th(style="width:300px;") Autor
+                    th(style="width:300px;") Produtor
                     th.w3-center Tipo
                     th.w3-center Data Registo
                     if produtores
@@ -24,7 +24,7 @@ block content
                     tr
                         td 
                             a(href=`/recurso/${r.id}`) #{r.titulo}  
-                        td #{r.autor}
+                        td #{r.owner}
                         td.w3-center #{r.tipo}
                         td.w3-center #{r.dataRegisto}
         
