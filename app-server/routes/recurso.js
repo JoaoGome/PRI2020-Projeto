@@ -87,7 +87,8 @@ router.get('/:id/editar', function(req,res) {
 router.post('/', function(req,res){
   var myToken = req.cookies.token;
   newString = req.body.hashtags.replace(/\s+/g,' ').trim();
-  req.body.hashtags = newString.split(" ")
+  req.body.hashtags = newString.split(" ");
+  req.body.tipo = req.body.tipo.toLowerCase();
   axios.put('http://localhost:8000/recurso?token=' + myToken, req.body)
     .then(dados => res.redirect('/mainPage?tab=2'))
     .catch(e => res.render('error', {error:e})) 
@@ -205,6 +206,7 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
 
       req.body.id = req.file.originalname
       req.body.fileName = req.file.originalname
+      req.body.tipo = req.body.tipo.toLowerCase();
       newString = req.body.hashtags.replace(/\s+/g,' ').trim();
       req.body.hashtags = newString.split(" ")
       console.log(req.body)
@@ -216,4 +218,14 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
     }
   })
 })
+
+//Download
+router.get('/:recursoID/download', function(req,res) {
+  axios.get('http://localhost:8000/recurso/' + req.params.recursoID + '?token=' + req.cookies.token)
+    .then(dados => {
+      res.download(path.normalize(__dirname+"/..") + '/public/fileStore/' + dados.data.fileName)
+    })
+    .catch(e => res.render('error', {error: e}))
+})
+
 module.exports = router;
