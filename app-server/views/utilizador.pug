@@ -37,9 +37,10 @@ block content
                 b.w3-text-blue-grey Nível:
                 span  #{user.level}
 
-            h5
-                b.w3-text-blue-grey Email:
-                span  #{user.email}
+            if eliminar === "sim"
+                h5
+                    b.w3-text-blue-grey Email:
+                    span  #{user.email}
 
             h5
                 b.w3-text-blue-grey Filiação:
