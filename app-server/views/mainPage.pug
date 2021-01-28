@@ -43,7 +43,7 @@ block content
                             button.w3-right.w3-button.w3-round-xxlarge.w3-text-white.w3-large.w3-margin-right.w3-theme-d3.w3-hover-opacity
                                 span + Novo Recurso        
 
-            .w3-bar.w3-theme-d3(style=`display:${filtrar}`)
+            .w3-bar.w3-theme-d3(id="filtros" style=`display:${filtrar}`)
                 h6.w3-margin-left Género: 
                     each t in tipos
                         input.w3-check.w3-opacity.w3-margin-left(style="height:20px" type="checkbox" value="checked" class="check" onclick=`showGeneros(event, '${t}')` checked)
@@ -64,14 +64,16 @@ block content
                         th.w3-center Tipo
                         th.w3-center Data Registo
                         if nivel == "admin"
-                            th.w3-center Visibilidade
+                            th.w3-center
+                                select.w3-theme-d2.w3-border-0(id="visSelect" onchange=`showVis('')`)
+                                        option(value='3') Visibilidade
+                                        option(value='1') Privado
+                                        option(value='2') Público
                             th.w3-center 
 
-                    - var vis = ""    
                     each r in recursos
-                        if nivel === "admin"
-                            - vis = r.visibilidade
-                        tr(class=`recurso ${r.tipo} ${r.owner}` style="display:")
+
+                        tr(class=`recurso ${r.tipo} ${r.owner} ${r.visibilidade}` style="display:")
                             td.w3-padding-large
                                 a(href=`/recurso/${r.id}`) #{r.id} 
                             td.w3-padding-large= r.titulo 
@@ -102,14 +104,14 @@ block content
                             th(style="width:600px;") Título
                             th.w3-center Tipo
                             th.w3-center 
-                                select.w3-theme-d2.w3-border-0(id="visSelect" onchange=`showVis()`)
+                                select.w3-theme-d2.w3-border-0(id="visSelect" onchange=`showVis('meu')`)
                                     option(value='3') Visibilidade
                                     option(value='1') Privado
                                     option(value='2') Público
                             th.w3-center Data Registo
                             th
                         each p in pessoais
-                            tr(id=`${p.visibilidade}` class=`recurso ${p.tipo} ${p.owner} meu${p.visibilidade}` style="display:")
+                            tr(class=`recurso ${p.tipo} ${p.owner} meu${p.visibilidade}` style="display:")
                                 td.w3-padding-large 
                                     a(href=`/recurso/meu/${p.id}`) #{p.id}
                                 td.w3-padding-large= p.titulo

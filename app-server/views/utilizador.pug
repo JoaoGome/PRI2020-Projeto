@@ -19,6 +19,7 @@ block content
                     button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'recursos', 'nao');") Perfil
                     button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'perfil', 'nao');") Recursos
                 if user.username === username
+                    - var eliminar = "sim" 
                     button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="addConfirmacao()") Eliminar Conta     
                 else
                     if nivel == "admin"
@@ -73,14 +74,9 @@ block content
                             td
                                 span  #{c.text}
                             
-                            if c.userID === username
+                            if eliminar = "sim" 
                                 td.w3-right.w3-margin-right.w3-hover-text-red
                                     a(href=`/comentario/remover/${c._id}?user=${user.username}`) Eliminar
-
-                            else 
-                                if nivel == "admin"
-                                    td.w3-right.w3-margin-right.w3-hover-text-red
-                                        a(href=`/comentario/remover/${c._id}?user=${user.username}`) Eliminar
 
                             td.w3-right.w3-margin-right #{c.data}
                             
@@ -108,17 +104,21 @@ block content
                         th(style="width:600px;") Título
                         th.w3-center Tipo
                         th.w3-center Data Registo
-                        if nivel === "admin"
-                            th.w3-center Visibilidade
+                        if eliminar == "sim"
+                            th.w3-center
+                                select.w3-theme-d3.w3-border-0(id="visSelect" onchange=`showVis('')`)
+                                        option(value='3') Visibilidade
+                                        option(value='1') Privado
+                                        option(value='2') Público
                         th
-                    each p in pessoais.reverse()
+                    each p in pessoais
                         tr(class=`recurso ${p.tipo} ${p.owner} ${p.visibilidade}` style="display:")
                             td.w3-padding-large 
                                 a(href=`/recurso/meu/${p.id}`) #{p.id}
                             td.w3-padding-large= p.titulo
                             td.w3-padding-large.w3-center #{p.tipo}
                             td.w3-padding-large.w3-center #{p.dataRegisto} 
-                            if nivel === "admin"
+                            if eliminar == "sim"
                                 if p.visibilidade == 1
                                     td.w3-center Privado
                                 else

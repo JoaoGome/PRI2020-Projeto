@@ -2,6 +2,7 @@
 
 function openDiv(evt, id, bt) {
   var i;
+
   var x = document.getElementsByClassName("lista");
   for (i = 0; i < x.length; i++) {
     x[i].style.display = "none";  
@@ -11,7 +12,13 @@ function openDiv(evt, id, bt) {
     tablinks[i].className = tablinks[i].className.replace("w3-theme-d3", "w3-theme-d4");
   }
 
-  if (bt === "sim"){
+  if (bt === "sim"){    // significa que estamos na main page que tem mais coisas
+
+    if(id === "users")
+      document.getElementById("filtros").style.display = "none"
+    else
+        document.getElementById("filtros").style.display = "block"
+
     var botao = document.getElementsByClassName("botao");
     botao[0].style.display="none"
 
@@ -93,7 +100,7 @@ function limparGeneros(event){
 }
 
 
-function showVis(){
+function showVis(pre){
 
   var selectBox = document.getElementById("visSelect");
   var selectedValue = selectBox.options[selectBox.selectedIndex].value;
@@ -103,12 +110,18 @@ function showVis(){
   if(selectedValue === '1') d2 = "none"
   if(selectedValue === '2') d1 = "none" 
 
-  var p1 = document.getElementsByClassName('meu1')
+  if(pre==="meu"){
+    var p1 = document.getElementsByClassName("meu1")
+    var p2 = document.getElementsByClassName("meu2")
+  }
+  else{
+    var p1 = document.getElementsByClassName("1")
+    var p2 = document.getElementsByClassName("2")
+  }
+
   for (i = 0; i < p1.length; i++)
     p1[i].style.display = d1
-  var p2 = document.getElementsByClassName('meu3')
+  
   for (i = 0; i < p2.length; i++)
     p2[i].style.display = d2
-
-  alert("pri: " + p1.length + ", pub: " + p2.length)
 }
