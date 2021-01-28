@@ -73,7 +73,7 @@ block content
 
                     each r in recursos
 
-                        tr(class=`recurso ${r.tipo} ${r.owner} ${r.visibilidade}` style="display:")
+                        tr(id="" class=`recurso ${r.tipo} ${r.owner} ${r.visibilidade}` style="display:")
                             td.w3-padding-large
                                 a(href=`/recurso/${r.id}`) #{r.id} 
                             td.w3-padding-large= r.titulo 
@@ -111,7 +111,7 @@ block content
                             th.w3-center Data Registo
                             th
                         each p in pessoais
-                            tr(class=`recurso ${p.tipo} ${p.owner} meu${p.visibilidade}` style="display:")
+                            tr(id="" class=`recurso ${p.tipo} ${p.owner} meu${p.visibilidade}` style="display:")
                                 td.w3-padding-large 
                                     a(href=`/recurso/meu/${p.id}`) #{p.id}
                                 td.w3-padding-large= p.titulo

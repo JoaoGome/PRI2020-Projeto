@@ -65,23 +65,48 @@ function addConfirmacao(s, ref){
   document.getElementById("ref").href = ref; 
 }
 
+
+
+function changeVis(vg, recs){
+  for (var i = 0; i < recs.length; i++){
+    //change vis
+    if(vg==="put_v"){
+      if(recs[i].id === "") recs[i].id = "v"
+      if(recs[i].id === "g") recs[i].id = "vg"
+    }
+    if(vg==="take_v"){
+      if(recs[i].id === "v") recs[i].id = ""
+      if(recs[i].id === "vg") recs[i].id = "g"
+    }
+    if(vg==="put_g"){
+      if(recs[i].id === "") recs[i].id = "g"
+      if(recs[i].id === "v") recs[i].id = "vg"
+    }
+    if(vg==="take_g"){
+      if(recs[i].id === "g") recs[i].id = ""
+      if(recs[i].id === "vg") recs[i].id = "v"
+    }
+    //change display
+    if(recs[i].id === "") recs[i].style.display = ""
+    else recs[i].style.display = "none"
+  }
+}
+
+
 function showGeneros(event, gen){
 
   var x = document.getElementsByClassName(gen)
   
   if(event.currentTarget.value === "checked"){
     event.currentTarget.value = "unchecked"
-    for (i = 0; i < x.length; i++)
-      x[i].style.display = "none"
+    changeVis("put_g", x)
   }
   else{
     event.currentTarget.value = "checked"
-    for (i = 0; i < x.length; i++)
-      x[i].style.display = ""
+    changeVis("take_g", x)
   }
 
   document.getElementById("limpar").style.display = "none"
-
 }
 
 function limparGeneros(event){
@@ -105,11 +130,6 @@ function showVis(pre){
   var selectBox = document.getElementById("visSelect");
   var selectedValue = selectBox.options[selectBox.selectedIndex].value;
 
-  var d1 = ""
-  var d2 = ""
-  if(selectedValue === '1') d2 = "none"
-  if(selectedValue === '2') d1 = "none" 
-
   if(pre==="meu"){
     var p1 = document.getElementsByClassName("meu1")
     var p2 = document.getElementsByClassName("meu2")
@@ -119,9 +139,16 @@ function showVis(pre){
     var p2 = document.getElementsByClassName("2")
   }
 
-  for (i = 0; i < p1.length; i++)
-    p1[i].style.display = d1
-  
-  for (i = 0; i < p2.length; i++)
-    p2[i].style.display = d2
+  if(selectedValue === '1'){
+    changeVis("take_v", p1)
+    changeVis("put_v", p2)
+  }
+  else if(selectedValue === '2'){
+    changeVis("put_v", p1)
+    changeVis("take_v", p2)
+  }
+  else{
+    changeVis("take_v", p1)
+    changeVis("take_v", p2)
+  }
 }
