@@ -116,5 +116,5 @@ module.exports.removerPessoal = function(id, a){
 
 // Altera recurso da bd
 module.exports.alterar = function(r){
-    return Recurso.findByIdAndUpdate({id: r.id}, r, {new: true})
+    return Recurso.findOneAndUpdate({id: r.id}, r, {new: true})
 }

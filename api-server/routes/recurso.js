@@ -43,6 +43,7 @@ router.post('/', function(req, res){
 
 // Alterar um recurso
 router.put('/', function(req, res){
+  console.log(req.body)
   Recurso.alterar(req.body)
     .then(dados => res.status(201).jsonp({dados: dados}))
     .catch(e => res.status(500).jsonp({error: e}))
