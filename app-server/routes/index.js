@@ -90,9 +90,14 @@ router.get('/mainPage', function(req,res) {
 router.get('/recursos', function(req,res) {
   var myToken = req.cookies.token;
   if(req.query.hashtag)
+  axios.get('http://localhost:8000/recursos/tipos?token=' + myToken)
+  .then(tipos =>
     axios.get('http://localhost:8000/recursos?hashtag=' + req.query.hashtag + '&token=' + myToken)
-      .then(dados => res.render('hashtag', {hashtag: req.query.hashtag, recursos: dados.data}))
+      .then(dados => res.render('hashtag', {tipos:tipos.data, hashtag: req.query.hashtag, recursos: dados.data}))
       .catch(e => res.render('error', {error:e}))
+  )
+  .catch(e => res.render('error', {error:e}))
+    
   else 
     res.redirect('/mainPage')
 })

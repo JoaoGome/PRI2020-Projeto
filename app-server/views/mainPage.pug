@@ -65,10 +65,12 @@ block content
                     if nivel == "admin"
                         th.w3-center Visibilidade
                         th.w3-center 
-                    
-                each r in recursos
 
-                    tr(class=`recurso ${r.tipo} ${r.owner} ${r.visibilidade}` style="display:")
+                - var vis = ""    
+                each r in recursos
+                    if nivel === "admin"
+                        - vis = r.visibilidade
+                    tr(id=`${vis}` class=`recurso ${r.tipo} ${r.owner}` style="display:")
                         td.w3-padding-large
                             a(href=`/recurso/${r.id}`) #{r.id} 
                         td.w3-padding-large= r.titulo 
@@ -97,11 +99,15 @@ block content
                             th(style="width:100px;") ID
                             th(style="width:600px;") Título
                             th.w3-center Tipo
-                            th.w3-center Visibilidade
+                            th.w3-center 
+                                select.w3-theme-d3.w3-border-0(id="visSelect" onchange=`showVis()`)
+                                    option(value='3') Visibilidade
+                                    option(value='1') Privado
+                                    option(value='2') Público
                             th.w3-center Data Registo
                             th
                         each p in pessoais
-                            tr
+                            tr(id=`${p.visibilidade}` class=`recursoMeu ${p.tipo} ${p.owner}` style="display:")
                                 td.w3-padding-large 
                                     a(href=`/recurso/meu/${p.id}`) #{p.id}
                                 td.w3-padding-large= p.titulo

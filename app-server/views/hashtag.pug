@@ -8,7 +8,13 @@ block content
                 h1.w3-opacity Gestor de Recursos
         .w3-bar.w3-theme-d4
             h3.w3-margin-left Hashtag #{hashtag}
-        
+        .w3-bar.w3-theme-d3.w3-padding-small
+            h6.w3-margin-left Género: 
+                each t in tipos
+                    input.w3-check.w3-opacity.w3-margin-left(style="height:20px" type="checkbox" value="checked" class="check" onclick=`showGeneros(event, '${t}')` checked)
+                    label  #{t}
+                button.w3-opacity.w3-round.w3-button.w3-right.w3-padding-small.w3-margin-right(id="limpar" onclick="limparGeneros(event)") Limpar
+            
 
         table.w3-table.w3-bordered
             tr.w3-theme-d3
@@ -21,7 +27,7 @@ block content
                     th.w3-center 
                 
             each r in recursos
-                tr
+                tr(class=`recurso ${r.tipo} ${r.owner} ${r.visibilidade}` style="display:")
                     td 
                         a(href=`/recurso/${r.id}`) #{r.titulo}  
                     td 

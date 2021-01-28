@@ -92,6 +92,15 @@ block content
         
         div.w3-display-container(class="lista", id="recursos", style=`display:${tab2}`)
             if pessoais.length
+                .w3-bar.w3-theme-d3.w3-padding-small
+                    h6.w3-margin-left Género: 
+                        each t in tipos
+                            input.w3-check.w3-opacity.w3-margin-left(style="height:20px" type="checkbox" value="checked" class="check" onclick=`showGeneros(event, '${t}')` checked)
+                            label  #{t}
+                        button.w3-opacity.w3-round.w3-button.w3-right.w3-padding-small.w3-margin-right(id="limpar" onclick="limparGeneros(event)") Limpar
+                
+            
+            
 
                 table.w3-table.w3-bordered
                     tr.w3-theme-d3
@@ -102,7 +111,7 @@ block content
                         if nivel === "admin"
                             th.w3-center Visibilidade
                         th
-                    each p in pessoais
+                    each p in pessoais.reverse()
                         tr(class=`recurso ${p.tipo} ${p.owner} ${p.visibilidade}` style="display:")
                             td.w3-padding-large 
                                 a(href=`/recurso/meu/${p.id}`) #{p.id}

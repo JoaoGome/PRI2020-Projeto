@@ -28,14 +28,17 @@ router.get('/:id', function(req,res) {
     .then(dados =>{ 
       var nivel = dados.data.nivel
       var username = dados.data.username
-      axios.get("http://localhost:8000/comentarios/user/" + req.params.id + "?token=" + myToken)
-        .then(cmts =>{ 
-          if (cmts) cmts = cmts.data.reverse()
-          axios.get("http://localhost:8000/recursos/user/" + req.params.id + "?token=" + myToken)
-            .then(ps =>{res.render('utilizador', {tab:"tab1", nivel: nivel, username: username, user: dados.data.dados, comentarios: cmts, pessoais: ps.data})})
+      axios.get("http://localhost:8000/recursos/tipos?token=" + myToken)
+        .then(tipos =>
+          axios.get("http://localhost:8000/comentarios/user/" + req.params.id + "?token=" + myToken)
+            .then(cmts =>{ 
+              if (cmts) cmts = cmts.data.reverse()
+              axios.get("http://localhost:8000/recursos/user/" + req.params.id + "?token=" + myToken)
+                .then(ps =>{res.render('utilizador', {tab:"tab1", tipos:tipos.data, nivel: nivel, username: username, user: dados.data.dados, comentarios: cmts, pessoais: ps.data})})
+                .catch(e => res.render('error', {error:e}))
+            })
             .catch(e => res.render('error', {error:e}))
-        })
-        .catch(e => res.render('error', {error:e}))
+        ).catch(e => res.render('error', {error:e}))
     })
     .catch(e => res.render('error', {error:e}))
 })

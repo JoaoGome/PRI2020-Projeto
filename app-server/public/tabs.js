@@ -91,3 +91,24 @@ function limparGeneros(event){
     x[i].removeAttribute("checked")
   }
 }
+
+
+function showVis(){
+
+  var selectBox = document.getElementById("visSelect");
+  var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+
+  var d1 = ""
+  var d2 = ""
+  if(selectedValue === '1') d2 = "none"
+  if(selectedValue === '2') d1 = "none" 
+
+  var p1 = document.getElementsByClassName('1')
+  for (i = 0; i < p1.length; i++)
+    p1[i].style.display = d1
+  var p2 = document.getElementsByClassName('2')
+  for (i = 0; i < p2.length; i++)
+    p2[i].style.display = d2
+
+
+}
