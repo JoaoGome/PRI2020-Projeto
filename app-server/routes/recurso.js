@@ -137,6 +137,10 @@ function existe (a,b) {
 
 router.post('/upload', upload.single('myFile'), function(req,res,next) {
   good = 1
+  manifestoExiste = 1
+  informationExiste = 1
+  goodManifesto = 1
+  goodInformation = 1
   listaFicheiros = []
   obj = {}
   var ob;
@@ -158,17 +162,30 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
       
       for (i in listaFicheiros)
       {
-        if (existe(listaFicheiros[i],partida) == false) good = 0;
+        if (existe(listaFicheiros[i],partida) == false)
+        {
+          good = 0;
+          goodManifesto = 0;
+        } 
       }
 
       metadados = zip.entryDataSync("information.json").toString('utf-8');
       obj = JSON.parse(metadados)
       
       if (!(obj.hasOwnProperty('titulo') && obj.hasOwnProperty('dataCreation') && obj.hasOwnProperty('autor') && obj.hasOwnProperty('username')))
+      {
         good = 0;  
+        goodInformation = 0;
+      }
+        
     }
 
-    else good = 0;
+    else 
+    {
+      good = 0;
+      if (!existe("manifesto.txt",listaFicheiros)) manifestoExiste = 0;
+      else informationExiste = 0;
+    }
 
     if(good == 1) 
     {
@@ -186,7 +203,13 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
       next();
       
     }
-    else{} // por aqui codigo quando zip for invalido
+    else
+    {
+      /*manifestoExiste -> se tiver a 0 é porque zip nao tem um ficheiro manifesto.txt
+      informationExiste -> se tiver a 0 é porque zip nao tem um ficheiro information.json
+      goodManifesto -> se tiver a 0 é porque conteúdo do manifesto nao corresponde aos ficheiros todos que vieram no zip
+      goodInformation -> se tiver a 0 é porque os campos de meta dados nao existem todos*/
+    } // por aqui codigo quando zip for invalido
 
   });
 }, function(req,res){
