@@ -54,5 +54,13 @@ router.get('/pessoais', function(req, res) {
   }
 });
 
+// Consultar recursos de um utilizador
+router.get('/user/:user', function(req, res) {
+  var vis = req.user.vis
+  if(req.params.user === req.user.username) vis = 1
+  Recurso.listarRecUser(vis, req.params.user)
+    .then(dados => res.status(200).jsonp(dados))
+    .catch(e => res.status(500).jsonp({error: e}))
+});
 
 module.exports = router;

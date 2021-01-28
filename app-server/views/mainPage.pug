@@ -8,6 +8,8 @@ block content
                 a.w3-opacity(href="/mainPage" style="text-decoration: none") Gestor de Recursos
                 a(href='/')
                     button.w3-margin-bottom.w3-right.w3-button.w3-round-large.w3-text-white.w3-large.w3-hover-opacity Logout
+                a(href='/user/meuPerfil')
+                    button.w3-margin-bottom.w3-right.w3-button.w3-round-large.w3-text-white.w3-large.w3-hover-opacity O meu perfil
         
         .w3-bar.w3-theme-d4
             h4
@@ -43,14 +45,14 @@ block content
         //- Listar recursos
         .w3-display-container(class="lista", id="recursos", style=`display:${tab1}`)
             
-            .w3-bar.w3-theme-d3.w3-margin-bottom.w3-padding-small
-                h5.w3-margin-left Género: 
+            .w3-bar.w3-theme-d3.w3-padding-small
+                h6.w3-margin-left Género: 
                     each t in tipos
                         input.w3-check.w3-opacity.w3-margin-left(style="height:20px" type="checkbox" value="checked" class="check" onclick=`showGeneros(event, '${t}')` checked)
                         label  #{t}
-                    button.w3-opacity.w3-round.w3-button.w3-right.w3-padding-small(onclick="limparGeneros()") Limpar
+                    button.w3-opacity.w3-round.w3-button.w3-right.w3-padding-small(id="limpar" onclick="limparGeneros(event)") Limpar
                 form(action='/recursos/procurar' method='POST')
-                    h5.w3-margin-left Procurar: 
+                    h6.w3-margin-left Procurar: 
                         input.w3-opacity.w3-round(name="search")
 
             table.w3-table-all

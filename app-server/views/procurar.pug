@@ -10,13 +10,13 @@ block content
         .w3-bar.w3-theme-d4
             h3.w3-margin-left Resultados: #{procura}
         .w3-bar.w3-theme-d4.w3-padding-small
-                h5.w3-margin-left Género: 
+                h6.w3-margin-left Género: 
                     each t in tipos
                         input.w3-check.w3-opacity.w3-margin-left(style="height:20px" type="checkbox" value="checked" class="check" onclick=`showGeneros(event, '${t}')` checked)
                         label  #{t}
-                    button.w3-opacity.w3-round.w3-button.w3-right.w3-padding-small.w3-margin-right(onclick="limparGeneros()") Limpar
+                    button.w3-opacity.w3-round.w3-button.w3-right.w3-padding-small.w3-margin-right(id="limpar" onclick="limparGeneros(event)") Limpar
                 form(action='/recursos/procurar' method='POST')
-                    h5.w3-margin-left Procurar: 
+                    h6.w3-margin-left Procurar: 
                         input.w3-opacity.w3-round(name="search")
         .w3-bar.w3-theme-d4
             span

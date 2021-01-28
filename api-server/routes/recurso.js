@@ -13,7 +13,7 @@ router.get('/:id', function(req, res) {
 
 // Consultar o recurso owner de um recurso
 router.get('/:id/owner', function(req, res) {
-  Recurso.consultar(req.params.id)
+  Recurso.consultarOwner(req.params.id)
     .then(dados => res.status(200).jsonp(dados))
     .catch(e =>  res.status(500).jsonp({error: e}))
 });

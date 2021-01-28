@@ -10,7 +10,6 @@ var multer = require('multer')
 var upload = multer({dest: 'uploads/'})
 const StreamZip = require('node-stream-zip');
 
-// funçoes auxiliares
 
 
 // GETS
@@ -112,6 +111,17 @@ router.post('/recursos/procurar', function(req,res) {
             .catch(e => res.render('error', {error:e}))
         })
         .catch(e => res.render('error', {error:e}))
+    })
+    .catch(e => res.render('error', {error:e}))
+})
+
+// Eliminar um comentario 
+router.get('/comentario/remover/:c', function(req,res) {
+  var myToken = req.cookies.token
+  axios.delete('http://localhost:8000/comentarios/' + req.params.c + '?token=' + myToken)
+    .then(dados =>{
+      if (req.query.user) res.redirect(`/user/${req.query.user}`)
+      if (req.query.recurso) res.redirect(`/recurso/${req.query.recurso}`)
     })
     .catch(e => res.render('error', {error:e}))
 })

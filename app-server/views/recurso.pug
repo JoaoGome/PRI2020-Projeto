@@ -14,7 +14,7 @@ block content
                 if eliminar
                     button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="addConfirmacao()") Eliminar
 
-                a(href="")
+                a(href=`/recurso/${recurso.id}/download`)
                     button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Download
                 button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Preview
                     
@@ -50,8 +50,12 @@ block content
 
             h5.w3-text-blue-grey
                 b Comentários:
+                if nivel === "admin"
+                    button.w3-right.w3-button.w3-round-large.w3-text-blue-grey.w3-medium(onclick="document.getElementById('removerComentarios').style.display='block'") 
+                        b - Remover Comentários
                 button.w3-right.w3-button.w3-round-large.w3-text-blue-grey.w3-medium(onclick="document.getElementById('comentar').style.display='block'") 
                     b + Adicionar Comentário
+                
             div(id="comentar" style="display:none")
                 form(action=`/recurso/${recurso.id}/comentario` method='POST')
                     span.w3-cell-row
@@ -71,12 +75,12 @@ block content
 
                             if c.userID === user
                                 td.w3-right.w3-margin-right.w3-hover-text-red
-                                    a(href=`/recurso/${recurso.id}/remover/${c._id}?owner=sim`) Eliminar
+                                    a(href=`/comentario/remover/${c._id}?recurso=${recurso.id}`) Eliminar
 
                             else 
                                 if nivel == "admin"
                                     td.w3-right.w3-margin-right.w3-hover-text-red
-                                        a(href=`/recurso/${recurso.id}/remover/${c._id}?owner=nao`) Eliminar
+                                        a(href=`/comentario/remover/${c._id}?recurso=${recurso.id}`) Eliminar
 
                             td.w3-right.w3-margin-right #{c.data}
                             
@@ -87,7 +91,7 @@ block content
             br     
         
 
-        //- de certeza que queres eliminar?
+        //- de certeza que queres eliminar o recurso?
         div.w3-modal(id="confirmar" style="display:none")
             div.w3-modal-content.w3-theme-d3.w3-round-large(style="width:450px")
                 div.w3-container.w3-padding-16
@@ -97,6 +101,18 @@ block content
                             button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium
                                 i(class="fa fa-check")
                         button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium.w3-margin-left(onclick="document.getElementById('confirmar').style.display='none'")
+                            i(class="fa fa-close")
+
+        //- de certeza que queres eliminar os comentarios?
+        div.w3-modal(id="removerComentarios" style="display:none")
+            div.w3-modal-content.w3-theme-d3.w3-round-large(style="width:450px")
+                div.w3-container.w3-padding-16
+                    h5.w3-center.w3-margin-bottom Tem a certeza que quer eliminar todos os comentários deste recurso?
+                    h5.w3-center
+                        a(href=`/recurso/${recurso.id}/remover/comentarios`)
+                            button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium
+                                i(class="fa fa-check")
+                        button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium.w3-margin-left(onclick="document.getElementById('removerComentarios').style.display='none'")
                             i(class="fa fa-close")
 
 

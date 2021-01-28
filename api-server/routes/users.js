@@ -16,6 +16,11 @@ router.get('/', function(req, res){
     res.status(500).jsonp({error: "Não autorizado"})
 })
 
+// Consultar username do user
+router.get('/user', function(req, res){
+  res.status(200).jsonp(req.user.username)
+})
+
 // Consultar user
 router.get('/:id', function(req, res){
   axios.get("http://localhost:8002/users/" + req.params.id)
@@ -23,29 +28,7 @@ router.get('/:id', function(req, res){
     .catch(e => res.status(501).jsonp({error: e}))
 })
 
-/*
-// Consultar user comentarios
-router.get('/:user/comentarios', function(req, res){
-  Comentario.listarByUser(req.params.user)
-    .then(dados => res.status(200).jsonp(dados))
-    .catch(e => res.status(501).jsonp({error: e}))
-})
 
-// Remover user comentarios
-router.delete('/:user/comentarios/remover', function(req, res){
-  Comentario.removerUser(req.params.user)
-    .then(dados => res.status(200).jsonp(dados))
-    .catch(e => res.status(501).jsonp({error: e}))
-})
-
-// Passar user a [deleted] nos comentarios
-router.put('/:user/comentarios/deleted', function(req, res){
-  Comentario.deletedUser(req.params.user)
-    .then(dados => res.status(200).jsonp(dados))
-    .catch(e => res.status(501).jsonp({error: e}))
-})
-
-*/
 
 
 //----------------------------------- Alterar users BD

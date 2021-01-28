@@ -28,11 +28,11 @@ router.post('/recurso/:rec', function(req, res) {
 // Eliminar comentario
 router.delete('/:c', function(req,res){
   if (req.user.level === "admin")
-    Comentario.remover(req.params.c)
+   Comentario.remover(req.params.c)
       .then(dados => res.status(200).jsonp(dados))
       .catch(e =>  res.status(500).jsonp({error: e}))
   else 
-    Comentario.removerPessoal(req.params.c)
+    Comentario.removerPessoal(req.params.c, req.user.username)
       .then(dados => res.status(200).jsonp(dados))
       .catch(e =>  res.status(500).jsonp({error: e}))
 })

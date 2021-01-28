@@ -20,6 +20,7 @@ PUT /comentarios/user/:user                             // Passar user a [delete
 
 GET /users?level=X                                      // Listar users de nivel X                                            
     GET /users/nivel/:X
+GET /users/user                                         // Devolve username do proprio utilizador
 GET /users/:id                                          // Consultar user
     GET /users/:id
 DELETE /users/:id                                       // Remover user
@@ -35,6 +36,7 @@ GET /recursos?tipo=X                                    // Listar todos os recur
 GET /recursos?procurar=X                                // Listar todos os recursos com X no título (conforme o visualizaçao)
 GET /recursos/tipos                                     // Listar os tipos existentes
 GET /recursos/pessoais                                  // Consultar os seus proprios recursos (apenas para produtor ou admin)
+GET /recursos/user/:user                                  // Consultar os seus proprios recursos (apenas para produtor ou admin)
 
 GET /recurso/:id                                        // Consultar um recurso
 GET /recurso/:id/owner                                  // Consultar owner de um recurso
@@ -71,6 +73,11 @@ POST /recursos/procurar
     GET /recursos=hashtag=X
     GET /recursos/tipos
 
+GET /comentario/remover/:c?user=:user                               // Remover comentário
+    DELETE /comentarios/:c  
+GET /comentario/remover/:c?recurso=:rec                             // Remover comentário
+    DELETE /comentarios/:c  
+
 GET /recurso/meu/:rec                                   // Consultar recurso pessoal
 GET /recurso/:rec                                       // Consultar um recurso
     GET /comentarios/recurso/:rec
@@ -83,11 +90,11 @@ GET /recurso/:id/remover                                // Eliminar recurso
 POST /recurso                                           // Alterar recurso
     PUT /recurso
 
-GET /recurso/remover/:c                                 // Remover comentário-----------
-    DELETE /comentarios/:c                              
+                            
 GET /recurso/:rec/remover/comentarios                   // Remover todos os comentarios do recurso
     GET /recurso/:rec/owner
     DELETE /comentarios/recurso/:rec/owner/:owner
+GET /recurso/:rec/download                          // Adicionar comentário
 POST /recurso/:rec/comentarios                          // Adicionar comentário
     POST /comentarios/recurso/:rec
 
@@ -95,6 +102,7 @@ GET /recurso/upload                                     // Pagina de upload ----
 POST /recurso/upload                                    // Upload de um recurso
 
 
+GET /user/meuPerfil                                     // Perfil do utilizador
 GET /user/:user                                         // Consultar um user
     GET /users/:user
     GET /comentarios/user/:user

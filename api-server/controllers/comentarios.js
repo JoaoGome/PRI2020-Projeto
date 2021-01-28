@@ -38,7 +38,7 @@ module.exports.removerPessoal = function(id, u){
 
 // Elimina todos os comentarios de um determinado user da bd
 module.exports.removerUser = function(u){
-    return Comentario.delete({userID: u})
+    return Comentario.remove({userID: u})
 }
 
 // Elimina todos os comentarios de um determinado user da bd
@@ -48,7 +48,7 @@ module.exports.deletedUser = function(u){
 
 // Elimina todos os comentarios de um determinado recurso da bd
 module.exports.removerRecurso = function(r){
-    return Comentario.delete({recursoID: r})
+    return Comentario.remove({recursoID: r})
 }
 
 // Altera texto do comentario

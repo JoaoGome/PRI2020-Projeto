@@ -12,6 +12,15 @@ const StreamZip = require('node-stream-zip');
 
 // GETS
 
+//Consultar próprio perfil
+router.get('/meuPerfil', function(req,res) {
+  var myToken = req.cookies.token;
+  axios.get("http://localhost:8000/users/user?token=" + myToken)
+    .then(user => res.redirect(`/user/${user.data}`))
+    .catch(e => res.render('error', {error:e}))
+})
+
+
 //Consultar um user
 router.get('/:id', function(req,res) {
   var myToken = req.cookies.token;
@@ -22,11 +31,15 @@ router.get('/:id', function(req,res) {
       axios.get("http://localhost:8000/comentarios/user/" + req.params.id + "?token=" + myToken)
         .then(cmts =>{ 
           if (cmts) cmts = cmts.data.reverse()
-          res.render('utilizador', {nivel: nivel, username: username, user: dados.data.dados, comentarios: cmts})})
+          axios.get("http://localhost:8000/recursos/user/" + req.params.id + "?token=" + myToken)
+            .then(ps =>{res.render('utilizador', {tab:"tab1", nivel: nivel, username: username, user: dados.data.dados, comentarios: cmts, pessoais: ps.data})})
+            .catch(e => res.render('error', {error:e}))
+        })
         .catch(e => res.render('error', {error:e}))
     })
     .catch(e => res.render('error', {error:e}))
 })
+
 
 
 //Eliminar um user

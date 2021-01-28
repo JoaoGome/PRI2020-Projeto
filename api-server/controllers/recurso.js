@@ -27,9 +27,16 @@ module.exports.listarRecPessoal = (p, id) => {
         .exec()
 }
 
+// Devolve Recursos de uma pessoa
+module.exports.listarRecUser = (v,u) => {
+    console.log(v)
+    return Recurso
+        .find({visibilidade: {$gte: v}, owner:u})
+        .exec()
+}
+
 // Devolve a lista de todos os Recursos conforme visibilidade
 module.exports.listarRec = v => {
-    console.log(v)
     return Recurso
         .find({visibilidade: {$gte: v}})
         .sort('titulo')

@@ -72,9 +72,14 @@ function showGeneros(event, gen){
     for (i = 0; i < x.length; i++)
       x[i].style.display = ""
   }
+
+  document.getElementById("limpar").style.display = "none"
+
 }
 
-function limparGeneros(){
+function limparGeneros(event){
+
+  event.currentTarget.style.display = "none"
 
   var rec = document.getElementsByClassName("recurso")
   for (i = 0; i < rec.length; i++)
