@@ -131,18 +131,11 @@ function existe (a,b) {
 
 
 
-router.post('/upload', upload.single('myFile'), function(req, res, next){
-  var myToken = req.cookies.token;
-  jwt.verify(myToken, 'PRI2020', function(e, payload){
-    if(e) res.status(401).jsonp({error: 'Erro na verificação do token: ' + e})
-    else{
-      req.user = { level: payload.level, username: payload.username }
-      next()
-    } 
-  })
-}, function(req,res){
+router.post('/upload', upload.single('myFile'), function(req,res,next) {
   good = 1
   listaFicheiros = []
+  obj = {}
+  var ob;
 
   const zip = new StreamZip({
     file:req.file.path,
@@ -150,67 +143,74 @@ router.post('/upload', upload.single('myFile'), function(req, res, next){
   })
 
   zip.on('ready', () => {
-    // Take a look at the files
     
     for (const entry of Object.values(zip.entries())) {
-      //zipDotTxtContents = zip.entryDataSync(entry).toString('utf8');
       listaFicheiros.push(entry.name)
     }
-    if (existe("manifesto.txt",listaFicheiros))
+    if (existe("manifesto.txt",listaFicheiros) && existe("information.json",listaFicheiros))
     {
       data = zip.entryDataSync("manifesto.txt").toString('utf8');
       partida = data.split(" ")
       
-      for (i in partida)
+      for (i in listaFicheiros)
       {
-        if (existe(partida[i],listaFicheiros) == false) good = 0;
+        if (existe(listaFicheiros[i],partida) == false) good = 0;
       }
+
+      metadados = zip.entryDataSync("information.json").toString('utf-8');
+      obj = JSON.parse(metadados)
+      
+      if (!(obj.hasOwnProperty('titulo') && obj.hasOwnProperty('dataCreation') && obj.hasOwnProperty('autor') && obj.hasOwnProperty('username')))
+        good = 0;  
     }
 
     else good = 0;
 
-    zip.close()
+    if(good == 1) 
+    {
+      if (obj.hasOwnProperty('subtitulo'))
+      {
+        req.body.subtitulo = obj.subtitulo
+      }
+
+      req.body.titulo = obj.titulo; 
+      req.body.autor = obj.autor; 
+      req.body.owner = obj.username;
+
+      req.body.dataRegisto = new Date().toISOString().slice(0, 10);
+      zip.close();
+      next();
+      
+    }
+    else{} // por aqui codigo quando zip for invalido
+
   });
-  
+}, function(req,res){
 
-  if (good == 1)
-  {
-      //zip valido
-      var parentDir = path.normalize(__dirname+"/..");
-      let quarantinePath = parentDir + '/' + req.file.path
-      let newPath = parentDir + '/public/fileStore/' + req.file.originalname
+  //zip valido
+  var parentDir = path.normalize(__dirname+"/..");
+  let quarantinePath = parentDir + '/' + req.file.path
+  let newPath = parentDir + '/public/fileStore/' + req.file.originalname
 
-      fs.rename(quarantinePath, newPath, function(err){
-        if(err){
-            res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
-            res.write('<p> Erro: ao mover o ficheiro da quarentena: ' + err + '</p>')
-            res.end()
-        }
-        else{
-            req.body.dataRegisto = new Date().toISOString().slice(0, 10)
-            req.body.id = req.file.originalname
-            req.body.fileName = req.file.orignalName
-            req.body.autor = req.user.username
-            newString = req.body.hashtags.replace(/\s+/g,' ').trim();
-            req.body.hashtags = newString.split(" ")
+  fs.rename(quarantinePath, newPath, function(err){
+    if(err){
+        res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'})
+        res.write('<p> Erro: ao mover o ficheiro da quarentena: ' + err + '</p>')
+        res.end()
+    }
+    else{
 
-            axios.post('http://localhost:8000/recurso?token=' + req.cookies.token,req.body)
-              .then(dados => {
-                res.redirect('/mainPage?tab=2')
-              })
-              .catch(e => res.render('error', {error: e}))
-            
-
-            
-        }
-    })
-  } 
-  else 
-  {
-    // zip invalido  
-  }
+      req.body.id = req.file.originalname
+      req.body.fileName = req.file.originalname
+      newString = req.body.hashtags.replace(/\s+/g,' ').trim();
+      req.body.hashtags = newString.split(" ")
+      console.log(req.body)
+      axios.post('http://localhost:8000/recurso?token=' + req.cookies.token,req.body)
+        .then(dados => {
+          res.redirect('/mainPage?tab=2')
+        })
+        .catch(e => res.render('error', {error: e}))
+    }
+  })
 })
-
-
-
 module.exports = router;
