@@ -6,15 +6,10 @@ block content
         header.w3-container.w3-theme-d4.w3-text-white
             a(href="/mainPage" style="text-decoration: none")
                 h1.w3-opacity Gestor de Recursos
-
+                    
         .w3-bar.w3-theme-d4
             h3.w3-margin-left Utilizador #{user.username}       
-                if user.username === username
-                    button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="addConfirmacao()") Eliminar Conta     
-                else
-                    if nivel == "admin"
-                        - var eliminar = "sim" 
-                        button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="addConfirmacao()") Eliminar
+                
         .w3-bar.w3-theme-d4
             span
                 if tab === "tab1"
@@ -23,6 +18,12 @@ block content
                 else
                     button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'recursos', 'nao');") Perfil
                     button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'perfil', 'nao');") Recursos
+                if user.username === username
+                    button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="addConfirmacao()") Eliminar Conta     
+                else
+                    if nivel == "admin"
+                        - var eliminar = "sim" 
+                        button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="addConfirmacao()") Eliminar Utilizador
 
         - var tab1 = "block"   
         - var tab2 = "none"   
@@ -58,7 +59,7 @@ block content
                     button.w3-right.w3-button.w3-round-large.w3-text-blue-grey.w3-medium(onclick="document.getElementById('removerComentarios').style.display='block'") 
                         b - Remover Comentários
 
-            table.w3-table-all
+            table.w3-table.w3-border.w3-bordered
                 if comentarios.length
                     tr.w3-theme-d3.w3-mobile
                         td Recurso
@@ -92,8 +93,8 @@ block content
         div.w3-display-container(class="lista", id="recursos", style=`display:${tab2}`)
             if pessoais.length
 
-                table.w3-table-all
-                    tr.w3-theme-d3.w3-mobile
+                table.w3-table.w3-bordered
+                    tr.w3-theme-d3
                         th(style="width:100px;") ID
                         th(style="width:600px;") Título
                         th.w3-center Tipo
@@ -102,7 +103,7 @@ block content
                             th.w3-center Visibilidade
                         th
                     each p in pessoais
-                        tr.w3-mobile
+                        tr(class=`recurso ${p.tipo} ${p.owner} ${p.visibilidade}` style="display:")
                             td.w3-padding-large 
                                 a(href=`/recurso/meu/${p.id}`) #{p.id}
                             td.w3-padding-large= p.titulo

@@ -9,25 +9,26 @@ block content
         .w3-bar.w3-theme-d4
             h3.w3-margin-left Hashtag #{hashtag}
         
-        .w3-container
-            table.w3-table-all
-                tr.w3-theme-d3
-                    th(style="width:600px;") Título
-                    th(style="width:300px;") Produtor
-                    th.w3-center Tipo
-                    th.w3-center Data Registo
-                    if produtores
-                        th.w3-center Visibilidade
-                        th.w3-center 
-                    
-                each r in recursos
-                    tr
-                        td 
-                            a(href=`/recurso/${r.id}`) #{r.titulo}  
-                        td #{r.owner}
-                        td.w3-center #{r.tipo}
-                        td.w3-center #{r.dataRegisto}
+
+        table.w3-table.w3-bordered
+            tr.w3-theme-d3
+                th(style="width:600px;") Título
+                th(style="width:300px;") Produtor
+                th.w3-center Tipo
+                th.w3-center Data Registo
+                if produtores
+                    th.w3-center Visibilidade
+                    th.w3-center 
+                
+            each r in recursos
+                tr
+                    td 
+                        a(href=`/recurso/${r.id}`) #{r.titulo}  
+                    td 
+                        a(href=`/user/${r.owner}`) #{r.owner}
+                    td.w3-center #{r.tipo}
+                    td.w3-center #{r.dataRegisto}
         
-        .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-margin-top.w3-padding-large
+        .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-padding-large
             address 
                 a(href="/mainPage") Voltar
