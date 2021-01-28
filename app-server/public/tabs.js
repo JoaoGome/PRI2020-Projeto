@@ -103,12 +103,12 @@ function showVis(){
   if(selectedValue === '1') d2 = "none"
   if(selectedValue === '2') d1 = "none" 
 
-  var p1 = document.getElementsByClassName('1')
+  var p1 = document.getElementsByClassName('meu1')
   for (i = 0; i < p1.length; i++)
     p1[i].style.display = d1
-  var p2 = document.getElementsByClassName('2')
+  var p2 = document.getElementsByClassName('meu3')
   for (i = 0; i < p2.length; i++)
     p2[i].style.display = d2
 
-
+  alert("pri: " + p1.length + ", pub: " + p2.length)
 }

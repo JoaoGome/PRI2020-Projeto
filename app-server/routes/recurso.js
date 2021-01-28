@@ -56,10 +56,17 @@ router.get('/:id/remover', function(req,res) {
   var myToken = req.cookies.token;
   var tab = 1
   if (req.query.tab) tab = req.query.tab
-  axios.delete('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
-    .then(dados => res.redirect(`/recurso/${req.params.id}/remover/comentarios?eliminado=sim&tab=${tab}`))
-    .catch(e => res.render('error', {error:e}))
-})
+  axios.get('http://localhost:8000/recurso/' + req.params.id + '/owner?token=' + myToken)
+    .then( owner =>{
+      console.log(owner.data)
+      axios.delete('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
+        .then(dados =>
+          axios.delete('http://localhost:8000/comentarios/recurso/' + req.params.rec +'/owner/' + owner.data.owner + '?token=' + myToken)
+            .then(d => res.redirect(`/mainPage?tab=${req.query.tab}`))
+            .catch(e => res.render('error', {error:e})))
+        .catch(e => res.render('error', {error:e}))
+    })
+})  
 
 
 // Editar um recurso
@@ -106,11 +113,7 @@ router.get('/:rec/remover/comentarios', function(req,res) {
   axios.get('http://localhost:8000/recurso/' + req.params.rec + '/owner?token=' + myToken)
     .then( owner =>{
       axios.delete('http://localhost:8000/comentarios/recurso/' + req.params.rec +'/owner/' + owner.data.owner + '?token=' + myToken)
-        .then(dados =>{ 
-          if (req.query.eliminado)
-            res.redirect(`/mainPage?tab=${req.query.tab}`)
-          else
-            res.redirect(`/recurso/${req.params.rec}`)})
+        .then(dados => res.redirect(`/recurso/${req.params.rec}`))
         .catch(e => res.render('error', {error:e}))
     })
     .catch(e => res.render('error', {error:e}))
