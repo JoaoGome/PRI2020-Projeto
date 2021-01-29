@@ -27,22 +27,25 @@ router.get('/mainPage', function(req,res) {
   var tab31 = "block"
   var tab32 = "none"
 
+  var order = "titulo"
+  if(req.query.sortBy) order = req.query.sortBy
+
   //Pedir lista de recursos
-  axios.get("http://localhost:8000/recursos?token=" + myToken)
+  axios.get("http://localhost:8000/recursos?sortBy=" + order + "&token=" + myToken)
     .then(r  =>{
         var nivel = r.data.level
         var dados = r.data.dados
         var tipos = r.data.tipos
-        console.log(r.data)
+        
         if (nivel === "consumidor")
-          res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos, recursos:dados})
+          res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos, recursos:dados, sort:order})
 
         else
           //abrir na tab correta
           if(req.query.tab && req.query.tab != 3) tab = req.query.tab
       
           //Pedir recursos pessoais
-          axios.get("http://localhost:8000/recursos/pessoais?token=" + myToken)
+          axios.get("http://localhost:8000/recursos/pessoais?sortBy=" + order + "&token=" + myToken)
             .then(p => {
 
               if (nivel === "admin"){
@@ -61,8 +64,8 @@ router.get('/mainPage', function(req,res) {
                   //Pedir lista de consumidores
                   axios.get("http://localhost:8000/users?level=consumidor&token=" + myToken)
                     .then(cs => {
-
-                      res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos, recursos:dados, produtores:ps.data, consumidores:cs.data, pessoais:p.data})
+                      
+                      res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos, recursos:dados, produtores:ps.data, consumidores:cs.data, pessoais:p.data, sort:order})
                     
                     })
                     .catch(e => res.render('error', {error:e}))
@@ -71,7 +74,7 @@ router.get('/mainPage', function(req,res) {
                 .catch(e => res.render('error', {error:e}))
               }
               else
-                res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos, recursos:dados, pessoais:p.data})
+                res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos, recursos:dados, pessoais:p.data, sort:order})
             })
             .catch(e => res.render('error', {error:e}))
     })

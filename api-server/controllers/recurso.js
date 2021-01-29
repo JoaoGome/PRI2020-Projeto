@@ -4,7 +4,7 @@ var Recurso = require('../models/recurso')
 
 //////////////////////////////////////////// Consultar bd
 
-// Devolve a lista de todos os Recursos
+// Devolve a lista de todos os Recursos     ----------> nao usado
 module.exports.listar = () => {
     return Recurso
         .find()
@@ -13,10 +13,9 @@ module.exports.listar = () => {
 }
 
 // Devolve a lista de todos os Recursos da pessoa
-module.exports.listarRecPessoais = p => {
+module.exports.listarRecPessoais = (p,o) => {
     return Recurso
         .find({owner:p})
-        .sort('titulo')
         .exec()
 }
 
@@ -29,25 +28,33 @@ module.exports.listarRecPessoal = (p, id) => {
 
 // Devolve Recursos de uma pessoa
 module.exports.listarRecUser = (v,u) => {
-    console.log(v)
     return Recurso
         .find({visibilidade: {$gte: v}, owner:u})
         .exec()
 }
 
 // Devolve a lista de todos os Recursos conforme visibilidade
-module.exports.listarRec = v => {
+module.exports.listarRec = (v,o) => {
     return Recurso
         .find({visibilidade: {$gte: v}})
-        .sort('titulo')
+        .sort(o)
         .exec()
 }
 
-// Devolve a lista dos recursos de determinado tipo
-module.exports.listarRecursosTitulo = (v,t) => {
+module.exports.listarRecBy = (v,s) => {
+    return Recurso
+        .aggregate([
+            {$group: {
+                _id: "$owner",
+                recursos: { $push: { titulo: "$titulo", id: "$id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade"} }
+                }}
+        ])
+}
+// Devolve a lista dos recursos de determinado tipo -----------------> nao usado
+module.exports.listarRecursosTitulo = (v,t,o) => {
     return Recurso
         .find({visibilidade: {$gte: v}, titulo: { "$regex":t }})
-        .sort('titulo')
+        .sort(o)
         .exec()
 }
 
@@ -61,7 +68,7 @@ module.exports.listarRecursosTipo = (v,t) => {
 
 // Devolve a lista de tipos
 module.exports.listarTipos = () => {
-    return Recurso
+    return Recurso   
         .distinct('tipo')
 }
 

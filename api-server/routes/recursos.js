@@ -8,32 +8,43 @@ var axios = require('axios')
 
 // Listar todas os recursos
 router.get('/', function(req, res) {
+  
   // Listar os tipos existentes
   Recurso.listarTipos()
     .then(tipos =>{
-      // Listar todos os recursos com determinada hashtag
-      if(req.query.hashtag)
-        Recurso.listarRecHashtags(req.user.vis, req.query.hashtag)
-          .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
-          .catch(e => res.status(500).jsonp({error: e}))
+      var order = "titulo"
+      if(req.query.sortBy) order = req.query.sortBy
+      
+      if(order === "owner"){
+        Recurso.listarRecBy(req.user.vis, order)
+            .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
+            .catch(e => res.status(500).jsonp({error: e}))
+      }
+      else{
+        // Listar todos os recursos com determinada hashtag
+        if(req.query.hashtag)
+          Recurso.listarRecHashtags(req.user.vis, req.query.hashtag, order)
+            .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
+            .catch(e => res.status(500).jsonp({error: e}))
 
-      // Listar todos os recursos com determinado tipo --------------------------------------> not used
-      else if(req.query.tipo)
-        Recurso.listarRecursosTipo(req.user.vis, req.query.tipo)
-          .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
-          .catch(e => res.status(500).jsonp({error: e}))
+        // Listar todos os recursos com determinado tipo --------------------------------------> not used
+        else if(req.query.tipo)
+          Recurso.listarRecursosTipo(req.user.vis, req.query.tipo, order)
+            .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
+            .catch(e => res.status(500).jsonp({error: e}))
 
-      // Listar todos os recursos com certo texto no titulo
-      else if(req.query.procurar)
-        Recurso.listarRecursosTitulo(req.user.vis, req.query.procurar)
-          .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
-          .catch(e => res.status(500).jsonp({error: e}))
+        // Listar todos os recursos com certo texto no titulo
+        else if(req.query.procurar)
+          Recurso.listarRecursosTitulo(req.user.vis, req.query.procurar, order)
+            .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
+            .catch(e => res.status(500).jsonp({error: e}))
 
-      // Listar todos os recursos
-      else
-        Recurso.listarRec(req.user.vis, req.query.hashtag)
-          .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
-          .catch(e => res.status(500).jsonp({error: e}))
+        // Listar todos os recursos
+        else
+          Recurso.listarRec(req.user.vis, order)
+            .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
+            .catch(e => res.status(500).jsonp({error: e}))
+      }
     })
     .catch(e => res.status(500).jsonp({error: e}))
 });
@@ -48,10 +59,12 @@ router.get('/tipos', function(req, res) {
 
 // Consultar os seus proprios recursos
 router.get('/pessoais', function(req, res) {
+  var order = "titulo"
+  if(req.query.sortBy) order = req.query.sortBy
   if(req.user.level === "consumidor")
     res.status(500).jsonp({error: "Não autorizado"})
   else{
-    Recurso.listarRecPessoais(req.user.username)
+    Recurso.listarRecPessoais(req.user.username, order)
       .then(dados => res.status(200).jsonp(dados))
       .catch(e => res.status(500).jsonp({error: e}))
   }
