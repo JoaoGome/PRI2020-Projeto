@@ -32,51 +32,46 @@ router.get('/mainPage', function(req,res) {
     .then(r  =>{
         var nivel = r.data.level
         var dados = r.data.dados
+        var tipos = r.data.tipos
+        console.log(r.data)
+        if (nivel === "consumidor")
+          res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos, recursos:dados})
 
-        // pedir lista de tipos
-        axios.get("http://localhost:8000/recursos/tipos?token=" + myToken)
-          .then(tipos =>{
+        else
+          //abrir na tab correta
+          if(req.query.tab && req.query.tab != 3) tab = req.query.tab
+      
+          //Pedir recursos pessoais
+          axios.get("http://localhost:8000/recursos/pessoais?token=" + myToken)
+            .then(p => {
 
-            if (nivel === "consumidor")
-              res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos.data, recursos:dados})
+              if (nivel === "admin"){
 
-            else
-              //abrir na tab correta
-              if(req.query.tab && req.query.tab != 3) tab = req.query.tab
-          
-              //Pedir recursos pessoais
-              axios.get("http://localhost:8000/recursos/pessoais?token=" + myToken)
-                .then(p => {
+                //abrir na tab correta
+                if(req.query.tab) tab = req.query.tab
+                if(req.query.tab2 && req.query.tab2 == 2){
+                  tab31 = "none"
+                  tab32 = "display"
+                }
 
-                  if (nivel === "admin"){
+                //Pedir lista de produtores
+                axios.get("http://localhost:8000/users?level=produtor&token=" + myToken)
+                .then(ps => {
+                
+                  //Pedir lista de consumidores
+                  axios.get("http://localhost:8000/users?level=consumidor&token=" + myToken)
+                    .then(cs => {
 
-                    //abrir na tab correta
-                    if(req.query.tab) tab = req.query.tab
-                    if(req.query.tab2 && req.query.tab2 == 2){
-                      tab31 = "none"
-                      tab32 = "display"
-                    }
-
-                    //Pedir lista de produtores
-                    axios.get("http://localhost:8000/users?level=produtor&token=" + myToken)
-                    .then(ps => {
+                      res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos, recursos:dados, produtores:ps.data, consumidores:cs.data, pessoais:p.data})
                     
-                      //Pedir lista de consumidores
-                      axios.get("http://localhost:8000/users?level=consumidor&token=" + myToken)
-                        .then(cs => {
-
-                          res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos.data, recursos:dados, produtores:ps.data, consumidores:cs.data, pessoais:p.data})
-                        
-                        })
-                        .catch(e => res.render('error', {error:e}))
-                      
                     })
                     .catch(e => res.render('error', {error:e}))
-                  }
-                  else
-                    res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos.data, recursos:dados, pessoais:p.data})
+                  
                 })
                 .catch(e => res.render('error', {error:e}))
+              }
+              else
+                res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos, recursos:dados, pessoais:p.data})
             })
             .catch(e => res.render('error', {error:e}))
     })
@@ -90,14 +85,11 @@ router.get('/mainPage', function(req,res) {
 router.get('/recursos', function(req,res) {
   var myToken = req.cookies.token;
   if(req.query.hashtag)
-  axios.get('http://localhost:8000/recursos/tipos?token=' + myToken)
-  .then(tipos =>
-    axios.get('http://localhost:8000/recursos?hashtag=' + req.query.hashtag + '&token=' + myToken)
-      .then(dados => res.render('hashtag', {tipos:tipos.data, hashtag: req.query.hashtag, recursos: dados.data}))
-      .catch(e => res.render('error', {error:e}))
-  )
-  .catch(e => res.render('error', {error:e}))
     
+    axios.get('http://localhost:8000/recursos?hashtag=' + req.query.hashtag + '&token=' + myToken)
+      .then(dados => res.render('hashtag', {tipos:dados.data.tipos, hashtag: req.query.hashtag, recursos: dados.data.dados}))
+      .catch(e => res.render('error', {error:e}))
+
   else 
     res.redirect('/mainPage')
 })
@@ -110,11 +102,7 @@ router.post('/recursos/procurar', function(req,res) {
     .then(recTitulo =>{
       var ht = req.body.search.replace(/\s*/g,'');
       axios.get('http://localhost:8000/recursos?hashtag=' + ht + '&token=' + myToken)
-        .then(recHashtag =>{
-          axios.get('http://localhost:8000/recursos/tipos?token=' + myToken)
-            .then(tipos => res.render('procurar', {tab:"tab1", procura:req.body.search, tipos:tipos.data, recHashtag: recHashtag.data, recTitulo: recTitulo.data}))
-            .catch(e => res.render('error', {error:e}))
-        })
+        .then(recHashtag => res.render('procurar', {tab:"tab1", procura:req.body.search, tipos:recTitulo.data.tipos, recHashtag:recHashtag.data.dados, recTitulo:recTitulo.data.dados}))
         .catch(e => res.render('error', {error:e}))
     })
     .catch(e => res.render('error', {error:e}))
