@@ -8,16 +8,25 @@ block content
                 h1.w3-opacity Gestor de Recursos
                     
         .w3-bar.w3-theme-d4
-            h3.w3-margin-left Utilizador #{user.username}       
-                
+            if vis == 4
+                h3.w3-margin-left Utilizador 
+                    a(href=`/user/${user.username}` style="text-decoration: none") #{user.username}       
+            else if vis == 1
+                h3.w3-margin-left Utilizador 
+                    a(href=`/user/${user.username}` style="text-decoration: none") #{user.username}       
+            else
+                h3.w3-margin-left O Meu Perfil
+                    a(href=`/user/${user.username}` style="text-decoration: none") 
+                        span.w3-margin-left.w3-opacity  #{user.username}       
+
         .w3-bar.w3-theme-d4
             span
                 if tab === "tab1"
                     button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'perfil', 'nao');") Perfil
                     button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'recursos', 'nao');") Recursos
                 else
-                    button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'recursos', 'nao');") Perfil
-                    button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'perfil', 'nao');") Recursos
+                    button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'perfil', 'nao');") Perfil
+                    button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'recursos', 'nao');") Recursos
                 if user.username === username
                     button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="addConfirmacao()") Eliminar Conta     
                 else
@@ -98,13 +107,12 @@ block content
                             span.w3-text-white.w3-round.w3-border-0.w3-hover-opacity.w3-theme-d3.w3-margin-left= sort
                             span.w3-dropdown-content.w3-bar-block
                                 if sort != "id"
-                                    a(href="/mainPage?sortBy=id").w3-bar-item.w3-button.w3-theme-d3.w3-hover-opacity ID
+                                    a(href=`/user/${user.username}?tab=recs&sortBy=id`).w3-bar-item.w3-button.w3-theme-d3.w3-hover-opacity ID
                                 if sort != "titulo"
-                                    a(href="/mainPage?sortBy=titulo").w3-bar-item.w3-button.w3-theme-d3.w3-hover-opacity Título
-                                if sort != "owner"
-                                    a(href="/mainPage?sortBy=owner").w3-bar-item.w3-button.w3-theme-d3.w3-hover-opacity Produtor
+                                    a(href=`/user/${user.username}?tab=recs&sortBy=titulo`).w3-bar-item.w3-button.w3-theme-d3.w3-hover-opacity Título
                                 if sort != "dataRegisto"
-                                    a(href="/mainPage?sortBy=dataRegisto").w3-bar-item.w3-button.w3-theme-d3.w3-hover-opacity Data Registo
+                                    a(href=`/user/${user.username}?tab=recs&sortBy=dataRegisto`).w3-bar-item.w3-button.w3-theme-d3.w3-hover-opacity Data Registo
+           
             include ./listaRecursos.pug
 
 
@@ -139,4 +147,4 @@ block content
 
         .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-padding-large
             address 
-                a(href=`/mainPage?tab=2`) Voltar
+                span(onclick="window.history.go(-1)" style="text-decoration: underline; cursor:pointer;" ) Voltar

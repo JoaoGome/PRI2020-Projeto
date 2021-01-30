@@ -32,15 +32,19 @@ router.get('/:id', function(req,res) {
       if (username === dados.data.dados.username)
         if(nivel === "produtor") vis = 2
         else vis = 3
-      else if (nivel.dados.nivel === "admin") vis = 1
-      
+      else if (nivel === "admin") vis = 1
+      var order = "titulo"
+      if(req.query.sortBy) order = req.query.sortBy
+
       axios.get("http://localhost:8000/recursos/tipos?token=" + myToken)
         .then(tipos =>
           axios.get("http://localhost:8000/comentarios/user/" + req.params.id + "?token=" + myToken)
             .then(cmts =>{ 
               if (cmts) cmts = cmts.data.reverse()
+              var tab = "tab1"
+              if(req.query.tab === "recs") tab = "tab2"
               axios.get("http://localhost:8000/recursos/user/" + req.params.id + "?token=" + myToken)
-                .then(ps =>{res.render('utilizador', {tab:"tab1", tipos:tipos.data, vis:vis, nivel:nivel, username: username, user: dados.data.dados, comentarios: cmts, recursos: ps.data})})
+                .then(ps =>{res.render('utilizador', {tab:tab, tipos:tipos.data, vis:vis, nivel:nivel, username: username, user: dados.data.dados, comentarios: cmts, recursos: ps.data, sort:order})})
                 .catch(e => res.render('error', {error:e}))
             })
             .catch(e => res.render('error', {error:e}))

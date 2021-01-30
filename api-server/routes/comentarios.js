@@ -38,9 +38,12 @@ router.delete('/:c', function(req,res){
 })
 
 
-// Remover comentarios do recurso
-router.delete('/recurso/:rec/owner/:owner', function(req, res){
-  if (req.user.username === req.params.owner || req.user.level === "admin")
+// Remover comentarios do recurso     -----------------------------------> alterar?
+router.delete('/recurso/:rec/owner/:owner', function(req,res,next) {
+  if (req.user.username === req.params.owner || req.user.level === "admin") next();
+  else res.status(500).jsonp({error: "Não autorizado"})
+}, function(req, res){
+
     Comentario.removerRecurso(req.params.rec)
       .then(dados => res.status(200).jsonp(dados))
       .catch(e => res.status(501).jsonp({error: e}))
@@ -55,18 +58,17 @@ router.get('/user/:user', function(req, res){
 })
 
 // Remover user comentarios
-router.delete('/user/:user', function(req, res){
-  if (req.user.username === req.params.user || req.user.level === "admin")
+router.delete('/user/:user',function(req,res,next) {
+  if (req.user.username === req.params.user || req.user.level === "admin") next();
+  else res.status(500).jsonp({error: "Não autorizado"})
+}, function(req, res){
+  
     Comentario.removerUser(req.params.user)
       .then(dados => res.status(200).jsonp(dados))
       .catch(e => res.status(501).jsonp({error: e}))
-  else 
-    res.status(500).jsonp({error: "Não autorizado"})
-
-  
 })
 
-// Passar user a [deleted] nos comentarios
+// Passar user a [deleted] nos comentarios              -----> not used yet
 router.put('/user/:user', function(req, res){
   Comentario.deletedUser(req.params.user)
     .then(dados => res.status(200).jsonp(dados))
