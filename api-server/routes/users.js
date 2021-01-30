@@ -10,7 +10,7 @@ const Comentario = require('../controllers/comentarios');
 router.get('/', function(req, res){
   if(req.user.level === "admin")
     axios.get("http://localhost:8002/users/nivel/" + req.query.level)
-      .then(dados => res.status(200).jsonp(dados.data))
+      .then(dados => res.status(200).jsonp({nivel: req.user.level, dados:dados.data}))
       .catch(e => res.status(501).jsonp({error: e}))
   else
     res.status(500).jsonp({error: "Não autorizado"})

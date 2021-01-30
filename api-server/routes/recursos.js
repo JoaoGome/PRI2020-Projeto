@@ -58,16 +58,21 @@ router.get('/tipos', function(req, res) {
 
 
 // Consultar os seus proprios recursos
-router.get('/pessoais', function(req, res) {
+router.get('/pessoais', function(req,res,next) {
+  if (req.user.level != "consumidor") next();
+  else res.status(500).jsonp({error: "Não autorizado"})
+}, function(req, res) {
+
   var order = "titulo"
   if(req.query.sortBy) order = req.query.sortBy
-  if(req.user.level === "consumidor")
-    res.status(500).jsonp({error: "Não autorizado"})
-  else{
-    Recurso.listarRecPessoais(req.user.username, order)
-      .then(dados => res.status(200).jsonp(dados))
-      .catch(e => res.status(500).jsonp({error: e}))
-  }
+  // Listar os tipos existentes
+  Recurso.listarTipos()
+    .then(tipos =>
+      Recurso.listarRecPessoais(req.user.username, order)
+        .then(dados => res.status(200).jsonp({dados:dados, tipos:tipos, level:req.user.level}))
+        .catch(e => res.status(500).jsonp({error: e}))
+    )
+    .catch(e => res.status(500).jsonp({error: e}))
 });
 
 // Consultar recursos de um utilizador

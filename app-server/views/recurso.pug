@@ -13,6 +13,8 @@ block content
                     - var eliminar = "sim"         
                 if eliminar
                     button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="addConfirmacao()") Eliminar
+                    a(href=`/recurso/${recurso.id}/editar`)
+                        button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Editar
 
                 a(href=`/recurso/${recurso.id}/download`)
                     button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Download
@@ -119,6 +121,7 @@ block content
 
         .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-margin-top.w3-padding-large
             address 
-                a(href=`/mainPage?tab=${tab}`) Voltar
+                //-a(href=`/mainPage?tab=${tab}`) Voltar
+                span(onclick="window.history.go(-1)" style="text-decoration: underline; cursor:pointer;" ) Voltar
                 span.w3-right Produtor: 
                     a(href=`/user/${recurso.owner}`) #{recurso.owner}

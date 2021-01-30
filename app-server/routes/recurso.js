@@ -42,7 +42,7 @@ router.get('/:id', function(req, res, next) {
   
 });
 
-//consultar recurso pessoal
+//consultar recurso pessoal                           -----------------> eliminar?
 router.get('/meu/:id', function(req, res, next) {
   res.redirect(`/recurso/${req.params.id}?tab=2`)
 });

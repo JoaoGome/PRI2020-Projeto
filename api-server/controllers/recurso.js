@@ -16,6 +16,7 @@ module.exports.listar = () => {
 module.exports.listarRecPessoais = (p,o) => {
     return Recurso
         .find({owner:p})
+        .sort(o)
         .exec()
 }
 

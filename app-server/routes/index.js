@@ -23,62 +23,67 @@ router.get('/mainPage', function(req,res) {
   var myToken = req.cookies.token;
 
   //abrir na tab correta
-  var tab = 1
-  var tab31 = "block"
-  var tab32 = "none"
+  var tab = "main"
+  if(req.query.tab) tab = req.query.tab
 
   var order = "titulo"
   if(req.query.sortBy) order = req.query.sortBy
 
-  //Pedir lista de recursos
-  axios.get("http://localhost:8000/recursos?sortBy=" + order + "&token=" + myToken)
-    .then(r  =>{
-        var nivel = r.data.level
-        var dados = r.data.dados
-        var tipos = r.data.tipos
-        
-        if (nivel === "consumidor")
-          res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos, recursos:dados, sort:order})
-
-        else
-          //abrir na tab correta
-          if(req.query.tab && req.query.tab != 3) tab = req.query.tab
-      
-          //Pedir recursos pessoais
-          axios.get("http://localhost:8000/recursos/pessoais?sortBy=" + order + "&token=" + myToken)
-            .then(p => {
-
-              if (nivel === "admin"){
-
-                //abrir na tab correta
-                if(req.query.tab) tab = req.query.tab
-                if(req.query.tab2 && req.query.tab2 == 2){
-                  tab31 = "none"
-                  tab32 = "display"
-                }
-
-                //Pedir lista de produtores
-                axios.get("http://localhost:8000/users?level=produtor&token=" + myToken)
-                .then(ps => {
-                
-                  //Pedir lista de consumidores
-                  axios.get("http://localhost:8000/users?level=consumidor&token=" + myToken)
-                    .then(cs => {
-                      
-                      res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos, recursos:dados, produtores:ps.data, consumidores:cs.data, pessoais:p.data, sort:order})
-                    
-                    })
-                    .catch(e => res.render('error', {error:e}))
-                  
-                })
-                .catch(e => res.render('error', {error:e}))
-              }
-              else
-                res.render('mainPage', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, tipos:tipos, recursos:dados, pessoais:p.data, sort:order})
-            })
-            .catch(e => res.render('error', {error:e}))
-    })
-    .catch(e => res.render('error', {error:e}))
+  if(tab === "main"){
+    //Pedir lista de recursos
+    axios.get("http://localhost:8000/recursos?sortBy=" + order + "&token=" + myToken)
+      .then(r  =>{
+          var dados = r.data.dados
+          var tipos = r.data.tipos
+          var nivel = r.data.level
+          var vis = 4
+          if(nivel === "admin") vis = 1
+          
+          res.render('main_recs', {nivel:nivel, vis:vis, tipos:tipos, recursos:dados, sort:order})
+      })
+      .catch(e => res.render('error', {error:e}))
+  }
+  if(tab === "meus"){
+    //Pedir lista de recursos pessoais
+    axios.get("http://localhost:8000/recursos/pessoais?sortBy=" + order + "&token=" + myToken)
+      .then(r  =>{
+          var nivel = r.data.level
+          var dados = r.data.dados
+          var tipos = r.data.tipos
+          var vis = 2
+          res.render('main_meus', {nivel:nivel, vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:order})
+      })
+      .catch(e => res.render('error', {error:e}))
+  }
+  if(tab === "users" || tab === "prods"){
+    var tab31 = "block"
+    var tab32 = "block"
+    if(tab === "users") tab32 = "none"
+    if(tab === "prods") tab31 = "none"
+    //Pedir lista de produtores
+    axios.get("http://localhost:8000/users?level=consumidor&token=" + myToken)
+      .then(cs =>{
+        var nivel = cs.data.nivel
+        var cons = cs.data.dados
+        //Pedir lista de produtores
+        axios.get("http://localhost:8000/users?level=produtor&token=" + myToken)
+          .then(ps => res.render('main_users', {nivel:nivel, tab31:tab31,tab32:tab32, produtores:ps.data.dados, consumidores:cons, sort:order}))
+          .catch(e => res.render('error', {error:e}))    
+      })
+      .catch(e => res.render('error', {error:e}))  
+  }
+/*  if(tab === "users"){
+    //Pedir lista de produtores
+    axios.get("http://localhost:8000/users?level=consumidor&token=" + myToken)
+      .then(cs => res.render('tab3', {nivel:nivel, consumidores:cs.data, sort:order}))
+      .catch(e => res.render('error', {error:e}))    
+  }
+  if(tab === "prod"){
+    //Pedir lista de produtores
+    axios.get("http://localhost:8000/users?level=produtor&token=" + myToken)
+      .then(ps => res.render('tab3', {nivel:nivel, produtores:ps.data, sort:order}))
+      .catch(e => res.render('error', {error:e}))                    
+  }*/
 });
 
 

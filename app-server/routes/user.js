@@ -28,13 +28,19 @@ router.get('/:id', function(req,res) {
     .then(dados =>{ 
       var nivel = dados.data.nivel
       var username = dados.data.username
+      var vis = 4
+      if (username === dados.data.dados.username)
+        if(nivel === "produtor") vis = 2
+        else vis = 3
+      else if (nivel.dados.nivel === "admin") vis = 1
+      
       axios.get("http://localhost:8000/recursos/tipos?token=" + myToken)
         .then(tipos =>
           axios.get("http://localhost:8000/comentarios/user/" + req.params.id + "?token=" + myToken)
             .then(cmts =>{ 
               if (cmts) cmts = cmts.data.reverse()
               axios.get("http://localhost:8000/recursos/user/" + req.params.id + "?token=" + myToken)
-                .then(ps =>{res.render('utilizador', {tab:"tab1", tipos:tipos.data, nivel: nivel, username: username, user: dados.data.dados, comentarios: cmts, pessoais: ps.data})})
+                .then(ps =>{res.render('utilizador', {tab:"tab1", tipos:tipos.data, vis:vis, nivel:nivel, username: username, user: dados.data.dados, comentarios: cmts, recursos: ps.data})})
                 .catch(e => res.render('error', {error:e}))
             })
             .catch(e => res.render('error', {error:e}))
@@ -48,12 +54,10 @@ router.get('/:id', function(req,res) {
 //Eliminar um user
 router.get('/:id/remover', function(req,res) {
     var myToken = req.cookies.token
-    var tab = 1
-    var tab2 = 1
+    var tab = users
     if (req.query.tab) tab = req.query.tab
-    if (req.query.tab2) tab2 = req.query.tab2
     axios.delete("http://localhost:8000/users/" + req.params.id + "?token=" + myToken)
-      .then(d => res.redirect(`/mainPage?tab=${tab}&tab2=${tab2}`))
+      .then(d => res.redirect(`/mainPage?tab=${tab}`))
       .catch(e => res.render('error', {error:e}))
 })
 
@@ -61,7 +65,7 @@ router.get('/:id/remover', function(req,res) {
 router.get('/:id/upgrade', function(req,res) {
   var myToken = req.cookies.token;
   axios.put("http://localhost:8000/users/" + req.params.id + "/upgrade?token=" + myToken)
-    .then(d => res.redirect('/mainPage?tab=3'))
+    .then(d => res.redirect('/mainPage?tab=users'))
     .catch(e => res.render('error', {error:e}))
 })
 
@@ -69,7 +73,7 @@ router.get('/:id/upgrade', function(req,res) {
 router.get('/:id/downgrade', function(req,res) {
   var myToken = req.cookies.token;
   axios.put("http://localhost:8000/users/" + req.params.id + "/downgrade?token=" + myToken)
-    .then(d => res.redirect('/mainPage?tab=3&tab2=2'))
+    .then(d => res.redirect('/mainPage?tab=prods'))
     .catch(e => res.render('error', {error:e}))
 })
 
