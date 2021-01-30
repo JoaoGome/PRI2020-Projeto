@@ -39,7 +39,7 @@ router.get('/mainPage', function(req,res) {
           var vis = 4
           if(nivel === "admin") vis = 1
           
-          res.render('main_recs', {nivel:nivel, vis:vis, tipos:tipos, recursos:dados, sort:order})
+          res.render('main_recs', {nivel:nivel, vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:order})
       })
       .catch(e => res.render('error', {error:e}))
   }

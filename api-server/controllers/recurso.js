@@ -23,7 +23,7 @@ module.exports.listarRecPessoais = (p,o) => {
 // Devolve determinado Recurso da pessoa
 module.exports.listarRecPessoal = (p, id) => {
     return Recurso
-        .findOne({owner:p, id:id})
+        .findOne({owner:p, _id:id})
         .exec()
 }
 
@@ -47,7 +47,7 @@ module.exports.listarRecBy = (v,s) => {
         .aggregate([
             {$group: {
                 _id: "$owner",
-                recursos: { $push: { titulo: "$titulo", id: "$id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade"} }
+                recursos: { $push: { titulo: "$titulo", _id: "$id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade"} }
                 }},
                 { "$sort": {"_id":1} }
         ])
@@ -90,7 +90,7 @@ module.exports.consultar = (v,id) => {
 // Devolve determinado recurso
 module.exports.consultarOwner = (id) => {
     return Recurso
-        .findOne({id:id})
+        .findOne({_id:id})
         .select('owner')
         .exec()
 }
@@ -115,15 +115,15 @@ module.exports.inserir = r => {
 
 // Elimina recurso da bd
 module.exports.remover = function(id){
-    return Recurso.deleteOne({id: id})
+    return Recurso.deleteOne({_id: id})
 }
 
 // Elimina recurso pessoal da bd
 module.exports.removerPessoal = function(id, a){
-    return Recurso.deleteOne({id: id, owner: a})
+    return Recurso.deleteOne({_id: id, owner: a})
 }
 
 // Altera recurso da bd
 module.exports.alterar = function(r){
-    return Recurso.findOneAndUpdate({id: r.id}, r, {new: true})
+    return Recurso.findOneAndUpdate({_id: r.id}, r, {new: true})
 }

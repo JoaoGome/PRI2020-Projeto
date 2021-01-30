@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 
 var recursoSchema = new mongoose.Schema({
-    id: { type: String, required: true },
     tipo: { type: String, required: true },
     titulo: String,
     dataRegisto: String,
@@ -9,7 +8,8 @@ var recursoSchema = new mongoose.Schema({
     autor: String,
     owner: String,
     hashtags: [String],
-    fileName: String
+    fileName: String,
+    preview: String
   });
 
 module.exports = mongoose.model('recurso', recursoSchema)

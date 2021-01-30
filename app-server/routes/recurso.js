@@ -58,7 +58,7 @@ router.get('/:id/remover', function(req,res) {
       console.log(owner.data)
       axios.delete('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
         .then(dados =>
-          axios.delete('http://localhost:8000/comentarios/recurso/' + req.params.rec +'/owner/' + owner.data.owner + '?token=' + myToken)
+          axios.delete('http://localhost:8000/comentarios/recurso/' + req.params.id +'/owner/' + owner.data.owner + '?token=' + myToken)
             .then(d => res.redirect(`/mainPage?tab=${req.query.tab}`))
             .catch(e => res.render('error', {error:e})))
         .catch(e => res.render('error', {error:e}))
@@ -81,7 +81,7 @@ router.get('/:id/editar', function(req,res) {
 
 
 // Alterar um recurso
-router.post('/:id', function(req,res){
+router.post('/editar/:id', function(req,res){
   var myToken = req.cookies.token;
   newString = req.body.hashtags.replace(/\s+/g,' ').trim();
   req.body.hashtags = newString.split(" ");
@@ -138,6 +138,7 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
   informationExiste = 1
   goodManifesto = 1
   goodInformation = 1
+  preview = "nao"
   listaFicheiros = []
   obj = {}
   var ob;
@@ -151,6 +152,11 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
     
     for (const entry of Object.values(zip.entries())) {
       listaFicheiros.push(entry.name)
+      if (entry.name != "manifesto.txt" && entry.name != "information.json")
+      {
+        broken = entry.name.split('.')
+        if (broken[1] == "pdf" || broken[1] == "doc" || broken[1] == "png" || broken[1] == "jpg" || broken[1] == "jpeg") preview = "sim"
+      }
     }
     if (existe("manifesto.txt",listaFicheiros) && existe("information.json",listaFicheiros))
     {
@@ -193,7 +199,7 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
 
       req.body.titulo = obj.titulo; 
       req.body.autor = obj.autor; 
-      req.body.owner = obj.username;
+      req.body.preview = preview
 
       req.body.dataRegisto = new Date().toISOString().slice(0, 10);
       zip.close();
@@ -223,8 +229,6 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
         res.end()
     }
     else{
-
-      req.body.id = req.file.originalname
       req.body.fileName = req.file.originalname
       req.body.tipo = req.body.tipo.toLowerCase();
       newString = req.body.hashtags.replace(/\s+/g,' ').trim();
@@ -232,7 +236,7 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
       console.log(req.body)
       axios.post('http://localhost:8000/recurso?token=' + req.cookies.token,req.body)
         .then(dados => {
-          res.redirect('/mainPage?tab=2')
+          res.redirect('/mainPage?tab=meus')
         })
         .catch(e => res.render('error', {error: e}))
     }

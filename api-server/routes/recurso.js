@@ -31,11 +31,9 @@ router.get('/pessoal/:id', function(req,res,next) {
 });
 
 
-
-
-
 // Inserir um recurso
 router.post('/', function(req, res){
+  req.body.owner = req.user.username;
   Recurso.inserir(req.body)
     .then(dados => res.status(201).jsonp({dados: dados}))
     .catch(e => res.status(500).jsonp({error: e}))

@@ -60,7 +60,7 @@ if recursos.length
                     tr(id="" class=`recurso ${r.tipo} ${r.visibilidade}` style="display:")
                         td
                         td.w3-padding-large
-                            a(href=`/recurso/${r.id}`) #{r.id} 
+                            a(href=`/recurso/${r._id}`) #{r._id} 
                         td.w3-padding-large= r.titulo 
                         td.w3-padding-large.w3-center #{r.tipo}
                         td.w3-padding-large.w3-center #{r.dataRegisto}
@@ -72,10 +72,10 @@ if recursos.length
                                 td.w3-padding-large.w3-center Público
                         
                             td
-                                button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('recurso', '/recurso/${r.id}/remover?tab=1');`) 
+                                button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('recurso', '/recurso/${r._id}/remover?tab=${tab}');`) 
                                     u Eliminar
                                 if vis == 2
-                                    a(href=`/recurso/${r.id}/editar`)
+                                    a(href=`/recurso/${r._id}/editar`)
                                         button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-opacity.w3-right.w3-margin-right 
                                             u Editar
 
@@ -100,7 +100,7 @@ if recursos.length
 
                 tr(id="" class=`recurso ${r.tipo} ${r.owner} ${r.visibilidade}` style="display:")
                     td.w3-padding-large
-                        a(href=`/recurso/${r.id}`) #{r.id} 
+                        a(href=`/recurso/${r._id}`) #{r._id} 
                     td.w3-padding-large= r.titulo 
                     if vis != 2
                         if vis != 3
@@ -116,7 +116,7 @@ if recursos.length
                             td.w3-padding-large.w3-center Público
                     
                         td
-                            button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('recurso', '/recurso/${r.id}/remover?tab=1');`) 
+                            button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('recurso', '/recurso/${r._id}/remover?tab=${tab}');`) 
                                 u Eliminar
 else
     p.w3-margin-left Não existem recursos.
