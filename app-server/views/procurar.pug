@@ -11,76 +11,21 @@ block content
             h3.w3-margin-left Resultados: #{procura}
         .w3-bar.w3-theme-d4
             span
-                if tab === "tab1"
-                    button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'titulo', 'nao');") Encontrado no Título
-                    button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'hashtag', 'nao');") Encontrado nas Hashtags
+                if tab === "titulo"
+                    button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d3(onclick="window.history.go(-1)") Encontrado no Título
+                    a(href=`/recursos/procurar?hashtag=${ht}`)    
+                        button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4 Encontrado nas Hashtags
+                    - var ref = "/recursos/procurar?titulo=" + procura + "&"
+                    
                 else
-                    button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'titulo', 'nao');") Encontrado no Título
-                    button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d3 tablink", onclick="openDiv(event, 'hashtag', 'nao');") Encontrado nas Hashtags
+                    button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4(onclick="window.history.go(-1)") Encontrado no Título
+                    button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d3 Encontrado nas Hashtags
+                    - var ref = "/recursos/procurar?hashtag=" + procura + "&"
 
-        .w3-bar.w3-theme-d3.w3-padding-small
-            h6.w3-margin-left Género: 
-                each t in tipos
-                    input.w3-check.w3-opacity.w3-margin-left(style="height:20px" type="checkbox" value="checked" class="check" onclick=`showGeneros(event, '${t}')` checked)
-                    label  #{t}
-                button.w3-opacity.w3-round.w3-button.w3-right.w3-padding-small.w3-margin-right(id="limpar" onclick="limparGeneros(event)") Limpar
-            form(action='/recursos/procurar' method='POST')
-                h6.w3-margin-left Procurar: 
-                    input.w3-opacity.w3-round.w3-margin-left(name="search")
-        
-        - var tab1 = "block"   
-        - var tab2 = "none"   
-        if tab === "tab2"
-            - var tab1 = "none"
-            - var tab2 = "block"
 
-        div.w3-display-container(class="lista", id="titulo", style=`display:${tab1}`)
 
-            if recTitulo.length
-                table.w3-table.w3-bordered
-                    tr.w3-theme-d2.w3-mobile
-                        th ID
-                        th(style="width:600px;") Título
-                        th(style="width:300px;") Produtor
-                        th.w3-center Tipo
-                        th.w3-center Data Registo
-                        
-                        each r in recTitulo
 
-                            tr.w3-mobile(class=`recurso ${r.tipo} ${r.owner} ${r.visibilidade}` style="display:")
-                                td.w3-padding-large
-                                    a(href=`/recurso/${r.id}`) #{r.id} 
-                                td.w3-padding-large= r.titulo 
-                                td.w3-padding-large
-                                    a(href=`/user/${r.owner}`) #{r.owner}
-                                td.w3-padding-large.w3-center #{r.tipo}
-                                td.w3-padding-large.w3-center #{r.dataRegisto}          
-            else
-                p.w3-margin-left Não existem recursos com esse título.
-
-        div.w3-display-container(class="lista", id="hashtag", style=`display:${tab2}`)
-
-            if recHashtag.length
-                table.w3-table.w3-bordered
-                    tr.w3-theme-d2.w3-mobile
-                        th ID
-                        th(style="width:600px;") Título
-                        th(style="width:300px;") Produtor
-                        th.w3-center Tipo
-                        th.w3-center Data Registo
-                        
-                        each r in recHashtag
-
-                            tr.w3-mobile(class=`recurso ${r.tipo} ${r.owner} ${r.visibilidade}` style="display:")
-                                td.w3-padding-large
-                                    a(href=`/recurso/${r.id}`) #{r.id} 
-                                td.w3-padding-large= r.titulo 
-                                td.w3-padding-large
-                                    a(href=`/user/${r.owner}`) #{r.owner}
-                                td.w3-padding-large.w3-center #{r.tipo}
-                                td.w3-padding-large.w3-center #{r.dataRegisto}
-            else
-                p.w3-margin-left Não existem recursos com essa hashtag.
+        include ./listaRecursos.pug
 
 
         .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-padding-large

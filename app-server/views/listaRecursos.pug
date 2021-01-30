@@ -1,6 +1,33 @@
         
 //- Listar recursos
 if recursos.length
+    .w3-bar.w3-theme-d3
+        h6.w3-margin-left Género: 
+            each t in tipos
+                input.w3-check.w3-opacity.w3-margin-left(style="height:20px" type="checkbox" value="checked" class="check" onclick=`showGeneros(event, '${t}')` checked)
+                label  #{t}
+            button.w3-opacity.w3-round.w3-button.w3-right.w3-padding-small(id="limpar" onclick="limparGeneros(event)") Limpar
+        
+
+        form(action='/recursos/procurar' method='POST')
+            h6.w3-margin-left Procurar: 
+                input.w3-opacity.w3-round.w3-margin-left(name="search")
+
+        h6
+            span.w3-dropdown-hover.w3-margin-left.w3-margin-bottom.w3-theme-d3 Ordenar por:
+                span.w3-text-white.w3-round.w3-border-0.w3-hover-opacity.w3-theme-d3.w3-margin-left= sort
+                span.w3-dropdown-content.w3-bar-block
+                    if sort != "id"
+                        a(href=`${ref}sortBy=id`).w3-bar-item.w3-button.w3-theme-d3.w3-hover-opacity ID
+                    if sort != "titulo"
+                        a(href=`${ref}sortBy=titulo`).w3-bar-item.w3-button.w3-theme-d3.w3-hover-opacity Título
+                    if vis != 2
+                        if vis != 3
+                            if sort != "owner"
+                                a(href=`${ref}sortBy=owner`).w3-bar-item.w3-button.w3-theme-d3.w3-hover-opacity Produtor
+                    if sort != "dataRegisto"
+                        a(href=`${ref}sortBy=dataRegisto`).w3-bar-item.w3-button.w3-theme-d3.w3-hover-opacity Data Registo
+                            
     table.w3-table.w3-bordered
 
         //- Ordenado por produtor
@@ -20,7 +47,7 @@ if recursos.length
                     th.w3-center 
             each o in recursos
                 tr
-                    td
+                    th.w3-text-blue-grey
                         a(href=`/user/${o._id}`)= o._id
                     td
                     td

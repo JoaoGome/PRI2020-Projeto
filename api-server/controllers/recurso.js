@@ -48,7 +48,8 @@ module.exports.listarRecBy = (v,s) => {
             {$group: {
                 _id: "$owner",
                 recursos: { $push: { titulo: "$titulo", id: "$id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade"} }
-                }}
+                }},
+                { "$sort": {"_id":1} }
         ])
 }
 // Devolve a lista dos recursos de determinado tipo -----------------> nao usado

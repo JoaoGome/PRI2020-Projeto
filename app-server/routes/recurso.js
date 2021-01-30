@@ -42,10 +42,7 @@ router.get('/:id', function(req, res, next) {
   
 });
 
-//consultar recurso pessoal                           -----------------> eliminar?
-router.get('/meu/:id', function(req, res, next) {
-  res.redirect(`/recurso/${req.params.id}?tab=2`)
-});
+
 
 
 //--------------------------------------- Recurso BD--------------------------------------------
@@ -84,13 +81,13 @@ router.get('/:id/editar', function(req,res) {
 
 
 // Alterar um recurso
-router.post('/', function(req,res){
+router.post('/:id', function(req,res){
   var myToken = req.cookies.token;
   newString = req.body.hashtags.replace(/\s+/g,' ').trim();
   req.body.hashtags = newString.split(" ");
   req.body.tipo = req.body.tipo.toLowerCase();
   axios.put('http://localhost:8000/recurso?token=' + myToken, req.body)
-    .then(dados => res.redirect('/mainPage?tab=2'))
+    .then(dados => res.redirect(`/recurso/${req.params.id}`))
     .catch(e => res.render('error', {error:e})) 
 })
 

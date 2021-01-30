@@ -92,29 +92,54 @@ router.get('/mainPage', function(req,res) {
 // listar recursos determinada hashtag
 router.get('/recursos', function(req,res) {
   var myToken = req.cookies.token;
-  if(req.query.hashtag)
-    
-    axios.get('http://localhost:8000/recursos?hashtag=' + req.query.hashtag + '&token=' + myToken)
-      .then(dados => res.render('hashtag', {tipos:dados.data.tipos, hashtag: req.query.hashtag, recursos: dados.data.dados}))
+  if(req.query.hashtag){
+    var order = "titulo"
+    if(req.query.sortBy) order = req.query.sortBy
+    axios.get('http://localhost:8000/recursos?hashtag=' + req.query.hashtag + '&sortBy=' + order + '&token=' + myToken)
+      .then(dados => res.render('hashtag', {tipos:dados.data.tipos, hashtag: req.query.hashtag, recursos: dados.data.dados, sort:order}))
       .catch(e => res.render('error', {error:e}))
-
+  }
   else 
     res.redirect('/mainPage')
 })
 
+// procurar recursos com determinado texto
+router.get('/recursos/procurar', function(req,res) {
+  var myToken = req.cookies.token;
+  var order = "titulo"
+  if(req.query.sortBy) order = req.query.sortBy
+  if(req.query.titulo){
+    var ht = req.query.titulo.replace(/\s*/g,'');
+    axios.get("http://localhost:8000/recursos?procurar=" + req.query.titulo + '&sortBy=' + order + "&token=" + myToken)
+      .then(recTitulo => res.render('procurar', {tab:"titulo", sort:order, procura:req.query.titulo, ht:ht, tipos:recTitulo.data.tipos, recursos:recTitulo.data.dados}))
+      .catch(e => res.render('error', {error:e}))
+  }
+  if(req.query.hashtag){
+    var ht = req.query.hashtag
+    axios.get('http://localhost:8000/recursos?hashtag=' + ht + '&sortBy=' + order + '&token=' + myToken)
+      .then(recHashtag => res.render('procurar', {tab:"hashtag", sort:order, procura:ht, tipos:recHashtag.data.tipos, recursos:recHashtag.data.dados}))
+      .catch(e => res.render('error', {error:e}))
+  }
+})
 
 // procurar recursos com determinado texto
 router.post('/recursos/procurar', function(req,res) {
+  res.redirect(`/recursos/procurar?titulo=${req.body.search}`)
+})
+
+
+// procurar recursos com determinado texto
+/*router.post('/recursos/procurar', function(req,res) {
   var myToken = req.cookies.token;
   axios.get("http://localhost:8000/recursos?procurar=" + req.body.search + "&token=" + myToken)
     .then(recTitulo =>{
-      var ht = req.body.search.replace(/\s*/g,'');
+      var ht = req.body.search.replace(/\s*//*g,'');
       axios.get('http://localhost:8000/recursos?hashtag=' + ht + '&token=' + myToken)
         .then(recHashtag => res.render('procurar', {tab:"tab1", procura:req.body.search, tipos:recTitulo.data.tipos, recHashtag:recHashtag.data.dados, recTitulo:recTitulo.data.dados}))
         .catch(e => res.render('error', {error:e}))
     })
     .catch(e => res.render('error', {error:e}))
-})
+})*/
 
 // Eliminar um comentario 
 router.get('/comentario/remover/:c', function(req,res) {
