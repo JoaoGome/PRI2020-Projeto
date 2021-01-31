@@ -8,7 +8,7 @@ const Comentario = require('../controllers/comentarios');
 // Comment Section
 
 
-// Consultar os comentários de um recurso
+// Consultar os comentários de um recurso                   -----------------------> eliminar?
 router.get('/recurso/:rec', function(req, res) {
   Comentario.listarByRecurso(req.params.rec)
     .then(dados => res.status(200).jsonp({dados:dados, nivel:req.user.level, user:req.user.username}))

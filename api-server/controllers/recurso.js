@@ -47,7 +47,7 @@ module.exports.listarRecBy = (v,s) => {
         .aggregate([
             {$group: {
                 _id: "$owner",
-                recursos: { $push: { titulo: "$titulo", _id: "$id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor"} }
+                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor"} }
                 }},
                 { "$sort": {"_id":1} }
         ])
@@ -83,7 +83,7 @@ module.exports.listarAutores = () => {
 // Devolve determinado recurso
 module.exports.consultar = (v,id) => {
     return Recurso
-        .findOne({visibilidade: {$gte: v}, id: id})
+        .findOne({visibilidade: {$gte: v}, _id: id})
         .exec()
 }
 

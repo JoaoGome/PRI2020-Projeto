@@ -60,7 +60,7 @@ if recursos.length
                     tr(id="" class=`recurso ${r.tipo} ${r.visibilidade}` style="display:")
                         td
                         td.w3-padding-large
-                            a(href=`/recurso/${r._id}`) #{r.titulo} 
+                            a(href=`/recurso/${r._id}?vis=${r.visibilidade}`) #{r.titulo} 
                         td.w3-padding-large #{r.autor}
                         td.w3-padding-large.w3-center #{r.tipo}
                         td.w3-padding-large.w3-center #{r.dataRegisto}
@@ -100,7 +100,7 @@ if recursos.length
 
                 tr(id="" class=`recurso ${r.tipo} ${r.owner} ${r.visibilidade}` style="display:")
                     td.w3-padding-large
-                        a(href=`/recurso/${r._id}`) #{r.titulo} 
+                        a(href=`/recurso/${r._id}?vis=${r.visibilidade}`) #{r.titulo} 
                     td.w3-padding-large #{r.autor}
                     if vis != 2
                         if vis != 3

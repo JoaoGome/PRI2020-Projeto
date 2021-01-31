@@ -1,14 +1,19 @@
 var express = require('express');
 var router = express.Router();
 var Recurso = require('../controllers/recurso')
+var Comentario = require('../controllers/comentarios')
 
 
 
 // Consultar um recurso
 router.get('/:id', function(req, res) {
-    Recurso.consultar(req.user.vis, req.params.id)
-      .then(dados => res.status(200).jsonp(dados))
-      .catch(e =>  res.status(500).jsonp({error: e}))
+  Recurso.consultar(req.user.vis, req.params.id)
+    .then(dados =>{
+        Comentario.listarByRecurso(req.params.id)
+          .then(cmts => res.status(200).jsonp({dados:dados, level:req.user.level, user:req.user.username, cmts:cmts}))
+          .catch(e => res.status(501).jsonp({error: e}))
+    })
+    .catch(e => res.status(502).jsonp({error: e}))
 });
 
 // Consultar o recurso owner de um recurso          ---------------->eliminar mas not yet
@@ -26,7 +31,13 @@ router.get('/pessoal/:id', function(req,res,next) {
 }, function(req, res) {
 
   Recurso.listarRecPessoal(req.user.username, req.params.id)
-    .then(dados => res.status(200).jsonp(dados))
+    .then(dados =>{
+      if(dados.data == null) res.status(500).jsonp({error: "Não existe ou não autorizado"})
+      else 
+        Comentario.listarByRecurso(req.params.rec)
+          .then(cmts => res.status(200).jsonp({dados:dados, level:req.user.level, user:req.user.username, cmts:cmts}))
+          .catch(e =>  res.status(500).jsonp({error: e}))
+    })
     .catch(e => res.status(500).jsonp({error: e}))
 });
 

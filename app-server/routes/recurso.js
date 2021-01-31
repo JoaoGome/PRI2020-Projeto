@@ -17,29 +17,30 @@ router.get('/upload', function(req,res) {
 // consultar recurso
 router.get('/:id', function(req, res, next) {
   var myToken = req.cookies.token;
-  var tab = 1
-  if (req.query.tab) tab = 2
-  axios.get('http://localhost:8000/comentarios/recurso/' + req.params.id + '?token=' + myToken)
-    .then(c =>{
-      var nivel = c.data.nivel
-      var user = c.data.user
-      var cmt = c.data.dados
-      axios.get('http://localhost:8000/recurso/pessoal/' + req.params.id + '?token=' + myToken)
-        .then(dados =>{ 
-          if(dados.data == null)
-            axios.get('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
-              .then(d =>res.render('recurso', {tab:tab, nivel:nivel, user:user, recurso: d.data, comentarios: cmt.reverse()}))
-              .catch(e => res.render('error', {error:e}))       
-          else
-            res.render('recurso', {tab:tab, eliminar:"sim", nivel:nivel, user:user, recurso: dados.data, comentarios: cmt.reverse()})})
-        .catch(e => 
-          axios.get('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
-              .then(d => res.render('recurso', {tab:tab, nivel:nivel, user:user, recurso: d.data, comentarios: cmt.reverse()}))
-              .catch(e => res.render('error', {error:e}))
-      )}
-    )
-    .catch(e => res.render('error', {error:e}))
-  
+  var vis = 2
+  if(req.query.vis) vis = req.query.vis
+  if(vis == 1)
+    axios.get('http://localhost:8000/recurso/pessoal/' + req.params.id + '?token=' + myToken)
+      .then(dados =>{
+        var rec = dados.data.dados
+        var nivel = dados.data.level
+        var cmt = dados.data.cmts.reverse()
+        var user = dados.data.user
+        if(dados.data == null) res.render('error', {error:"Não autorizado"})
+        else res.render('recurso', {nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+      })
+      .catch(e => res.render('error', {error:e})) 
+      
+  if(vis == 2)
+    axios.get('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
+      .then(dados =>{
+        var rec = dados.data.dados
+        var nivel = dados.data.level
+        var cmt = dados.data.cmts.reverse()
+        var user = dados.data.user
+        res.render('recurso', {nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+      })
+      .catch(e => res.render('error', {error:e}))
 });
 
 
