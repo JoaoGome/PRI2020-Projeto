@@ -215,12 +215,29 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
         if (!informationExiste) console.log("Verifique que o zip tem o ficheiro information.json.")
         if (!goodManifesto) aviso.push("Verifique se o conteúdo do manifesto.txt corresponde a todos os ficheiros do zip.")
         if (!goodInformation) aviso.push("Verifique que o ficheiro information.json contém título, autor e dataCriação")
+        
+        var parentDir = path.normalize(__dirname+"/..");
+        let quarantinePath = parentDir + '/' + req.file.path
+        try {
+          fs.unlinkSync(quarantinePath) //file removed
+        } catch(err) {
+          console.error(err)
+        }
+
         res.render('upload', {tipo:req.body.tipo, hashtags:req.body.hashtags, aviso:aviso, vis:req.body.visibilidade, })
       } // por aqui codigo quando zip for invalido
 
     });
   }
   else{
+    var parentDir = path.normalize(__dirname+"/..");
+    let quarantinePath = parentDir + '/' + req.file.path
+    try {
+      fs.unlinkSync(quarantinePath) //file removed
+    } catch(err) {
+      console.error(err)
+    }
+
     var aviso = ["O ficheiro tem de ser um zip."]
     res.render('upload', {tipo:req.body.tipo, hashtags:req.body.hashtags, aviso:aviso, vis:req.body.visibilidade, })
   }
