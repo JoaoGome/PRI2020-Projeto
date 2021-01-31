@@ -75,6 +75,15 @@ router.post('/registar', function(req,res) {
 })
 
 
+// Facebook login
+router.get('/auth/facebook', passport.authenticate('facebook'));
+
+router.get('/auth/facebook/callback', passport.authenticate('facebook', {
+    successRedirect: 'http://localhost:8001/mainPage',
+    failureRedirect: 'http://localhost:8001/login'
+  })
+);
+
 
 module.exports = router;
 
