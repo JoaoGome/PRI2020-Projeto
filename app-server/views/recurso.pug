@@ -8,7 +8,8 @@ block content
                 h1.w3-opacity Gestor de Recursos
 
         .w3-bar.w3-theme-d4
-            h3.w3-margin-left Recurso #{recurso.Título}       
+            h3.w3-margin-left Recurso: 
+                span.margin-left.w3-opacity #{recurso.titulo}       
                 if nivel == "admin"
                     - var eliminar = "sim"         
                 if eliminar
@@ -22,10 +23,6 @@ block content
                     
 
         .w3-container
-            h5
-                b.w3-text-blue-grey Título:
-                span  #{recurso.titulo}
-
 
             h5
                 b.w3-text-blue-grey Tipo:

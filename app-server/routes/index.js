@@ -128,18 +128,7 @@ router.post('/recursos/procurar', function(req,res) {
 })
 
 
-// procurar recursos com determinado texto
-/*router.post('/recursos/procurar', function(req,res) {
-  var myToken = req.cookies.token;
-  axios.get("http://localhost:8000/recursos?procurar=" + req.body.search + "&token=" + myToken)
-    .then(recTitulo =>{
-      var ht = req.body.search.replace(/\s*//*g,'');
-      axios.get('http://localhost:8000/recursos?hashtag=' + ht + '&token=' + myToken)
-        .then(recHashtag => res.render('procurar', {tab:"tab1", procura:req.body.search, tipos:recTitulo.data.tipos, recHashtag:recHashtag.data.dados, recTitulo:recTitulo.data.dados}))
-        .catch(e => res.render('error', {error:e}))
-    })
-    .catch(e => res.render('error', {error:e}))
-})*/
+
 
 // Eliminar um comentario 
 router.get('/comentario/remover/:c', function(req,res) {

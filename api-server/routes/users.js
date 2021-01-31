@@ -25,7 +25,13 @@ router.get('/user', function(req, res){
 // Consultar user
 router.get('/:id', function(req, res){
   axios.get("http://localhost:8002/users/" + req.params.id)
-    .then(dados => res.status(200).jsonp({nivel: req.user.level, username: req.user.username, dados: dados.data}))
+    .then(dados =>{
+      Comentario.listarByUser(req.params.user)
+        .then(cmts => 
+          res.status(200).jsonp({nivel:req.user.level, username:req.user.username, dados:dados.data, cmts:cmts}))
+        .catch(e => res.status(501).jsonp({error: e}))
+      
+    })
     .catch(e => res.status(501).jsonp({error: e}))
 })
 

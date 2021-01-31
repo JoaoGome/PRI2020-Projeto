@@ -28,9 +28,10 @@ module.exports.listarRecPessoal = (p, id) => {
 }
 
 // Devolve Recursos de uma pessoa
-module.exports.listarRecUser = (v,u) => {
+module.exports.listarRecUser = (v,u,o) => {
     return Recurso
         .find({visibilidade: {$gte: v}, owner:u})
+        .sort(o)
         .exec()
 }
 

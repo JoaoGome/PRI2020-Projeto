@@ -38,7 +38,10 @@ router.get('/pessoal/:id', function(req,res,next) {
           .then(cmts => res.status(200).jsonp({dados:dados, level:req.user.level, user:req.user.username, cmts:cmts}))
           .catch(e =>  res.status(500).jsonp({error: e}))
     })
-    .catch(e => res.status(500).jsonp({error: e}))
+    .catch(e =>{
+      if (req.user.level != "admin") res.status(500).jsonp({error: e})
+      else res.redirect(`/recurso/${req.params.id}?token=${req.query.token}`)
+    })
 });
 
 

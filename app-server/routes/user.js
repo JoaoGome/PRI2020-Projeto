@@ -22,7 +22,48 @@ router.get('/meuPerfil', function(req,res) {
 
 
 //Consultar um user
-router.get('/:id', function(req,res) {
+router.get('/:id', function(req, res){
+  var myToken = req.cookies.token;
+  axios.get("http://localhost:8000/users/" + req.params.id + "?token=" + myToken)
+    .then(dados =>{
+      var nivel = dados.data.nivel
+      var username = dados.data.username
+      var user = dados.data.dados
+      var cmts = dados.data.cmts.reverse()
+      var vis = 4
+      if (username === dados.data.dados.username) vis = 2
+      else if (nivel === "admin") vis = 1
+      
+      res.render('utilizador', {vis:vis, user:user, comentarios:cmts})
+    })
+    .catch(e => res.render('error', {error:e}))
+
+})
+
+//Consultar os recursos de um user
+router.get('/:id/recursos', function(req, res){
+  var myToken = req.cookies.token;
+  var order = "titulo"
+  if(req.query.sortBy) order = req.query.sortBy
+  axios.get("http://localhost:8000/recursos/user/" + req.params.id + "?sortBy=" + order + "&token=" + myToken)
+    .then(dados =>{
+      var tipos = dados.data.tipos
+      var recs = dados.data.dados
+      var nivel = dados.data.level
+      var user = dados.data
+      var vis = 4
+      if (req.params.id === user.username)
+        if(nivel === "produtor") vis = 2
+        else vis = 3
+      else if (nivel === "admin") vis = 1
+      
+      res.render('utilizador', {tipos:tipos, vis:vis, user:user, recursos:recs, sort:order})
+    })
+    .catch(e => res.render('error', {error:e}))
+})
+
+
+/*router.get('/:id', function(req,res) {
   var myToken = req.cookies.token;
   axios.get("http://localhost:8000/users/" + req.params.id + "?token=" + myToken)
     .then(dados =>{ 
@@ -51,7 +92,7 @@ router.get('/:id', function(req,res) {
         ).catch(e => res.render('error', {error:e}))
     })
     .catch(e => res.render('error', {error:e}))
-})
+})*/
 
 
 

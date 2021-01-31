@@ -49,13 +49,6 @@ router.get('/', function(req, res) {
     .catch(e => res.status(500).jsonp({error: e}))
 });
 
-// Listar tipos                                                     --------------------------------------> not used
-router.get('/tipos', function(req, res) {
-  Recurso.listarTipos()
-    .then(dados => res.status(200).jsonp(dados))
-    .catch(e => res.status(500).jsonp({error: e}))
-});
-
 
 // Consultar os seus proprios recursos
 router.get('/pessoais', function(req,res,next) {
@@ -68,6 +61,7 @@ router.get('/pessoais', function(req,res,next) {
   // Listar os tipos existentes
   Recurso.listarTipos()
     .then(tipos =>
+      // Listar os recursos pessoais
       Recurso.listarRecPessoais(req.user.username, order)
         .then(dados => res.status(200).jsonp({dados:dados, tipos:tipos, level:req.user.level}))
         .catch(e => res.status(500).jsonp({error: e}))
@@ -79,9 +73,15 @@ router.get('/pessoais', function(req,res,next) {
 router.get('/user/:user', function(req, res) {
   var vis = req.user.vis
   if(req.params.user === req.user.username) vis = 1
-  Recurso.listarRecUser(vis, req.params.user)
-    .then(dados => res.status(200).jsonp(dados))
-    .catch(e => res.status(500).jsonp({error: e}))
+  var order = "titulo"
+  if(req.query.sortBy) order = req.query.sortBy
+  // Listar os tipos existentes
+  Recurso.listarTipos()
+    .then(tipos =>
+      // Listar os recursos de um utilizador
+      Recurso.listarRecUser(vis, req.params.user, order)
+        .then(dados => res.status(200).jsonp({dados:dados, nivel:req.user.level, tipos:tipos, username:req.user.username}))
+        .catch(e => res.status(500).jsonp({error: e})))
 });
 
 module.exports = router;

@@ -31,7 +31,7 @@ router.get('/:id', function(req, res, next) {
       })
       .catch(e => res.render('error', {error:e})) 
       
-  if(vis == 2)
+  if(vis == 2 )
     axios.get('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
       .then(dados =>{
         var rec = dados.data.dados

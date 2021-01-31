@@ -50,7 +50,7 @@ router.delete('/recurso/:rec/owner/:owner', function(req,res,next) {
 })
 
 
-// Consultar user comentarios
+// Consultar user comentarios                                         -------------> eliminar?
 router.get('/user/:user', function(req, res){
   Comentario.listarByUser(req.params.user)
     .then(dados => res.status(200).jsonp(dados))
