@@ -19,7 +19,8 @@ block content
 
                 a(href=`/recurso/${recurso._id}/download`)
                     button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Download
-                button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Preview
+                if recurso.preview === "sim"
+                    button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Preview
                     
 
         .w3-container

@@ -1,0 +1,35 @@
+extends layout
+
+block content
+    
+    .w3-light-grey
+        header.w3-container.w3-theme-d4.w3-text-white
+            h1
+                a.w3-opacity(href="/mainPage" style="text-decoration: none") Gestor de Recursos
+        
+        .w3-bar.w3-theme-d4
+            h3.w3-margin-left Resultados: #{procura}
+        .w3-bar.w3-theme-d4
+            span
+                if tab === "titulo" 
+                    button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d3 Encontrado no Título
+                    a(href=`/recursos/procurar?hashtag=${ht}`)    
+                        button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4 Encontrado nas Hashtags
+                    - var ref = "/recursos/procurar?titulo=" + procura + "&"
+                    - var retroceder = -1
+                    
+                else
+                    button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4(onclick="window.history.go(-1)") Encontrado no Título
+                    button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d3 Encontrado nas Hashtags
+                    - var ref = "/recursos/procurar?hashtag=" + procura + "&"
+                    - var retroceder = -2
+
+
+
+
+        include ./listaRecursos.pug
+
+
+        .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-padding-large
+            span(onclick=`window.history.go(${retroceder})` style="text-decoration: underline; cursor:pointer;" ) Voltar
+
