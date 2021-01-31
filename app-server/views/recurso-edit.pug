@@ -8,7 +8,7 @@ block content
                 h1.w3-opacity Gestor de Recursos
         .w3-bar.w3-theme-d4
             h3.w3-margin-left Editar Recurso
-        form.w3-container.w3-padding-large(action=`/recurso/editar/${recurso.id}` method='POST')
+        form.w3-container.w3-padding-large(action=`/recurso/editar/${recurso._id}` method='POST')
 
             h5.w3-cell-row.w3-padding
                 label.w3-cell(style="width:100px") Tipo:
@@ -35,7 +35,7 @@ block content
                 label.w3-cell(style="width:100px") Ficheiro ZIP:
                 span.w3-margin-left #{recurso.fileName} oi
 
-            input.w3-input(type="hidden" name="id" value=`${recurso.id}`)
+            input.w3-input(type="hidden" name="id" value=`${recurso._id}`)
             input.w3-input(type="hidden" name="dataRegisto" value=`${recurso.dataRegisto}`)
             input.w3-input(type="hidden" name="autor" value=`${recurso.autor}`)
             input.w3-input(type="hidden" name="fileName" value=`${recurso.fileName}`)
@@ -46,4 +46,4 @@ block content
         
         .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-margin-top.w3-padding-large
             address 
-                a(href=`/recurso/${recurso.id}`) Voltar
+                a(href=`/recurso/${recurso._id}`) Voltar

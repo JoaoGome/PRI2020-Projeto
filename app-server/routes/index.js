@@ -67,7 +67,7 @@ router.get('/mainPage', function(req,res) {
         var cons = cs.data.dados
         //Pedir lista de produtores
         axios.get("http://localhost:8000/users?level=produtor&token=" + myToken)
-          .then(ps => res.render('main_users', {nivel:nivel, tab31:tab31,tab32:tab32, produtores:ps.data.dados, consumidores:cons, sort:order}))
+          .then(ps => res.render('main_users', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, produtores:ps.data.dados, consumidores:cons, sort:order}))
           .catch(e => res.render('error', {error:e}))    
       })
       .catch(e => res.render('error', {error:e}))  

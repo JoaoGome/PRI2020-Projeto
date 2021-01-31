@@ -47,7 +47,7 @@ module.exports.listarRecBy = (v,s) => {
         .aggregate([
             {$group: {
                 _id: "$owner",
-                recursos: { $push: { titulo: "$titulo", _id: "$id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade"} }
+                recursos: { $push: { titulo: "$titulo", _id: "$id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor"} }
                 }},
                 { "$sort": {"_id":1} }
         ])

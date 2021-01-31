@@ -17,10 +17,10 @@ if recursos.length
             span.w3-dropdown-hover.w3-margin-left.w3-margin-bottom.w3-theme-d3 Ordenar por:
                 span.w3-text-white.w3-round.w3-border-0.w3-hover-opacity.w3-theme-d3.w3-margin-left= sort
                 span.w3-dropdown-content.w3-bar-block
-                    if sort != "id"
-                        a(href=`${ref}sortBy=id`).w3-bar-item.w3-button.w3-theme-d3.w3-hover-opacity ID
                     if sort != "titulo"
                         a(href=`${ref}sortBy=titulo`).w3-bar-item.w3-button.w3-theme-d3.w3-hover-opacity Título
+                    if sort != "autor"
+                        a(href=`${ref}sortBy=autor`).w3-bar-item.w3-button.w3-theme-d3.w3-hover-opacity Autor
                     if vis != 2
                         if vis != 3
                             if sort != "owner"
@@ -33,9 +33,9 @@ if recursos.length
         //- Ordenado por produtor
         if sort === "owner"
             tr.w3-theme-d2
-                th(style="width:300px;") Produtor
-                th ID
+                th Produtor
                 th(style="width:600px;") Título
+                th(style="width:300px;") Autor
                 th.w3-center Tipo
                 th.w3-center Data Registo
                 if vis != 4
@@ -60,8 +60,8 @@ if recursos.length
                     tr(id="" class=`recurso ${r.tipo} ${r.visibilidade}` style="display:")
                         td
                         td.w3-padding-large
-                            a(href=`/recurso/${r._id}`) #{r._id} 
-                        td.w3-padding-large= r.titulo 
+                            a(href=`/recurso/${r._id}`) #{r.titulo} 
+                        td.w3-padding-large #{r.autor}
                         td.w3-padding-large.w3-center #{r.tipo}
                         td.w3-padding-large.w3-center #{r.dataRegisto}
 
@@ -82,10 +82,10 @@ if recursos.length
         //- Ordenado normal
         else
             tr.w3-theme-d2
-                th ID
                 th(style="width:600px;") Título
+                th(style="width:300px;") Autor
                 if vis != 2
-                    th(style="width:300px;") Produtor
+                    th Produtor
                 th.w3-center Tipo
                 th.w3-center Data Registo
                 if vis != 4
@@ -100,8 +100,8 @@ if recursos.length
 
                 tr(id="" class=`recurso ${r.tipo} ${r.owner} ${r.visibilidade}` style="display:")
                     td.w3-padding-large
-                        a(href=`/recurso/${r._id}`) #{r._id} 
-                    td.w3-padding-large= r.titulo 
+                        a(href=`/recurso/${r._id}`) #{r.titulo} 
+                    td.w3-padding-large #{r.autor}
                     if vis != 2
                         if vis != 3
                             td.w3-padding-large
