@@ -5,6 +5,7 @@ var recursoSchema = new mongoose.Schema({
     titulo: String,
     dataRegisto: String,
     visibilidade: Number,
+    dataCriacao: String,
     autor: String,
     owner: String,
     hashtags: [String],

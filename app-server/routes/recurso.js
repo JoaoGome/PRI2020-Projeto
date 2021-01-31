@@ -177,7 +177,7 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
         metadados = zip.entryDataSync("information.json").toString('utf-8');
         obj = JSON.parse(metadados)
         
-        if (!(obj.hasOwnProperty('titulo') && obj.hasOwnProperty('dataCreation') && obj.hasOwnProperty('autor')))
+        if (!(obj.hasOwnProperty('titulo') && obj.hasOwnProperty('dataCriacao') && obj.hasOwnProperty('autor')))
         {
           good = 0;  
           goodInformation = 0;
@@ -199,6 +199,7 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
         req.body.titulo = obj.titulo; 
         req.body.autor = obj.autor; 
         req.body.preview = preview
+        req.body.dataCriacao = obj.dataCriacao
 
         req.body.dataRegisto = new Date().toISOString().slice(0, 10);
         zip.close();
@@ -206,10 +207,6 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
         
       }
       else {
-        /*manifestoExiste -> se tiver a 0 é porque zip nao tem um ficheiro manifesto.txt
-        informationExiste -> se tiver a 0 é porque zip nao tem um ficheiro information.json
-        goodManifesto -> se tiver a 0 é porque conteúdo do manifesto nao corresponde aos ficheiros todos que vieram no zip
-        goodInformation -> se tiver a 0 é porque os campos de meta dados nao existem todos*/
         var aviso = []
         if (!manifestoExiste) aviso.push("Verifique que o zip tem o ficheiro manifesto.txt.")
         if (!informationExiste) console.log("Verifique que o zip tem o ficheiro information.json.")
