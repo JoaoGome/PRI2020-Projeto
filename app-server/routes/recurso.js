@@ -19,6 +19,9 @@ router.get('/:id', function(req, res, next) {
   var myToken = req.cookies.token;
   var vis = 2
   if(req.query.vis) vis = req.query.vis
+  var retroceder = -1
+  if(req.query.estado === "e1") retroceder = -2
+  if(req.query.estado === "e2") retroceder = -3
   if(vis == 1)
     axios.get('http://localhost:8000/recurso/pessoal/' + req.params.id + '?token=' + myToken)
       .then(dados =>{
@@ -26,19 +29,24 @@ router.get('/:id', function(req, res, next) {
         var nivel = dados.data.level
         var cmt = dados.data.cmts.reverse()
         var user = dados.data.user
+        var permitir = 0
+        if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
+        else if (user === rec.owner) permitir = 1 
         if(dados.data == null) res.render('error', {error:"Não autorizado"})
-        else res.render('recurso', {nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+        else res.render('recurso', {r:retroceder, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
       })
       .catch(e => res.render('error', {error:e})) 
       
   if(vis == 2 )
     axios.get('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
-      .then(dados =>{
+      .then(dados =>{ 
         var rec = dados.data.dados
         var nivel = dados.data.level
         var cmt = dados.data.cmts.reverse()
         var user = dados.data.user
-        res.render('recurso', {nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+        var permitir = 1
+        if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
+        res.render('recurso', {r:retroceder, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
       })
       .catch(e => res.render('error', {error:e}))
 });
@@ -56,7 +64,7 @@ router.get('/:id/remover', function(req,res) {
   if (req.query.tab) tab = req.query.tab
   axios.get('http://localhost:8000/recurso/' + req.params.id + '/owner?token=' + myToken)
     .then( owner =>{
-      console.log(owner.data)
+
       axios.delete('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
         .then(dados =>
           axios.delete('http://localhost:8000/comentarios/recurso/' + req.params.id +'/owner/' + owner.data.owner + '?token=' + myToken)
@@ -70,14 +78,23 @@ router.get('/:id/remover', function(req,res) {
 // Editar um recurso
 router.get('/:id/editar', function(req,res) {
   var myToken = req.cookies.token;
-  axios.get('http://localhost:8000/recurso/pessoal/' + req.params.id + '?token=' + myToken)
-    .then(dados =>{
-      var hashtags = dados.data.hashtags[0]
-      for(var i = 1; i < dados.data.hashtags.length; i++)
-        hashtags += " " + dados.data.hashtags[i]
-      res.render('recurso-edit', {recurso: dados.data, hashtags: hashtags})
-    })
-    .catch(e => res.render('error', {error:e}))
+  if(req.query.visibilidade){
+    axios.get('http://localhost:8000/recurso/' + req.params.id + '/alterar?visibilidade=' + req.query.visibilidade + '&token=' + myToken)
+      .then(dados => res.redirect(`/user/${dados.data.username}/recursos`))
+      .catch(e => res.render('error', {error:e}))
+  }
+  else{
+    var r = "e2"
+    if(req.query.r) r = req.query.r
+    axios.get('http://localhost:8000/recurso/pessoal/' + req.params.id + '?token=' + myToken)
+      .then(dados =>{
+        var hashtags = dados.data.dados.hashtags[0]
+        for(var i = 1; i < dados.data.dados.hashtags.length; i++)
+          hashtags += " " + dados.data.dados.hashtags[i]
+        res.render('recurso-edit', {r:r, recurso: dados.data.dados, hashtags: hashtags})
+      })
+      .catch(e => res.render('error', {error:e}))
+  }
 })
 
 
@@ -88,7 +105,7 @@ router.post('/editar/:id', function(req,res){
   req.body.hashtags = newString.split(" ");
   req.body.tipo = req.body.tipo.toLowerCase();
   axios.put('http://localhost:8000/recurso?token=' + myToken, req.body)
-    .then(dados => res.redirect(`/recurso/${req.params.id}`))
+    .then(dados => res.redirect(`/recurso/${req.params.id}?estado=${req.query.r}&vis=1`))
     .catch(e => res.render('error', {error:e})) 
 })
 

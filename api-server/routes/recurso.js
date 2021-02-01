@@ -23,25 +23,29 @@ router.get('/:id/owner', function(req, res) {
     .catch(e =>  res.status(500).jsonp({error: e}))
 });
 
+// Alterar visibilidade recurso
+router.get('/:id/alterar', function(req, res) {
+  Recurso.alterarRecPessoalVis(req.user.username, req.params.id, req.query.visibilidade)
+    .then(dados => res.status(200).jsonp({dados:dados, username:req.user.username}))
+    .catch(e =>  res.status(500).jsonp({error: e}))
+});
+
 
 // Consultar um recurso pessoal
 router.get('/pessoal/:id', function(req,res,next) {
-  if (req.user.level != "consumidor") next();
-  else res.status(500).jsonp({error: "Não autorizado"})
+  if (req.user.level === "admin") res.redirect(`/recurso/${req.params.id}?token=${req.query.token}`)
+  else next();
 }, function(req, res) {
 
-  Recurso.listarRecPessoal(req.user.username, req.params.id)
+  Recurso.consultarRecPessoal(req.user.username, req.params.id)
     .then(dados =>{
-      if(dados.data == null) res.status(500).jsonp({error: "Não existe ou não autorizado"})
+      if(dados == null) res.status(500).jsonp({error: "Não existe ou não autorizado"})
       else 
         Comentario.listarByRecurso(req.params.rec)
           .then(cmts => res.status(200).jsonp({dados:dados, level:req.user.level, user:req.user.username, cmts:cmts}))
           .catch(e =>  res.status(500).jsonp({error: e}))
     })
-    .catch(e =>{
-      if (req.user.level != "admin") res.status(500).jsonp({error: e})
-      else res.redirect(`/recurso/${req.params.id}?token=${req.query.token}`)
-    })
+    .catch(e => res.status(500).jsonp({error: e}))
 });
 
 
@@ -64,7 +68,7 @@ router.put('/', function(req, res){
 // Remover um recurso 
 router.delete('/:id', function(req,res,next) {
   if (req.user.level != "consumidor") next();
-  else res.status(500).jsonp({error: "Não autorizado"})
+  else res.status(401).jsonp({error: "Não autorizado"})
 }, function(req, res) {
 
   if(req.user.level === "admin")

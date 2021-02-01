@@ -31,10 +31,10 @@ router.get('/:id', function(req, res){
       var user = dados.data.dados
       var cmts = dados.data.cmts.reverse()
       var vis = 4
-      if (username === dados.data.dados.username) vis = 2
+      if (username === dados.data.dados.username) vis = 3
       else if (nivel === "admin") vis = 1
       
-      res.render('utilizador', {vis:vis, user:user, comentarios:cmts})
+      res.render('utilizador', {tab:req.query.tab, vis:vis, user:user, utilizador:req.params.id, comentarios:cmts})
     })
     .catch(e => res.render('error', {error:e}))
 
@@ -49,15 +49,13 @@ router.get('/:id/recursos', function(req, res){
     .then(dados =>{
       var tipos = dados.data.tipos
       var recs = dados.data.dados
-      var nivel = dados.data.level
+      var nivel = dados.data.nivel 
       var user = dados.data
       var vis = 4
-      if (req.params.id === user.username)
-        if(nivel === "produtor") vis = 2
-        else vis = 3
+      if (req.params.id === user.username) vis = 3
       else if (nivel === "admin") vis = 1
-      
-      res.render('utilizador', {tipos:tipos, vis:vis, user:user, recursos:recs, sort:order})
+
+      res.render('utilizador', {tipos:tipos, vis:vis, user:user, utilizador:req.params.id, recursos:recs, sort:order})
     })
     .catch(e => res.render('error', {error:e}))
 })
@@ -99,10 +97,12 @@ router.get('/:id/recursos', function(req, res){
 //Eliminar um user
 router.get('/:id/remover', function(req,res) {
     var myToken = req.cookies.token
-    var tab = users
+    var tab = "users"
     if (req.query.tab) tab = req.query.tab
     axios.delete("http://localhost:8000/users/" + req.params.id + "?token=" + myToken)
-      .then(d => res.redirect(`/mainPage?tab=${tab}`))
+      .then(d => {
+        window.history.go(-1)})
+        //res.redirect(`/mainPage?tab=${tab}`))
       .catch(e => res.render('error', {error:e}))
 })
 

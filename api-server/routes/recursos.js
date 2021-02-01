@@ -53,7 +53,7 @@ router.get('/', function(req, res) {
 // Consultar os seus proprios recursos
 router.get('/pessoais', function(req,res,next) {
   if (req.user.level != "consumidor") next();
-  else res.status(500).jsonp({error: "Não autorizado"})
+  else res.status(401).jsonp({error: "Não autorizado"})
 }, function(req, res) {
 
   var order = "titulo"

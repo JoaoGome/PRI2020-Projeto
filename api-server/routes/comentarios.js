@@ -41,7 +41,7 @@ router.delete('/:c', function(req,res){
 // Remover comentarios do recurso     -----------------------------------> alterar?
 router.delete('/recurso/:rec/owner/:owner', function(req,res,next) {
   if (req.user.username === req.params.owner || req.user.level === "admin") next();
-  else res.status(500).jsonp({error: "Não autorizado"})
+  else res.status(401).jsonp({error: "Não autorizado"})
 }, function(req, res){
 
     Comentario.removerRecurso(req.params.rec)
@@ -60,7 +60,7 @@ router.get('/user/:user', function(req, res){
 // Remover user comentarios
 router.delete('/user/:user',function(req,res,next) {
   if (req.user.username === req.params.user || req.user.level === "admin") next();
-  else res.status(500).jsonp({error: "Não autorizado"})
+  else res.status(401).jsonp({error: "Não autorizado"})
 }, function(req, res){
   
     Comentario.removerUser(req.params.user)

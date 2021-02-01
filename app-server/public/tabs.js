@@ -152,3 +152,13 @@ function showVis(pre){
     changeVis("take_v", p2)
   }
 }
+
+
+function dropVis(){
+  var x = document.getElementById("dropVis");
+  if (x.className.indexOf("w3-show") == -1) { 
+    x.className += " w3-show";
+  } else {
+    x.className = x.className.replace(" w3-show", "");
+  }
+}

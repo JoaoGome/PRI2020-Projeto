@@ -9,15 +9,14 @@ block content
                     
         .w3-bar.w3-theme-d4
             if vis == 4
-                h3.w3-margin-left Utilizador 
-                    a(href=`/user/${user.username}` style="text-decoration: none") #{user.username}       
+                h3.w3-margin-left Utilizador  
+                    span.w3-opacity.w3-margin-left #{utilizador}       
             else if vis == 1
                 h3.w3-margin-left Utilizador 
-                    a(href=`/user/${user.username}` style="text-decoration: none") #{user.username}       
+                    span.w3-opacity.w3-margin-left #{utilizador}    
             else
                 h3.w3-margin-left O Meu Perfil
-                    a(href=`/user/${user.username}` style="text-decoration: none") 
-                        span.w3-margin-left.w3-opacity  #{user.username}       
+                    span.w3-margin-left.w3-opacity  #{user.username}       
 
         .w3-bar.w3-theme-d4
             span
@@ -98,7 +97,7 @@ block content
             br     
         
         div.w3-display-container(class="lista", id="recursos", style=`display:${tab2}`)
-            - var ref = `/user/${user.username}?tab=recs&`
+            - var ref = `/user/${user.username}/recursos?`
             if recursos
                 include ./listaRecursos.pug
 
@@ -134,4 +133,7 @@ block content
 
         .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-padding-large
             address 
-                span(onclick=`window.history.go(${retroceder})` style="text-decoration: underline; cursor:pointer;" ) Voltar
+                if tab === "prods"
+                    a(href="/mainPage?tab=prods") Voltar
+                else
+                    span(onclick=`window.history.go(${retroceder})` style="text-decoration: underline; cursor:pointer;" ) Voltar
