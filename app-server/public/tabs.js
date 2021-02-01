@@ -31,7 +31,7 @@ function openDiv(evt, id, bt) {
   evt.currentTarget.className = evt.currentTarget.className.replace("w3-theme-d4", "w3-theme-d3");
 }
 
-function openUsers(evt, id) {
+function openUsers(evt, id, ref) {
   var i;
   var x = document.getElementsByClassName("users");
   for (i = 0; i < x.length; i++) {
@@ -43,12 +43,22 @@ function openUsers(evt, id) {
   }
   document.getElementById(id).style.display = "block"; 
   evt.currentTarget.className = evt.currentTarget.className.replace("w3-theme-d3", "w3-theme-d2");
+
+  if(document.getElementById("refUsername")) 
+    document.getElementById("refUsername").href = `${ref}username`; 
+  if(document.getElementById("refData")) 
+    document.getElementById("refData").href = `${ref}dataLastAcess`; 
 }
 
 
 
 function addComentario(){
-  document.getElementById("comentar").style.display = "block"; 
+  var x = document.getElementById("comentar")
+
+  if(x.style.display === "none")
+     document.getElementById("comentar").style.display = "block"
+  else
+    document.getElementById("comentar").style.display = "none"   
 }
 
 

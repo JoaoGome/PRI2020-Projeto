@@ -22,8 +22,15 @@ block content
             span
                 if comentarios
                     button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d3 Perfil
-                    a(href=`/user/${user.username}/recursos`)    
-                        button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4 Recursos
+                    if tab === "prods"
+                        a(href=`/user/${user.username}/recursos?tab=prods`)    
+                            button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4 Recursos
+                    else if tab === "users"
+                        a(href=`/user/${user.username}/recursos?tab=users`)    
+                            button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4 Recursos
+                    else
+                        a(href=`/user/${user.username}/recursos`)    
+                            button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4 Recursos
                     - var retroceder = -1
                 else
                     button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4(onclick="window.history.go(-1)") Perfil
@@ -33,6 +40,7 @@ block content
                     button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="addConfirmacao()") Eliminar Conta     
                 if vis == 1
                     button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="addConfirmacao()") Eliminar Utilizador
+
 
         if comentarios
             - var tab1 = "block"   
@@ -133,7 +141,9 @@ block content
 
         .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-padding-large
             address 
-                if tab === "prods"
-                    a(href="/mainPage?tab=prods") Voltar
+                if tab === "users"
+                    a(href=`/mainPage?tab=users`) Voltar
+                else if tab === "prods"
+                    a(href=`/mainPage?tab=prods`) Voltar
                 else
                     span(onclick=`window.history.go(${retroceder})` style="text-decoration: underline; cursor:pointer;" ) Voltar

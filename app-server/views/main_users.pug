@@ -25,7 +25,28 @@ block content
                     a(href="/mainPage?tab=meus")
                         button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4") Os Meus Recursos
 
-        include ./listasUsers.pug
+        //- Listar os utilizadores
+        if nivel == "admin"
+
+            .w3-bar.w3-theme-d3
+                span
+                    if tab31 == "block"
+                        button.w3-bar-item.w3-hover-opacity.w3-margin-top(class="w3-theme-d2 2tab", onclick="openUsers(event, 'consumidores', '/mainPage?tab=users&sortBy=');") Lista de Consumidores
+                        button.w3-bar-item.w3-hover-opacity.w3-margin-top(class="w3-theme-d3 2tab", onclick="openUsers(event, 'produtores', '/mainPage?tab=prods&sortBy=');") Lista de Produtores
+                    else
+                        button.w3-bar-item.w3-hover-opacity.w3-margin-top(class="w3-theme-d3 2tab", onclick="openUsers(event, 'consumidores', '/mainPage?tab=users&sortBy=');") Lista de Consumidores
+                        button.w3-bar-item.w3-hover-opacity.w3-margin-top(class="w3-theme-d2 2tab", onclick="openUsers(event, 'produtores', '/mainPage?tab=prods&sortBy=');") Lista de Produtores
+            .w3-bar.w3-theme-d2
+                h6
+                    span.w3-dropdown-hover.w3-margin-left.w3-margin-bottom.w3-theme-d2 Ordenar por:
+                        span.w3-text-white.w3-round.w3-border-0.w3-hover-opacity.w3-theme-d2.w3-margin-left= sort
+                        span.w3-dropdown-content.w3-bar-block
+                            if sort != "username"
+                                a(id="refUsername" href=`/mainPage?tab=users&sortBy=titulo`).w3-bar-item.w3-button.w3-theme-d2.w3-hover-blue-grey.w3-hover-opacity Username
+                            if sort != "ultimoAcesso"
+                                a(id="refData" href=`/mainPage?tab=users&sortBy=dataLastAcess`).w3-bar-item.w3-button.w3-theme-d2.w3-hover-blue-grey.w3-hover-opacity Último Acesso
+
+            include ./listasUsers.pug
 
 
         //- de certeza que queres eliminar?

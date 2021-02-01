@@ -22,7 +22,7 @@ if recursos.length
                     if sort != "autor"
                         a(href=`${ref}sortBy=autor`).w3-bar-item.w3-button.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity Autor
                     if produtor
-                        if sort != "owner"
+                        if sort != "produtor"
                             a(href=`${ref}sortBy=owner`).w3-bar-item.w3-button.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity Produtor
                     if sort != "dataRegisto"
                         a(href=`${ref}sortBy=dataRegisto`).w3-bar-item.w3-button.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity Data Registo
@@ -30,7 +30,7 @@ if recursos.length
     table.w3-table.w3-bordered
 
         //- Ordenado por produtor
-        if sort === "owner"
+        if sort === "produtor"
             tr.w3-theme-d2
                 th Produtor
                 th(style="width:600px;") Título

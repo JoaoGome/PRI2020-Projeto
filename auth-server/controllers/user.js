@@ -7,9 +7,9 @@ module.exports.consultar = uname => {
 }
 
 //listar utilizadores nivel X
-module.exports.listarLevel = l => {
+module.exports.listarLevel = (l,o) => {
     return User.find({level: l})
-            .sort('-username')
+            .sort(o)
             .exec();
 }
 

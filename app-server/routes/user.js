@@ -55,7 +55,7 @@ router.get('/:id/recursos', function(req, res){
       if (req.params.id === user.username) vis = 3
       else if (nivel === "admin") vis = 1
 
-      res.render('utilizador', {tipos:tipos, vis:vis, user:user, utilizador:req.params.id, recursos:recs, sort:order})
+      res.render('utilizador', {tab:req.query.tab, tipos:tipos, vis:vis, user:user, utilizador:req.params.id, recursos:recs, sort:order})
     })
     .catch(e => res.render('error', {error:e}))
 })

@@ -27,6 +27,7 @@ router.get('/mainPage', function(req,res) {
   if(req.query.tab) tab = req.query.tab
 
   var order = "titulo"
+  if(tab === "users" || tab === "prods") order = "username"
   if(req.query.sortBy) order = req.query.sortBy
 
   if(tab === "main"){
@@ -39,6 +40,7 @@ router.get('/mainPage', function(req,res) {
           var vis = 4
           if(nivel === "admin") vis = 1
           
+          if(order === "owner") order = "produtor"
           res.render('main_recs', {nivel:nivel, produtor:"sim", vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:order})
       })
       .catch(e => res.render('error', {error:e}))
@@ -51,6 +53,7 @@ router.get('/mainPage', function(req,res) {
           var dados = r.data.dados
           var tipos = r.data.tipos
           var vis = 2
+          if(order === "owner") order = "produtor"
           res.render('main_meus', {nivel:nivel, vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:order})
       })
       .catch(e => res.render('error', {error:e}))
@@ -60,15 +63,18 @@ router.get('/mainPage', function(req,res) {
     var tab32 = "block"
     if(tab === "users") tab32 = "none"
     if(tab === "prods") tab31 = "none"
+
     //Pedir lista de produtores
-    axios.get("http://localhost:8000/users?level=consumidor&token=" + myToken)
+    axios.get("http://localhost:8000/users?level=consumidor&sortBy=" + req.query.sortBy + "&token=" + myToken)
       .then(cs =>{
         var nivel = cs.data.nivel
         var cons = cs.data.dados
         //Pedir lista de produtores
-        axios.get("http://localhost:8000/users?level=produtor&token=" + myToken)
-          .then(ps => res.render('main_users', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, produtores:ps.data.dados, consumidores:cons, sort:order}))
-          .catch(e => res.render('error', {error:e}))    
+        axios.get("http://localhost:8000/users?level=produtor&sortBy=" + req.query.sortBy + "&token=" + myToken)
+          .then(ps =>{
+            if(order === "dataLastAcess") order = "ultimoAcesso"
+            res.render('main_users', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, produtores:ps.data.dados, consumidores:cons, sort:order})
+          }).catch(e => res.render('error', {error:e}))    
       })
       .catch(e => res.render('error', {error:e}))  
   }

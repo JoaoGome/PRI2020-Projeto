@@ -12,7 +12,7 @@ router.get('/', function(req,res,next) {
   else res.status(500).jsonp({error: "Não autorizado"})
 }, function(req, res){
 
-  axios.get("http://localhost:8002/users/nivel/" + req.query.level)
+  axios.get("http://localhost:8002/users/nivel/" + req.query.level + "?sortBy=" + req.query.sortBy)
     .then(dados => res.status(200).jsonp({nivel: req.user.level, dados:dados.data}))
     .catch(e => res.status(501).jsonp({error: e}))
 })

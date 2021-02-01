@@ -25,6 +25,9 @@ block content
         .w3-container
 
             h5
+                b.w3-text-blue-grey Subtítulo:
+                span  #{recurso.subtitulo}
+            h5
                 b.w3-text-blue-grey Tipo:
                 span  #{recurso.tipo}
 
@@ -58,7 +61,7 @@ block content
                 if permitir > 0
                     button.w3-right.w3-button.w3-round-large.w3-text-blue-grey.w3-medium(onclick="document.getElementById('removerComentarios').style.display='block'") 
                         b - Remover Comentários
-                button.w3-right.w3-button.w3-round-large.w3-text-blue-grey.w3-medium(onclick="document.getElementById('comentar').style.display='block'") 
+                button.w3-right.w3-button.w3-round-large.w3-text-blue-grey.w3-medium(onclick="addComentario()") 
                     b + Adicionar Comentário
                 
             div(id="comentar" style="display:none")

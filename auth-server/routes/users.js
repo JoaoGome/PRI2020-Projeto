@@ -15,7 +15,7 @@ router.get('/:id', function(req, res) {
 
 //listar users nivel X
 router.get('/nivel/:level', function(req, res) {
-  User.listarLevel(req.params.level)
+  User.listarLevel(req.params.level, req.query.sortBy)
     .then(dados => res.status(200).jsonp(dados))
     .catch(e => res.status(500).jsonp({error: e}))
 })

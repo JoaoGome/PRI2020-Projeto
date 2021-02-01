@@ -11,8 +11,12 @@ block content
         form.w3-container.w3-padding-large(action=`/recurso/editar/${recurso._id}?r=${r}` method='POST')
 
             h5.w3-cell-row.w3-padding
-                label.w3-cell(style="width:100px") Titulo
+                label.w3-cell(style="width:100px") Título
                 input.w3-input.w3-margin-left(type="text" name="titulo" value=`${recurso.titulo}` placeholder=`Introduza o título` required)
+            h5.w3-cell-row.w3-padding
+                label.w3-cell(style="width:100px") Subtítulo
+                input.w3-input.w3-margin-left(type="text" name="subtitulo" value=`${recurso.subtitulo}` placeholder=`Introduza o subtítulo`)
+            
             h5.w3-cell-row.w3-padding
                 label.w3-cell(style="width:100px") Tipo:
                 input.w3-input.w3-margin-left.w3-round.w3-cell(type="text" name="tipo" pattern="[A-Za-z]*" value=`${recurso.tipo}` placeholder=`Introduza o tipo de recurso (artigo, tese, relatório...)` required)
