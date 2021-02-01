@@ -30,6 +30,7 @@ router.get('/:id', function(req, res){
       var username = dados.data.username
       var user = dados.data.dados
       var cmts = dados.data.cmts.reverse()
+      console.log(dados.data)
       var vis = 4
       if (username === dados.data.dados.username) vis = 3
       else if (nivel === "admin") vis = 1

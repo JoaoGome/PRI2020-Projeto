@@ -26,51 +26,17 @@ router.get('/user', function(req, res){
 router.get('/:id', function(req, res){
   axios.get("http://localhost:8002/users/" + req.params.id)
     .then(dados =>{
+
+      var cmts = []
       Comentario.listarByUser(req.params.id)
         .then(comentarios =>{
-
-          var cmts = []
-          var l = comentarios.length
-          console.log("comentarios lenght: " + l )
-
-          for(var i = 0; i < l; i++)
-            var c = comentarios[i]
-            var rID = c.recursoID
-            var cID = c._id
-            var cText = c.text
-            var cUser = c.userID
-            console.log("rID: " + rID + ", cID: " + cID + ", cText: " + cText + ", cUser: " + cUser)
-            console.log("cmt" + i + " id: " + rID)
-            Recurso.consultar(1, rID)
-              .then(rec => { 
-                console.log(rec)
-                if( rec.visibilidade == 2 || req.user.level === "admin" || req.user.username === rec.owner ){
-                  console.log("here" + i)
-                  cmts.push({_id:cID, text:cText, recursoID:rID, userID:cUser})
-                }
-                else console.log("ooooooooooooooooooiiiiiiiii")
-              })
-              .catch(console.log("recursos não existente")) 
-          /*comentarios.forEach( function(cmt, index, object) {
-            
-            Recurso.consultar(1, cmt.recursoID)
-              .then(rec => { 
-                if( rec.visibilidade == 2 || req.user.level === "admin" || req.user.username === rec.owner ){
-                  cmt.recursoID = rec.titulo
-                  console.log("cmt"+index+": " + cmt)
-                }
-                else
-                  comentarios.splice(index, 1);
-              })
-              .catch(console.log("recursos não existente"))    
-          })*/
-          console.log("here")
-          console.log("CMTS: " + cmts)
-
-          res.status(200).jsonp({nivel:req.user.level, username:req.user.username, dados:dados.data, cmts:cmts})
-
-        })
-        .catch(e => res.status(501).jsonp({error: e}))
+          for (c in comentarios)
+            cmts.push({data: comentarios[c].data, text: comentarios[c].text, recursoID: comentarios[c].recursoID, recursoTitulo: comentarios[c].recursoTitulo,_id: comentarios[c]._id})
+          
+            res.status(200).jsonp({nivel:req.user.level, username:req.user.username, dados:dados.data, cmts:cmts})    
+        }).catch(e => res.status(501).jsonp({error: e}))
+      
+      
     })
     .catch(e => res.status(500).jsonp({error: e}))
 })

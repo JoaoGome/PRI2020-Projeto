@@ -70,6 +70,7 @@ block content
                 form(action=`/recurso/${recurso._id}/comentario?${helpRef}` method='POST')
                     span.w3-cell-row
                         input.w3-input.w3-round.w3-cell(style="width:1300px" type="text" name="text" placeholder=`Introduza o seu comentário` required)
+                        input.w3-input(type="hidden" name="recursoTitulo" value=`${recurso.titulo}`)  
                         input.w3-btn.w3-blue-grey.w3-round.w3-cell(type="submit" value="Enviar")
 
             table.w3-table.w3-border.w3-bordered
