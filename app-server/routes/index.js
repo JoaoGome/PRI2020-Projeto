@@ -102,7 +102,10 @@ router.get('/recursos', function(req,res) {
     var order = "titulo"
     if(req.query.sortBy) order = req.query.sortBy
     axios.get('http://localhost:8000/recursos?hashtag=' + req.query.hashtag + '&sortBy=' + order + '&token=' + myToken)
-      .then(dados => res.render('hashtag', {produtor:"sim", tipos:dados.data.tipos, hashtag: req.query.hashtag, recursos: dados.data.dados, sort:order}))
+      .then(dados =>{
+        if(order === "owner") order = "produtor"
+        res.render('hashtag', {produtor:"sim", tipos:dados.data.tipos, hashtag: req.query.hashtag, recursos: dados.data.dados, sort:order})
+      })
       .catch(e => res.render('error', {error:e}))
   }
   else 
@@ -117,13 +120,19 @@ router.get('/recursos/procurar', function(req,res) {
   if(req.query.titulo){
     var ht = req.query.titulo.replace(/\s*/g,'');
     axios.get("http://localhost:8000/recursos?procurar=" + req.query.titulo + '&sortBy=' + order + "&token=" + myToken)
-      .then(recTitulo => res.render('procurar', {tab:"titulo", produtor:"sim", sort:order, procura:req.query.titulo, ht:ht, tipos:recTitulo.data.tipos, recursos:recTitulo.data.dados}))
+      .then(recTitulo =>{
+        if(order === "owner") order = "produtor"
+        res.render('procurar', {tab:"titulo", produtor:"sim", sort:order, procura:req.query.titulo, ht:ht, tipos:recTitulo.data.tipos, recursos:recTitulo.data.dados})
+      })
       .catch(e => res.render('error', {error:e}))
   }
   if(req.query.hashtag){
     var ht = req.query.hashtag
     axios.get('http://localhost:8000/recursos?hashtag=' + ht + '&sortBy=' + order + '&token=' + myToken)
-      .then(recHashtag => res.render('procurar', {tab:"hashtag", produtor:"sim", sort:order, procura:ht, tipos:recHashtag.data.tipos, recursos:recHashtag.data.dados}))
+      .then(recHashtag => {
+        if(order === "owner") order = "produtor"
+        res.render('procurar', {tab:"hashtag", produtor:"sim", sort:order, procura:ht, tipos:recHashtag.data.tipos, recursos:recHashtag.data.dados})
+      })
       .catch(e => res.render('error', {error:e}))
   }
 })
