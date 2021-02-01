@@ -126,6 +126,11 @@ module.exports.removerPessoal = function(id, a){
     return Recurso.deleteOne({_id: id, owner: a})
 }
 
+// Elimina todos os recursos de um User
+module.exports.removerRecUser = function(u){
+    return Recurso.remove({userID: u})
+}
+
 // Elimina todos os comentarios de um determinado user da bd
 module.exports.alterarRecPessoalVis = function(u, id, new_v){
     return Recurso.findOneAndUpdate({owner:u, _id:id},{$set: {visibilidade:new_v} })

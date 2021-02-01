@@ -21,7 +21,7 @@ router.post('/recurso/:rec', function(req, res) {
   req.body.recursoID = req.params.rec
   req.body.data =  new Date().toISOString().slice(0, 16).split('T').join(' ')
   Comentario.inserir(req.body)
-    .then(dados => res.status(200).jsonp(dados))
+    .then(dados => res.status(200).jsonp({dados:dados, username:req.user.username, level:req.user.level}))
     .catch(e =>  res.status(500).jsonp({error: e}))
 });
 
@@ -29,11 +29,11 @@ router.post('/recurso/:rec', function(req, res) {
 router.delete('/:c', function(req,res){
   if (req.user.level === "admin")
    Comentario.remover(req.params.c)
-      .then(dados => res.status(200).jsonp(dados))
+      .then(dados => res.status(200).jsonp({dados:dados, username:req.user.username, level:req.user.level}))
       .catch(e =>  res.status(500).jsonp({error: e}))
   else 
     Comentario.removerPessoal(req.params.c, req.user.username)
-      .then(dados => res.status(200).jsonp(dados))
+      .then(dados => res.status(200).jsonp({dados:dados, username:req.user.username, level:req.user.level}))
       .catch(e =>  res.status(500).jsonp({error: e}))
 })
 

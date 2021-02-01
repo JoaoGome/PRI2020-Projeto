@@ -117,7 +117,12 @@ router.post('/editar/:id', function(req,res){
 router.post('/:id/comentario', function(req,res) {
   var myToken = req.cookies.token;
   axios.post('http://localhost:8000/comentarios/recurso/' + req.params.id + '?token=' + myToken, req.body)
-    .then(dados => res.redirect(`/recurso/${req.params.id}`))
+    .then(dados =>{
+      if(req.query.owner && (dados.data.username === req.query.owner || dados.data.level === "admin"))
+        res.redirect(`/recurso/${req.params.id}?vis=1`)
+      else 
+        res.redirect(`/recurso/${req.params.id}?vis=2`)
+    })
     .catch(e => res.render('error', {error:e}))
 })
 

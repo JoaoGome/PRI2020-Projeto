@@ -23,10 +23,10 @@ block content
                     
 
         .w3-container
-
-            h5
-                b.w3-text-blue-grey Subtítulo:
-                span  #{recurso.subtitulo}
+            if recurso.subtitulo
+                h5
+                    b.w3-text-blue-grey Subtítulo:
+                    span  #{recurso.subtitulo}
             h5
                 b.w3-text-blue-grey Tipo:
                 span  #{recurso.tipo}
@@ -34,8 +34,10 @@ block content
             h5
                 b.w3-text-blue-grey Visibilidade:
                 if recurso.visibilidade == 1
+                    - var helpRef = `owner=${recurso.owner}`
                     span  Privado
                 else
+                    - var helpRef = ""
                     span  Público
 
             h5
@@ -58,14 +60,14 @@ block content
 
             h5.w3-text-blue-grey
                 b Comentários:
-                if permitir > 0
+                if nivel === "admin"
                     button.w3-right.w3-button.w3-round-large.w3-text-blue-grey.w3-medium(onclick="document.getElementById('removerComentarios').style.display='block'") 
                         b - Remover Comentários
                 button.w3-right.w3-button.w3-round-large.w3-text-blue-grey.w3-medium(onclick="addComentario()") 
                     b + Adicionar Comentário
                 
-            div(id="comentar" style="display:none")
-                form(action=`/recurso/${recurso._id}/comentario` method='POST')
+            div(id="comentar" style="display:none")                    
+                form(action=`/recurso/${recurso._id}/comentario?${helpRef}` method='POST')
                     span.w3-cell-row
                         input.w3-input.w3-round.w3-cell(style="width:1300px" type="text" name="text" placeholder=`Introduza o seu comentário` required)
                         input.w3-btn.w3-blue-grey.w3-round.w3-cell(type="submit" value="Enviar")
@@ -75,20 +77,24 @@ block content
                     each c in comentarios
                         tr
                             td
-                                a(href=`/user/${c.userID}` style="text-decoration: none")
+                                if c.userID === "[deleted]"
                                     b #{c.userID}:
-                                span  #{c.text}
+                                    span  #{c.text}
+                                else
+                                    a(href=`/user/${c.userID}` style="text-decoration: none")
+                                        b #{c.userID}:
+                                    span  #{c.text}
                             
                             
 
                             if c.userID === user
                                 td.w3-right.w3-margin-right.w3-hover-text-red
-                                    a(href=`/comentario/remover/${c._id}?recurso=${recurso._id}`) Eliminar
+                                    a(href=`/comentario/remover/${c._id}?recurso=${recurso._id}&${helpRef}`) Eliminar
 
                             else 
                                 if nivel == "admin"
                                     td.w3-right.w3-margin-right.w3-hover-text-red
-                                        a(href=`/comentario/remover/${c._id}?recurso=${recurso._id}`) Eliminar
+                                        a(href=`/comentario/remover/${c._id}?recurso=${recurso._id}&${helpRef}`) Eliminar
 
                             td.w3-right.w3-margin-right #{c.data}
                             

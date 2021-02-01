@@ -43,7 +43,10 @@ module.exports.removerUser = function(u){
 
 // Elimina todos os comentarios de um determinado user da bd
 module.exports.deletedUser = function(u){
-    return Comentario.findAndUpdate({userID:u},{$set: {userID:"[deleted]"} })
+    return Comentario.updateMany(
+        {userID:u},
+        {$set: {userID:"[deleted]"}}
+    )
 }
 
 // Elimina todos os comentarios de um determinado recurso da bd

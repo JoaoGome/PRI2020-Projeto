@@ -41,7 +41,7 @@ router.get('/pessoal/:id', function(req,res,next) {
     .then(dados =>{
       if(dados == null) res.status(500).jsonp({error: "Não existe ou não autorizado"})
       else 
-        Comentario.listarByRecurso(req.params.rec)
+        Comentario.listarByRecurso(req.params.id)
           .then(cmts => res.status(200).jsonp({dados:dados, level:req.user.level, user:req.user.username, cmts:cmts}))
           .catch(e =>  res.status(500).jsonp({error: e}))
     })

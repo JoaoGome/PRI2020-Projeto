@@ -142,7 +142,12 @@ router.get('/comentario/remover/:c', function(req,res) {
   axios.delete('http://localhost:8000/comentarios/' + req.params.c + '?token=' + myToken)
     .then(dados =>{
       if (req.query.user) res.redirect(`/user/${req.query.user}`)
-      if (req.query.recurso) res.redirect(`/recurso/${req.query.recurso}`)
+      if (req.query.recurso){
+        if(req.query.owner && (dados.data.username === req.query.owner || dados.data.level === "admin"))
+          res.redirect(`/recurso/${req.query.recurso}?vis=1`)
+        else 
+          res.redirect(`/recurso/${req.query.recurso}?vis=2`)
+      }
     })
     .catch(e => res.render('error', {error:e}))
 })

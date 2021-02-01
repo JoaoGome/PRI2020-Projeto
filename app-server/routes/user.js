@@ -100,9 +100,7 @@ router.get('/:id/remover', function(req,res) {
     var tab = "users"
     if (req.query.tab) tab = req.query.tab
     axios.delete("http://localhost:8000/users/" + req.params.id + "?token=" + myToken)
-      .then(d => {
-        window.history.go(-1)})
-        //res.redirect(`/mainPage?tab=${tab}`))
+      .then(d => res.redirect(`/mainPage?tab=${tab}`))
       .catch(e => res.render('error', {error:e}))
 })
 
