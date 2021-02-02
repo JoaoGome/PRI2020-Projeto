@@ -198,9 +198,13 @@ router.post('/recursos/filtrar', function(req,res) {
   if (Array.isArray(req.body.ordem)) var ordem = req.body.orderBy.join(',')
   else var ordem = req.body.orderBy
   var ref = req.query.ref
+  var filterBy = ""
+  if (req.body.filterBy) filterBy = `&filterBy=${tipos}`
   var visBy = ""
   if (req.body.visBy) visBy = `&visBy=${req.body.visBy}`
-  res.redirect(`${ref}&sortBy=${ordenar}&orderBy=${ordem}&filterBy=${tipos}${visBy}`)
+  if (!ref.includes('?')) ref = ref + '?'
+  else ref = ref + '&'
+  res.redirect(`${ref}sortBy=${ordenar}&orderBy=${ordem}${filterBy}${visBy}`)
 })
 
 

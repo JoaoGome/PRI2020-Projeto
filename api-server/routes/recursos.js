@@ -113,8 +113,6 @@ router.get('/user/:user', function(req, res) {
   else order[0] = -1
   if(order[1] === "asc" ) order[1] = 1
   else order[1] = -1
-  var filter = tipos
-  if(req.query.filterBy) filter = req.query.filterBy.split(',')
   
   var visBy = [2]
   if(req.user.vis == 1) visBy = [1,2]
@@ -123,11 +121,15 @@ router.get('/user/:user', function(req, res) {
   
   // Listar os tipos existentes
   Recurso.listarTipos()
-    .then(tipos =>
+    .then(tipos =>{
+      var filter = tipos
+      if(req.query.filterBy) filter = req.query.filterBy.split(',')
       // Listar os recursos de um utilizador
-      Recurso.listarRecUser(vis, req.params.user, sort)
+      Recurso.listarRecUser(visBy, req.params.user, filter, sort[0], sort[1], order[0], order[1])
         .then(dados => res.status(200).jsonp({dados:dados, nivel:req.user.level, tipos:tipos, username:req.user.username}))
-        .catch(e => res.status(500).jsonp({error: e})))
+        .catch(e => res.status(500).jsonp({error: e}))
+    })
+    .catch(e => res.status(500).jsonp({error: e}))
 });
 
 module.exports = router;

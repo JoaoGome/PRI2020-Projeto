@@ -44,7 +44,7 @@ router.get('/:id', function(req, res){
 //Consultar os recursos de um user
 router.get('/:id/recursos', function(req, res){
   var myToken = req.cookies.token;
-  var sort = "titulo"
+  var sort = "titulo,titulo"
   if(req.query.sortBy) sort = req.query.sortBy
   var order = "asc,asc"
   if(req.query.orderBy) order = req.query.orderBy

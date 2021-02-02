@@ -105,7 +105,7 @@ block content
             br     
         
         div.w3-display-container(class="lista", id="recursos", style=`display:${tab2}`)
-            - var ref = `'/user/${user.username}/recursos'`
+            - var ref = `/user/${utilizador}/recursos`
             if recursos
                 include ./listaRecursos.pug
 
