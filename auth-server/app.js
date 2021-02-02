@@ -3,7 +3,6 @@ var express = require('express');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var dotenv = require('dotenv')
-var { json } = require("body-parser")
 
 var { v4: uuidv4 } = require('uuid');
 var session = require('express-session');
@@ -28,6 +27,8 @@ db.once('open', function() {
 
 var User = require('./controllers/user')
 
+dotenv.config();
+
 // Configuração da estratégia local
 passport.use(new LocalStrategy(
   {usernameField: 'username'}, (username, password, done) => {
@@ -42,14 +43,6 @@ passport.use(new LocalStrategy(
     })
 )
 
-dotenv.config();
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
-});
 
 // Facebook OAuth
 passport.use(
@@ -58,16 +51,55 @@ passport.use(
       clientID: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
       callbackURL: process.env.FACEBOOK_CALLBACK_URL,
-      profileFields: ["email", "name"]
+      profileFields: ["emails", "name"]
     },
     function(accessToken, refreshToken, profile, done) {
-      return done(null, profile);
+      console.log("TOKEN = " + accessToken);
+      console.log("REFRESH TOKEN = " + refreshToken);
+      console.log("PROFILE = "+JSON.stringify(profile));
+
+      User.consultarByEmail(profile.emails[0].value)
+        .then(dados => {
+          const user = dados
+          // Caso o email não exista na bd cria um novo utilizador
+          if(!user) {
+            var newUser = {
+              "username": '',
+              "level": "consumidor",
+              "email": profile.emails[0].value,
+              "dataRegisto": new Date().toISOString().slice(0, 10),
+              "dataLastAcess": ''
+            }
+            User.inserir(newUser)
+
+            done(null, newUser)
+          }
+          else
+            done(null, user)
+        })
+        .catch(erro => { console.log('Facebook Strategy: ' + erro); done(erro)})
+
+      //return done(null, profile);
     }
   )
 )
 
+// Serialize/Deserialize by email
+passport.serializeUser(function(user, done) {
+  console.log("Serialize: " + user)
+  done(null, user.email);
+});
+
+passport.deserializeUser(function(email, done) {
+  console.log("Deserialize: " + email)
+  User.consultarByEmail(email)
+    .then(dados => done(null, dados))
+    .catch(erro => done(erro, false))
+});
+
 // Indica-se ao passport como serializar o utilizador
-passport.serializeUser((user,done) => {
+
+/*passport.serializeUser((user,done) => {
   console.log('Serielização, id: ' + user.username)
   done(null, user.username)
 })
@@ -78,7 +110,7 @@ passport.deserializeUser((uname, done) => {
   User.consultar(uname)
     .then(dados => done(null, dados))
     .catch(erro => done(erro, false))
-})
+})*/
 
 var usersRouter = require('./routes/users');
 
@@ -103,8 +135,6 @@ app.use(cookieParser('PRI2020'));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(json())
-
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
@@ -120,7 +150,8 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  //res.render('error');
+  res.send()
 });
 
 module.exports = app;

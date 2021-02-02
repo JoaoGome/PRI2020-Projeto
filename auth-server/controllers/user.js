@@ -6,6 +6,12 @@ module.exports.consultar = uname => {
     .exec();
 }
 
+// Devolve informação referente a um user a partir do email
+module.exports.consultarByEmail = email => {
+    return User.findOne({email: email})
+    .exec();
+}
+
 //listar utilizadores nivel X
 module.exports.listarLevel = l => {
     return User.find({level: l})

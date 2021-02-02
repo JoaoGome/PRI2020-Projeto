@@ -45,7 +45,9 @@ router.post('/login', passport.authenticate('local'), function(req,res) {
     console.log(req.user)
     jwt.sign({username: req.user.username, 
               level:  req.user.level,
-              sub: 'Projeto PRI2020'}, "PRI2020", function(e,token) {
+              sub: 'Projeto PRI2020'},
+              "PRI2020",
+              function(e,token) {
                 if(e) res.status(500).jsonp({error: "Erro na geração do token: " + e}) 
                 else{
                   var d = new Date().toISOString().slice(0, 10)
@@ -76,12 +78,33 @@ router.post('/registar', function(req,res) {
 
 
 // Facebook login
-router.get('/auth/facebook', passport.authenticate('facebook'));
+router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 
-router.get('/auth/facebook/callback', passport.authenticate('facebook', {
-    successRedirect: 'http://localhost:8001/mainPage',
-    failureRedirect: 'http://localhost:8001/login'
-  })
+router.get('/auth/facebook/callback', passport.authenticate('facebook', {failureRedirect: 'http://localhost:8001/login'}),
+  function(req, res){
+    //console.log(req)
+    if(req.user.username == '')
+      res.send('Username não definido')
+
+    else{
+      jwt.sign({username: req.user.username, 
+                level:  req.user.level,
+                sub: 'Projeto PRI2020'},
+                "PRI2020",
+                function(e,token) {
+                  console.log('Token: ' + token)
+                  if(e) res.status(500).jsonp({error: "Erro na geração do token: " + e}) 
+                  else{
+                    var d = new Date().toISOString().slice(0, 10)
+                    User.alterarLastAcess(req.body.username, d)
+                      .then(res.status(201).cookie('token', token).redirect('http://localhost:8001/mainPage'))
+                      .catch(e => res.status(500).jsonp({error: "Erro updating last acess: " + e}) )
+                  }
+                })
+                //res.cookie('token', token)
+      //res.redirect('http://localhost:8001/mainPage')
+    }
+  }
 );
 
 
