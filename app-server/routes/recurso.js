@@ -287,7 +287,7 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
 router.get('/:recursoID/download', function(req,res) {
   axios.get('http://localhost:8000/recurso/' + req.params.recursoID + '?token=' + req.cookies.token)
     .then(dados => {
-      res.download(path.normalize(__dirname+"/..") + '/public/fileStore/' + dados.data.fileName)
+      res.download(path.normalize(__dirname+"/..") + '/public/fileStore/' + dados.data.dados.fileName)
     })
     .catch(e => res.render('error', {error: e}))
 })
