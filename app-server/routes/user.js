@@ -12,6 +12,31 @@ const StreamZip = require('node-stream-zip');
 
 // GETS
 
+
+function defineFiltros(req, tab){
+
+  //filtros
+  var sort = "titulo,titulo"
+  if(tab === "users" || tab === "prods") sort = "username"
+  if(req.query.sortBy) sort = req.query.sortBy
+  
+  var order = "asc,asc"
+  if(req.query.orderBy) order = req.query.orderBy
+
+  var filter = ""
+  if(req.query.filterBy) filter =  req.query.filterBy
+
+  var filterVis = "todos"
+  if(req.query.visBy) filterVis = req.query.visBy 
+  var visBy = "", filterBy = ""
+  if (req.query.visBy) visBy = `&visBy=${req.query.visBy}`
+  if (req.query.filterBy) filterBy = `&filterBy=${filter}`
+
+  return [sort, order, filter, filterVis, filterBy, visBy]
+}
+
+
+
 //Consultar próprio perfil
 router.get('/meuPerfil', function(req,res) {
   var myToken = req.cookies.token;
@@ -44,18 +69,13 @@ router.get('/:id', function(req, res){
 //Consultar os recursos de um user
 router.get('/:id/recursos', function(req, res){
   var myToken = req.cookies.token;
-  var sort = "titulo,titulo"
-  if(req.query.sortBy) sort = req.query.sortBy
-  var order = "asc,asc"
-  if(req.query.orderBy) order = req.query.orderBy
-  var filter = ""
-  if(req.query.filterBy) filter =  req.query.filterBy
-  var filterVis = "todos"
-  if(req.query.visBy) filterVis = req.query.visBy
-  var visBy = ""
-  if (req.query.visBy) visBy = `&visBy=${req.query.visBy}`
+  
+  //filtros
+  var filtros = defineFiltros(req, "")
+  var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5]
 
-  axios.get("http://localhost:8000/recursos/user/" + req.params.id + "?sortBy="+sort+"&orderBy="+order+"&filterBy="+filter+visBy + "&token=" + myToken)
+
+  axios.get("http://localhost:8000/recursos/user/" + req.params.id + "?sortBy="+sort+"&orderBy="+order+filterBy+visBy + "&token=" + myToken)
     .then(dados =>{
       var tipos = dados.data.tipos
       var recs = dados.data.dados

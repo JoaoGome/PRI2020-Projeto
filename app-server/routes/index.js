@@ -11,20 +11,7 @@ var upload = multer({dest: 'uploads/'})
 const StreamZip = require('node-stream-zip');
 
 
-
-// GETS
-router.get('/', function(req, res, next) {
-    res.render('index');
-});
-
-
-
-router.get('/mainPage', function(req,res) {
-  var myToken = req.cookies.token;
-
-  //abrir na tab correta
-  var tab = "main"
-  if(req.query.tab) tab = req.query.tab
+function defineFiltros(req, tab){
 
   //filtros
   var sort = "titulo,titulo"
@@ -41,7 +28,29 @@ router.get('/mainPage', function(req,res) {
   if(req.query.visBy) filterVis = req.query.visBy 
   var visBy = "", filterBy = ""
   if (req.query.visBy) visBy = `&visBy=${req.query.visBy}`
-  if (req.query.filterBy) visBy = `&filterBy=${filter}`
+  if (req.query.filterBy) filterBy = `&filterBy=${filter}`
+
+  return [sort, order, filter, filterVis, filterBy, visBy]
+}
+
+
+// GETS
+router.get('/', function(req, res, next) {
+    res.render('index');
+});
+
+
+
+router.get('/mainPage', function(req,res) {
+  var myToken = req.cookies.token;
+
+  //abrir na tab correta
+  var tab = "main"
+  if(req.query.tab) tab = req.query.tab
+
+  //filtros
+  var filtros = defineFiltros(req, tab)
+  var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5]
 
   if(tab === "main"){
     //Pedir lista de recursos
@@ -118,18 +127,11 @@ router.get('/mainPage', function(req,res) {
 router.get('/recursos', function(req,res) {
   var myToken = req.cookies.token;
   if(req.query.hashtag){
-    var sort = "titulo"
-    if(req.query.sortBy) sort = req.query.sortBy
-    var order = "asc,asc"
-    if(req.query.orderBy) order = req.query.orderBy
-    var filter = ""
-    if(req.query.filterBy) filter =  req.query.filterBy
-    var filterVis = "todos"
-    if(req.query.visBy) filterVis = req.query.visBy 
-    var visBy = ""
-    if (req.query.visBy) visBy = `&visBy=${req.query.visBy}`
+    //filtros
+    var filtros = defineFiltros(req, "")
+    var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5]
 
-    axios.get('http://localhost:8000/recursos?hashtag=' + req.query.hashtag + '&sortBy='+sort+"&orderBy="+order+"&filterBy="+filter+visBy + '&token=' + myToken)
+    axios.get('http://localhost:8000/recursos?hashtag=' + req.query.hashtag + '&sortBy='+sort+"&orderBy="+order+filterBy+visBy + '&token=' + myToken)
       .then(dados =>{
         sort = sort.replace(/owner/,"produtor").split(',')
         order = order.split(',')
@@ -146,20 +148,14 @@ router.get('/recursos', function(req,res) {
 // procurar recursos com determinado texto
 router.get('/recursos/procurar', function(req,res) {
   var myToken = req.cookies.token;
-  var sort = "titulo,titulo"
-  if(req.query.sortBy) sort = req.query.sortBy
-  var order = "asc,asc"
-  if(req.query.orderBy) order = req.query.orderBy
-  var filter = ""
-  if(req.query.filterBy) filter =  req.query.filterBy
-  var filterVis = "todos"
-  if(req.query.visBy) filterVis = req.query.visBy 
-  var visBy = ""
-  if (req.query.visBy) visBy = `&visBy=${req.query.visBy}`
+  
+  //filtros
+  var filtros = defineFiltros(req, "")
+  var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5]
 
   if(req.query.titulo){
     var ht = req.query.titulo.replace(/\s*/g,'');
-    axios.get("http://localhost:8000/recursos?procurar=" + req.query.titulo + '&sortBy='+sort+"&orderBy="+order+"&filterBy="+filter+visBy + "&token=" + myToken)
+    axios.get("http://localhost:8000/recursos?procurar=" + req.query.titulo + '&sortBy='+sort+"&orderBy="+order+filterBy+visBy + "&token=" + myToken)
       .then(recTitulo =>{
         sort = sort.replace(/owner/,"produtor").split(',')
         order = order.split(',')
@@ -171,7 +167,7 @@ router.get('/recursos/procurar', function(req,res) {
   }
   if(req.query.hashtag){
     var ht = req.query.hashtag
-    axios.get('http://localhost:8000/recursos?hashtag=' + ht + '&sortBy='+sort+"&orderBy="+order+"&filterBy="+filter+visBy + '&token=' + myToken)
+    axios.get('http://localhost:8000/recursos?hashtag=' + ht + '&sortBy='+sort+"&orderBy="+order+filterBy+visBy + '&token=' + myToken)
       .then(recHashtag => {
         sort = sort.replace(/owner/,"produtor").split(',')
         order = order.split(',')
