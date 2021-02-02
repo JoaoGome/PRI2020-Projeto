@@ -80,19 +80,27 @@ router.post('/registar', function(req,res) {
 // Facebook login
 router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 
+/*
+  Callback chamada depois do login do FB ser autenticado
+  Caso a autenticação do FB falhe, redireciona o user para a página de login
+  Caso o username esteja vazio significa que é o primeiro login do user, e redireciona-o para uma página para inserir a info em falta
+*/
 router.get('/auth/facebook/callback', passport.authenticate('facebook', {failureRedirect: 'http://localhost:8001/login'}),
   function(req, res){
-    //console.log(req)
     if(req.user.username == '')
       res.send('Username não definido')
+      // TODO: Redirecionar para uma página para introduzir username e filiação
 
+    /* 
+      Criar token e adicionar-lo como cookie
+      Redirecionar para a mainPage
+    */
     else{
       jwt.sign({username: req.user.username, 
                 level:  req.user.level,
                 sub: 'Projeto PRI2020'},
                 "PRI2020",
                 function(e,token) {
-                  console.log('Token: ' + token)
                   if(e) res.status(500).jsonp({error: "Erro na geração do token: " + e}) 
                   else{
                     var d = new Date().toISOString().slice(0, 10)
@@ -101,8 +109,6 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', {failure
                       .catch(e => res.status(500).jsonp({error: "Erro updating last acess: " + e}) )
                   }
                 })
-                //res.cookie('token', token)
-      //res.redirect('http://localhost:8001/mainPage')
     }
   }
 );

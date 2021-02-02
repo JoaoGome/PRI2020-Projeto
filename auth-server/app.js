@@ -44,7 +44,9 @@ passport.use(new LocalStrategy(
 )
 
 
-// Facebook OAuth
+/*
+  Facebook OAuth Strategy
+*/
 passport.use(
   new FacebookStrategy(
     {
@@ -54,9 +56,9 @@ passport.use(
       profileFields: ["emails", "name"]
     },
     function(accessToken, refreshToken, profile, done) {
-      console.log("TOKEN = " + accessToken);
-      console.log("REFRESH TOKEN = " + refreshToken);
-      console.log("PROFILE = "+JSON.stringify(profile));
+      //console.log("TOKEN = " + accessToken);
+      //console.log("REFRESH TOKEN = " + refreshToken);
+      //console.log("PROFILE = "+JSON.stringify(profile));
 
       User.consultarByEmail(profile.emails[0].value)
         .then(dados => {
@@ -78,20 +80,16 @@ passport.use(
             done(null, user)
         })
         .catch(erro => { console.log('Facebook Strategy: ' + erro); done(erro)})
-
-      //return done(null, profile);
     }
   )
 )
 
 // Serialize/Deserialize by email
 passport.serializeUser(function(user, done) {
-  console.log("Serialize: " + user)
   done(null, user.email);
 });
 
 passport.deserializeUser(function(email, done) {
-  console.log("Deserialize: " + email)
   User.consultarByEmail(email)
     .then(dados => done(null, dados))
     .catch(erro => done(erro, false))
