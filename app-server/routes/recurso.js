@@ -44,8 +44,9 @@ router.get('/:id', function(req, res, next) {
         var nivel = dados.data.level
         var cmt = dados.data.cmts.reverse()
         var user = dados.data.user
-        var permitir = 1
+        var permitir = 0
         if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
+        else if (user === rec.owner) permitir = 1 
         res.render('recurso', {r:retroceder, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
       })
       .catch(e => res.render('error', {error:e}))
@@ -62,16 +63,10 @@ router.get('/:id/remover', function(req,res) {
   var myToken = req.cookies.token;
   var tab = 1
   if (req.query.tab) tab = req.query.tab
-  axios.get('http://localhost:8000/recurso/' + req.params.id + '/owner?token=' + myToken)
-    .then( owner =>{
 
-      axios.delete('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
-        .then(dados =>
-          axios.delete('http://localhost:8000/comentarios/recurso/' + req.params.id +'/owner/' + owner.data.owner + '?token=' + myToken)
-            .then(d => res.redirect(`/mainPage?tab=${req.query.tab}`))
-            .catch(e => res.render('error', {error:e})))
-        .catch(e => res.render('error', {error:e}))
-    })
+  axios.delete('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
+    .then(dados => res.redirect(`/mainPage`))
+    .catch(e => res.render('error', {error:e}))
 })  
 
 

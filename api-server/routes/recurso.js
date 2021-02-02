@@ -73,11 +73,22 @@ router.delete('/:id', function(req,res,next) {
 
   if(req.user.level === "admin")
     Recurso.remover(req.params.id)
-      .then(dados => res.status(200).jsonp(dados))
+      .then(dados => {
+        // remover os comentarios do recurso
+        Comentario.removerRecurso(req.params.id)
+          .then(res.status(200).jsonp(dados))
+          .catch(e => res.render(500).jsonp({error: e}))
+      })
       .catch(e => res.status(500).jsonp({error: e}))
+
   if(req.user.level === "produtor")
     Recurso.removerPessoal(req.params.id, req.user.username)
-      .then(dados => res.status(200).jsonp(dados))
+      .then(dados => {
+        // remover os comentarios do recurso
+        Comentario.removerRecurso(req.params.id)
+          .then(res.status(200).jsonp(dados))
+          .catch(e => res.render(500).jsonp({error: e}))
+      })
       .catch(e => res.status(500).jsonp({error: e}))
 });
 

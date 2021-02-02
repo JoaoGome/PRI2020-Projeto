@@ -54,14 +54,21 @@ router.delete('/:id', function(req,res,next) {
 
   // nos seus comentarios username passa a [deleted]
   Comentario.deletedUser(req.params.id)
-    .then(c =>{ console.log("here")
+    .then(c =>{
+        // eliminar recursos do user
         Recurso.removerRecUser(req.params.id)
-        .then(r =>{
-          axios.delete("http://localhost:8002/users/" + req.params.id )
-            .then(dados => res.status(200).jsonp(dados.data))
-            .catch(e => res.status(500).jsonp({error: e}))      
-        })
-      .catch(e => res.status(502).jsonp({error: e}))
+          .then(r =>{
+            // eliminar comentarios do recurso
+            Comentario.removerRecurso(req.params.id)
+              .then(r =>{
+                // eliminar o user
+                axios.delete("http://localhost:8002/users/" + req.params.id )
+                  .then(dados => res.status(200).jsonp(dados.data))
+                  .catch(e => res.status(500).jsonp({error: e}))      
+                })
+              .catch(e => res.status(502).jsonp({error: e}))
+          })
+          .catch(e => res.status(502).jsonp({error: e}))
     })
     .catch(e => res.status(501).jsonp({error: e}))
 })
