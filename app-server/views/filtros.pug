@@ -1,0 +1,72 @@
+        
+
+.w3-bar.w3-theme-d3
+    form(action=`/recursos/filtrar?ref=${ref}` method='POST')
+        h6.w3-margin-left Género: 
+            each t in tipos
+                input.w3-check.w3-opacity.w3-margin-left(style="height:20px" type="checkbox" name="filterBy" value=t checked=filter.includes(t))
+                label  #{t}
+            input.w3-margin-right.w3-opacity.w3-round.w3-button.w3-right.w3-padding-small(type="submit" value="Aplicar")
+            br
+            if vis < 4
+                label.w3-margin-top Visibilidade:
+                select.w3-margin-top.w3-margin-left.w3-round.w3-theme-d3.w3-opacity.w3-border-light-grey.w3-margin-right(name="visBy")
+                    option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value=filterVis)= filterVis
+                    if filterVis != "todos"
+                        option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="todos") Todos
+                    if filterVis != "publico"
+                        option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="publico") Público
+                    if filterVis != "privado"
+                        option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="privado") Privado
+
+            - var sortValue0 = sort[0]
+            if sortValue0 === "produtor"
+                - sortValue0 = "owner"
+            label.w3-margin-top Ordenar por:
+            select.w3-margin-top.w3-margin-left.w3-round.w3-theme-d3.w3-opacity.w3-border-light-grey(name="sortBy" onchange="showSort2(this.value)")
+                option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value=sortValue0)= sort[0]
+                if sort[0] != "titulo"
+                    option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="titulo") Título
+                if sort[0] != "autor"
+                    option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="autor") Autor
+                if produtor
+                    if sort[0] != "produtor"
+                        option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="owner") Produtor
+                if sort[0] != "dataRegisto"
+                    option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="dataRegisto") Data Registo
+            select.w3-margin-top.w3-round.w3-theme-d3.w3-opacity.w3-border-light-grey(name="orderBy")
+                option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value=order[0])= order[0]
+                if order[0] != "asc"
+                    option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="asc") asc
+                if order[0] != "desc"
+                    option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="desc") desc
+
+            - var dispSort = "none"
+            if sort[0] != "titulo"
+                - var dispSort = "inline"
+            - var sortValue1 = sort[1]
+            if sortValue1 === "produtor"
+                - sortValue1 = "owner"
+
+            select.w3-margin-top.w3-margin-left.w3-round.w3-theme-d3.w3-opacity.w3-border-light-grey(class="sort2" name="sortBy" style=`display:${dispSort}`)
+                option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value=sortValue1)= sort[1]
+                if sort[1] != "titulo"
+                    option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="titulo") Título
+                if sort[1] != "autor"
+                    option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="autor" class="autor") Autor
+                if produtor
+                    if sort[1] != "produtor"
+                        option.w3-hover-blue-grey.w3-hover-opacity(value="owner") Produtor
+                if sort[1] != "dataRegisto"
+                    option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="dataRegisto" class="dataRegisto") Data Registo
+            select.w3-margin-top.w3-round.w3-theme-d3.w3-opacity.w3-border-light-grey(class="sort2" name="orderBy" style=`display:${dispSort}`)
+                option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value=order[1])= order[1]
+                if order[1] != "asc"
+                    option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="asc") asc
+                if order[1] != "desc"
+                    option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="desc") desc
+
+    if produtor
+        form(action='/recursos/procurar' method='POST')
+            h6.w3-margin-left Procurar: 
+                input.w3-opacity.w3-round.w3-margin-left(name="search")

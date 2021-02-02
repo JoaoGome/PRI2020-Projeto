@@ -159,7 +159,6 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
   preview = "nao"
   listaFicheiros = []
   obj = {}
-  var ob;
 
   if(req.file.mimetype === 'application/zip' || req.file.mimetype === "application/x-zip-compressed"){
     const zip = new StreamZip({

@@ -7,20 +7,30 @@ var Recurso = require('../models/recurso')
 
 
 // Devolve a lista de todos os Recursos da pessoa
-module.exports.listarRecPessoais = (p,o) => {
+module.exports.listarRecPessoais = (v,u, f, s1, s2, o1, o2) => {
+    var sort2 = {}
+    sort2[s2] = o2
+
     return Recurso
-        .find({owner:p})
-        .sort(o)
-        .exec()
+        .aggregate([
+            { $sort: sort2 },
+            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"owner":u} ]} },
+            { $group: {
+                _id: "$"+s1,
+                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
+            }},
+            { $sort: {"_id":o1} }
+            
+        ])
 }
 
 // Devolve determinado Recurso da pessoa
 module.exports.consultarRecPessoal = (p, id) => {
     return Recurso
-        .findOne({_id: id})
+        .findOne({_id: id, owner:p})
         .exec()
 }
-
+// Devolve determinado Recurso 
 module.exports.consultar = (v,id) => {
     return Recurso
         .findOne({visibilidade: {$gte: v}, _id: id})
@@ -28,47 +38,82 @@ module.exports.consultar = (v,id) => {
 }
 
 // Devolve Recursos de uma pessoa
-module.exports.listarRecUser = (v,u,o) => {
-    return Recurso
-        .find({visibilidade: {$gte: v}, owner:u})
-        .sort(o)
-        .exec()
-}
-
-// Devolve a lista de todos os Recursos conforme visibilidade
-module.exports.listarRec = (v,o) => {
-    return Recurso
-        .find({visibilidade: {$gte: v}})
-        .sort(o)
-        .exec()
-}
-
-// Devolve a lista de todos os Recursos ordenados por owner conforme visibilidade
-module.exports.listarRecBy = (v,s) => {
+module.exports.listarRecUser = (v,u, f, s1, s2, o1, o2) => {
+    var sort2 = {}
+    sort2[s2] = o2
     return Recurso
         .aggregate([
-            {$group: {
-                _id: "$owner",
-                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor"} }
-                }},
-                { "$sort": {"_id":1} },
-                { "$match": {"recursos.visibilidade": {'$gte': v}} }
+            { $sort: sort2 },
+            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"owner":u} ]} },
+            { $group: {
+                _id: "$"+s1,
+                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
+            }},
+            { $sort: {"_id":o1} }
+            
         ])
 }
-// Devolve a lista dos recursos de determinado titulo
-module.exports.listarRecursosTitulo = (v,t,o) => {
+
+// Devolve a lista de todos os Recursos conforme visibilidade ----------------> nao usado
+module.exports.listarRec = (v,s) => {
+    var sort = {}
+    sort[s] = 1
     return Recurso
-        .find({visibilidade: {$gte: v}, titulo: { "$regex":t }})
-        .sort(o)
+        .find({visibilidade: {$gte: v}})
+        .sort(sort)
         .exec()
 }
 
-// Devolve a lista dos recursos de determinado tipo ----------------> nao usado
-module.exports.listarRecursosTipo = (v,t) => {
+// Devolve a lista de todos os Recursos ordenados e agrupados conforme visibilidade
+module.exports.listarRecBy = (v, f, s1, s2, o1, o2) => {
+    var sort2 = {}
+    sort2[s2] = o2
     return Recurso
-        .find({visibilidade: {$gte: v}, tipo: t})
-        .sort('titulo')
-        .exec()
+        .aggregate([
+            { $sort: sort2 },
+            { $match: {$and: [{"visibilidade": {$in: v}}, {"tipo": {$in: f}}] } },
+            { $group: {
+                _id: "$"+s1,
+                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
+            }},
+            { $sort: {"_id":o1} }
+            
+        ])
+}
+
+// Devolve a lista dos recursos de determinado titulo
+module.exports.listarRecursosTitulo = (v, t, f, s1, s2, o1, o2) => {
+    var sort2 = {}
+    sort2[s2] = o2
+    return Recurso
+        .aggregate([
+            { $sort: sort2 },
+            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"titulo":{"$regex":t}} ]} },
+            { $group: {
+                _id: "$"+s1,
+                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
+            }},
+            { $sort: {"_id":o1} }
+            
+        ])
+}
+
+
+// Devolve a lista dos recursos de determinado tipo ----------------> nao usado
+module.exports.listarRecursosTipo = (v,t, s1, s2, o1, o2) => {
+    var sort2 = {}
+    sort2[s2] = o2
+    return Recurso
+        .aggregate([
+            { $sort: sort2 },
+            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo":t} ]} },
+            { $group: {
+                _id: "$"+s1,
+                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
+            }},
+            { $sort: {"_id":o1} }
+            
+        ])
 }
 
 // Devolve a lista de tipos
@@ -99,10 +144,20 @@ module.exports.consultarOwner = (id) => {
 }
 
 // Devolve recursos com determinada hashtag
-module.exports.listarRecHashtags = (v,h) => {
+module.exports.listarRecHashtags = (v,h, f, s1, s2, o1, o2) => {
+    var sort2 = {}
+    sort2[s2] = o2
     return Recurso
-        .find({visibilidade: {$gte: v}, hashtags: h})
-        .exec()
+        .aggregate([
+            { $sort: sort2 },
+            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"hashtags": h} ]} },
+            { $group: {
+                _id: "$"+s1,
+                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
+            }},
+            { $sort: {"_id":o1} }
+            
+        ])
 }
 
 

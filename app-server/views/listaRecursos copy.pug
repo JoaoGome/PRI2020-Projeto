@@ -1,0 +1,134 @@
+        
+//- Listar recursos
+if recursos.length
+
+    include ./filtros.pug
+
+    table.w3-table.w3-bordered
+
+        //- Ordenado por grupos
+        if sort[0] != "titulo"
+            tr.w3-theme-d2
+                if sort[0] === "produtor"
+                    th(style="width:200px;") Produtor
+                else if sort[0] === "autor"
+                    th(style="width:250px;")  Autor
+                else if sort[0] === "dataRegisto"
+                    th(style="width:250px;")  Data Registo
+                
+                th(style="width:500px;") Título
+                if sort[0] != "autor"
+                    th(style="width:250px;") Autor
+                if sort[0] != "produtor"
+                    th(style="width:200px;") Produtor
+                th Tipo
+                if sort[0] != "dataRegisto"
+                    th.w3-center Data Registo
+                if vis < 4
+                    th.w3-center Visibilidade
+                    th.w3-center 
+
+            each o in recursos
+                each r,i in o.recursos
+                    tr.w3-hover-text-blue-grey(id="" class=`recurso ${r.tipo} ${r.visibilidade}` style="display:")
+                        if i == 0
+                            if sort[0] === "produtor"
+                                th.w3-text-blue-grey
+                                    a(href=`/user/${o._id}` style="text-decoration:none;")= o._id
+                            else
+                                td.w3-padding-large= o._id
+                        else 
+                            td
+                        td.w3-padding-large
+                            a(href=`/recurso/${r._id}?vis=${r.visibilidade}`) #{r.titulo} 
+                        if sort[0] != "autor"
+                            td.w3-padding-large #{r.autor}
+                        if sort[0] != "produtor"
+                            td.w3-padding-large
+                                a(href=`/user/${r.owner}`) #{r.owner}
+                        td.w3-padding-large #{r.tipo}
+                        if sort[0] != "dataRegisto"
+                            td.w3-padding-large.w3-center #{r.dataRegisto}
+
+                        if vis < 4
+                            if vis == 3
+                                if r.visibilidade == 1
+                                    td.w3-padding-large.w3-center 
+                                        span.w3-dropdown-click(onclick="dropVis()") Privado 
+                                            i.w3-opacity(class="fa fa-angle-down")
+                                            a.w3-dropdown-content.w3-light-grey.w3-border.w3-hover-blue-grey.w3-hover-opacity(id="dropVis" href=`/recurso/${r._id}/editar?visibilidade=2` style="cursor:pointer;") 
+                                                .w3-left.w3-padding-small Tornar Público
+                                else
+                                    td.w3-padding-large.w3-center 
+                                        span.w3-dropdown-click(onclick="dropVis()") Público 
+                                            i.w3-opacity(class="fa fa-angle-down")
+                                            a.w3-dropdown-content.w3-light-grey.w3-border.w3-hover-blue-grey.w3-hover-opacity(id="dropVis" href=`/recurso/${r._id}/editar?visibilidade=1` style="cursor:pointer;") 
+                                                .w3-left.w3-padding-small Tornar Privado
+                            else
+                                if r.visibilidade == 1
+                                    td.w3-padding-large.w3-center Privado
+                                else
+                                    td.w3-padding-large.w3-center Público
+                        
+                            td
+                                button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('recurso', '/recurso/${r._id}/remover?tab=${tab}');`) 
+                                    u Eliminar
+                                if vis == 2
+                                    button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-blue-grey.w3-right.w3-margin-right 
+                                        a(href=`/recurso/${r._id}/editar?e1`) Editar
+
+
+        //- Ordenado por titulo
+        else
+            tr.w3-theme-d2
+                th(style="width:500px;") Título
+                th(style="width:250px;") Autor
+                if produtor
+                    th(style="width:200px;") Produtor
+                th Tipo
+                th.w3-center Data Registo
+                if vis < 4
+                    th.w3-center Visibilidade
+                    th.w3-center 
+
+            each r in recursos
+
+                tr.w3-hover-text-blue-grey
+                    td.w3-padding-large
+                        a(href=`/recurso/${r._id}?vis=${r.visibilidade}`) #{r.titulo} 
+                    td.w3-padding-large #{r.autor}
+                    if produtor
+                        td.w3-padding-large
+                            a(href=`/user/${r.owner}`) #{r.owner}
+                    td.w3-padding-large #{r.tipo}
+                    td.w3-padding-large.w3-center #{r.dataRegisto}
+
+                    if vis < 4
+                        if vis == 3
+                            if r.visibilidade == 1
+                                td.w3-padding-large.w3-center 
+                                    span.w3-dropdown-click(onclick="dropVis()") Privado 
+                                        i.w3-opacity(class="fa fa-angle-down")
+                                        a.w3-dropdown-content.w3-light-grey.w3-border.w3-hover-blue-grey.w3-hover-opacity(id="dropVis" href=`/recurso/${r._id}/editar?visibilidade=2` style="cursor:pointer;") 
+                                            .w3-left.w3-padding-small Tornar Público
+                            else
+                                td.w3-padding-large.w3-center 
+                                    span.w3-dropdown-click(onclick="dropVis()") Público 
+                                        i.w3-opacity(class="fa fa-angle-down")
+                                        a.w3-dropdown-content.w3-light-grey.w3-border.w3-hover-blue-grey.w3-hover-opacity(id="dropVis" href=`/recurso/${r._id}/editar?visibilidade=1` style="cursor:pointer;") 
+                                            .w3-left.w3-padding-small Tornar Privado
+                        else
+                            if r.visibilidade == 1
+                                td.w3-padding-large.w3-center Privado
+                            else
+                                td.w3-padding-large.w3-center Público
+                    
+                        td
+                            button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('recurso', '/recurso/${r._id}/remover?tab=${tab}');`) 
+                                u Eliminar
+                            if vis == 2
+                                button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-blue-grey.w3-right.w3-margin-right 
+                                    a(href=`/recurso/${r._id}/editar?e1`) Editar
+
+else
+    p.w3-margin-left Não existem recursos.

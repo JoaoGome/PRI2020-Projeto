@@ -36,9 +36,9 @@ block content
                     button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4(onclick="window.history.go(-1)") Perfil
                     button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d3 Recursos
                     - var retroceder = -2
-                if user.username === utilizador
+                if username === utilizador
                     button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="addConfirmacao()") Eliminar Conta     
-                if vis == 1
+                else if vis == 1
                     button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="addConfirmacao()") Eliminar Utilizador
 
 
@@ -105,7 +105,7 @@ block content
             br     
         
         div.w3-display-container(class="lista", id="recursos", style=`display:${tab2}`)
-            - var ref = `/user/${user.username}/recursos?`
+            - var ref = `'/user/${user.username}/recursos'`
             if recursos
                 include ./listaRecursos.pug
 
@@ -115,7 +115,7 @@ block content
         div.w3-modal(id="confirmar" style="display:none")
             div.w3-modal-content.w3-theme-d3.w3-round-large(style="width:450px")
                 div.w3-container.w3-padding-16
-                    if user.username === utilizador
+                    if username === utilizador
                         h5.w3-center.w3-margin-bottom Tem a certeza que quer eliminar a sua conta?
                         - var refMine = "?conta=mine"
                     else if vis = 1

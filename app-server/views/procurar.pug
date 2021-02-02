@@ -15,15 +15,14 @@ block content
                     button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d3 Encontrado no Título
                     a(href=`/recursos/procurar?hashtag=${ht}`)    
                         button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4 Encontrado nas Hashtags
-                    - var ref = "/recursos/procurar?titulo=" + procura + "&"
+                    - var ref = "/recursos/procurar?titulo=" + procura
                     - var retroceder = -1
                     
                 else
                     button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4(onclick="window.history.go(-1)") Encontrado no Título
                     button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d3 Encontrado nas Hashtags
-                    - var ref = "/recursos/procurar?hashtag=" + procura + "&"
+                    - var ref = "/recursos/procurar?hashtag=" + procura
                     - var retroceder = -2
-
 
 
 

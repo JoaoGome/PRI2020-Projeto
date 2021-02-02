@@ -5,6 +5,11 @@ var axios = require('axios')
 
 /* GET home page. */
 
+function retiraFiltros (vis, req) {
+  for (i = 0; i < b.length; i++)
+    if (b[i] == a) return true
+  return false
+}
 
 // Listar todas os recursos
 router.get('/', function(req, res) {
@@ -12,39 +17,47 @@ router.get('/', function(req, res) {
   // Listar os tipos existentes
   Recurso.listarTipos()
     .then(tipos =>{
-      var order = "titulo"
-      if(req.query.sortBy) order = req.query.sortBy
+      var sort = "titulo,titulo"
+      if(req.query.sortBy) sort = req.query.sortBy
+      sort = sort.split(",")
+      var order = "asc,asc"
+      if(req.query.orderBy) order = req.query.orderBy
+      order = order.split(",")
+      if(order[0] === "asc" ) order[0] = 1
+      else order[0] = -1
+      if(order[1] === "asc" ) order[1] = 1
+      else order[1] = -1
+      var filter = tipos
+      if(req.query.filterBy) filter = req.query.filterBy.split(',')
       
-      if(order === "owner"){
-        Recurso.listarRecBy(req.user.vis, order)
-            .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
-            .catch(e => res.status(500).jsonp({error: e}))
-      }
-      else{
-        // Listar todos os recursos com determinada hashtag
-        if(req.query.hashtag)
-          Recurso.listarRecHashtags(req.user.vis, req.query.hashtag, order)
-            .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
-            .catch(e => res.status(500).jsonp({error: e}))
+      var visBy = [2]
+      if(req.user.vis == 1) visBy = [1,2]
+      if(req.query.visBy === "privado" && req.user.vis == 1) visBy = [1]
+      if(req.query.visBy === "publico") visBy = [2]
 
-        // Listar todos os recursos com determinado tipo --------------------------------------> not used
-        else if(req.query.tipo)
-          Recurso.listarRecursosTipo(req.user.vis, req.query.tipo, order)
-            .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
-            .catch(e => res.status(500).jsonp({error: e}))
+      // Listar todos os recursos com determinada hashtag
+      if(req.query.hashtag)
+        Recurso.listarRecHashtags(visBy, req.query.hashtag, filter, sort[0], sort[1], order[0], order[1])
+          .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
+          .catch(e => res.status(500).jsonp({error: e}))
 
-        // Listar todos os recursos com certo texto no titulo
-        else if(req.query.procurar)
-          Recurso.listarRecursosTitulo(req.user.vis, req.query.procurar, order)
-            .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
-            .catch(e => res.status(500).jsonp({error: e}))
+      // Listar todos os recursos com determinado tipo --------------------------------------> not used
+      else if(req.query.tipo)
+        Recurso.listarRecursosTipo(visBy, req.query.tipo, sort[0], sort[1], order[0], order[1])
+          .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
+          .catch(e => res.status(500).jsonp({error: e}))
 
-        // Listar todos os recursos
-        else
-          Recurso.listarRec(req.user.vis, order)
-            .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
-            .catch(e => res.status(500).jsonp({error: e}))
-      }
+      // Listar todos os recursos com certo texto no titulo
+      else if(req.query.procurar)
+        Recurso.listarRecursosTitulo(visBy, req.query.procurar, filter, sort[0], sort[1], order[0], order[1])
+          .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
+          .catch(e => res.status(500).jsonp({error: e}))
+
+      // Listar todos os recursos
+      else
+        Recurso.listarRecBy(visBy, filter, sort[0], sort[1], order[0], order[1])
+          .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
+          .catch(e => res.status(500).jsonp({error: e}))
     })
     .catch(e => res.status(500).jsonp({error: e}))
 });
@@ -56,16 +69,32 @@ router.get('/pessoais', function(req,res,next) {
   else res.status(401).jsonp({error: "Não autorizado"})
 }, function(req, res) {
 
-  var order = "titulo"
-  if(req.query.sortBy) order = req.query.sortBy
+  var sort = "titulo,titulo"
+  if(req.query.sortBy) sort = req.query.sortBy
+  sort = sort.split(",")
+  var order = "asc,asc"
+  if(req.query.orderBy) order = req.query.orderBy
+  order = order.split(",")
+  if(order[0] === "asc" ) order[0] = 1
+  else order[0] = -1
+  if(order[1] === "asc" ) order[1] = 1
+  else order[1] = -1
+  
+  var visBy = [1,2]
+  if(req.query.visBy === "privado") visBy = [1]
+  if(req.query.visBy === "publico") visBy = [2]
+
   // Listar os tipos existentes
   Recurso.listarTipos()
-    .then(tipos =>
+    .then(tipos =>{
+      var filter = tipos
+      if(req.query.filterBy) filter = req.query.filterBy.split(',')
+
       // Listar os recursos pessoais
-      Recurso.listarRecPessoais(req.user.username, order)
+      Recurso.listarRecPessoais(visBy, req.user.username, filter, sort[0], sort[1], order[0], order[1])
         .then(dados => res.status(200).jsonp({dados:dados, tipos:tipos, level:req.user.level}))
         .catch(e => res.status(500).jsonp({error: e}))
-    )
+    })
     .catch(e => res.status(500).jsonp({error: e}))
 });
 
@@ -73,13 +102,30 @@ router.get('/pessoais', function(req,res,next) {
 router.get('/user/:user', function(req, res) {
   var vis = req.user.vis
   if(req.params.user === req.user.username) vis = 1
-  var order = "titulo"
-  if(req.query.sortBy) order = req.query.sortBy
+
+  var sort = "titulo,titulo"
+  if(req.query.sortBy) sort = req.query.sortBy
+  sort = sort.split(",")
+  var order = "asc,asc"
+  if(req.query.orderBy) order = req.query.orderBy
+  order = order.split(",")
+  if(order[0] === "asc" ) order[0] = 1
+  else order[0] = -1
+  if(order[1] === "asc" ) order[1] = 1
+  else order[1] = -1
+  var filter = tipos
+  if(req.query.filterBy) filter = req.query.filterBy.split(',')
+  
+  var visBy = [2]
+  if(req.user.vis == 1) visBy = [1,2]
+  if(req.query.visBy === "privado" && req.user.vis == 1) visBy = [1]
+  if(req.query.visBy === "publico") visBy = [2]
+  
   // Listar os tipos existentes
   Recurso.listarTipos()
     .then(tipos =>
       // Listar os recursos de um utilizador
-      Recurso.listarRecUser(vis, req.params.user, order)
+      Recurso.listarRecUser(vis, req.params.user, sort)
         .then(dados => res.status(200).jsonp({dados:dados, nivel:req.user.level, tipos:tipos, username:req.user.username}))
         .catch(e => res.status(500).jsonp({error: e})))
 });

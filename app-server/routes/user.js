@@ -35,7 +35,7 @@ router.get('/:id', function(req, res){
       if (username === dados.data.dados.username) vis = 3
       else if (nivel === "admin") vis = 1
       
-      res.render('utilizador', {tab:req.query.tab, vis:vis, user:user, utilizador:req.params.id, comentarios:cmts})
+      res.render('utilizador', {tab:req.query.tab, vis:vis, user:user, username:username, utilizador:req.params.id, comentarios:cmts})
     })
     .catch(e => res.render('error', {error:e}))
 
@@ -44,9 +44,18 @@ router.get('/:id', function(req, res){
 //Consultar os recursos de um user
 router.get('/:id/recursos', function(req, res){
   var myToken = req.cookies.token;
-  var order = "titulo"
-  if(req.query.sortBy) order = req.query.sortBy
-  axios.get("http://localhost:8000/recursos/user/" + req.params.id + "?sortBy=" + order + "&token=" + myToken)
+  var sort = "titulo"
+  if(req.query.sortBy) sort = req.query.sortBy
+  var order = "asc,asc"
+  if(req.query.orderBy) order = req.query.orderBy
+  var filter = ""
+  if(req.query.filterBy) filter =  req.query.filterBy
+  var filterVis = "todos"
+  if(req.query.visBy) filterVis = req.query.visBy
+  var visBy = ""
+  if (req.query.visBy) visBy = `&visBy=${req.query.visBy}`
+
+  axios.get("http://localhost:8000/recursos/user/" + req.params.id + "?sortBy="+sort+"&orderBy="+order+"&filterBy="+filter+visBy + "&token=" + myToken)
     .then(dados =>{
       var tipos = dados.data.tipos
       var recs = dados.data.dados
@@ -55,43 +64,14 @@ router.get('/:id/recursos', function(req, res){
       var vis = 4
       if (req.params.id === user.username) vis = 3
       else if (nivel === "admin") vis = 1
+      sort = sort.split(',')
+      order = order.split(',')
+      filter = filter.split(',')
 
-      res.render('utilizador', {tab:req.query.tab, tipos:tipos, vis:vis, user:user, utilizador:req.params.id, recursos:recs, sort:order})
+      res.render('utilizador', {tab:req.query.tab, tipos:tipos, vis:vis, user:user, username:user.username, utilizador:req.params.id, recursos:recs, sort:sort,order:order,filter:filter,filterVis:filterVis})
     })
     .catch(e => res.render('error', {error:e}))
 })
-
-
-/*router.get('/:id', function(req,res) {
-  var myToken = req.cookies.token;
-  axios.get("http://localhost:8000/users/" + req.params.id + "?token=" + myToken)
-    .then(dados =>{ 
-      var nivel = dados.data.nivel
-      var username = dados.data.username
-      var vis = 4
-      if (username === dados.data.dados.username)
-        if(nivel === "produtor") vis = 2
-        else vis = 3
-      else if (nivel === "admin") vis = 1
-      var order = "titulo"
-      if(req.query.sortBy) order = req.query.sortBy
-
-      axios.get("http://localhost:8000/recursos/tipos?token=" + myToken)
-        .then(tipos =>
-          axios.get("http://localhost:8000/comentarios/user/" + req.params.id + "?token=" + myToken)
-            .then(cmts =>{ 
-              if (cmts) cmts = cmts.data.reverse()
-              var tab = "tab1"
-              if(req.query.tab === "recs") tab = "tab2"
-              axios.get("http://localhost:8000/recursos/user/" + req.params.id + "?token=" + myToken)
-                .then(ps =>{res.render('utilizador', {tab:tab, tipos:tipos.data, vis:vis, nivel:nivel, username: username, user: dados.data.dados, comentarios: cmts, recursos: ps.data, sort:order})})
-                .catch(e => res.render('error', {error:e}))
-            })
-            .catch(e => res.render('error', {error:e}))
-        ).catch(e => res.render('error', {error:e}))
-    })
-    .catch(e => res.render('error', {error:e}))
-})*/
 
 
 
