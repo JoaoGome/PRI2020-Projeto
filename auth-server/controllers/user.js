@@ -46,6 +46,10 @@ module.exports.alterarLastAcess = (uname,date) => {
     return User.findOneAndUpdate({username: uname}, {$set: {dataLastAcess: date}});
 }
 
+// alterar username e filiação a um utilizador a partir do seu email
+module.exports.alterarUnameFil = (email, uname, fil) => {
+    return User.findOneAndUpdate({email: email}, {$set: {username: uname, filiacao: fil}})
+}
 
 
 

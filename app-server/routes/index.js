@@ -183,6 +183,20 @@ router.post('/register', function(req,res) {
     .catch(e => res.render('register-form', {error:e, user: req.body.username, email: req.body.email, fil: req.body.filiacao}))
 })
 
+router.get('/complete-reg', function(req, res){
+  console.log(req)
+  res.render('complete-reg-form', {user: "", email: req.query.email, fil: ""})
+})
+
+/*
+  
+*/
+router.post('/complete-reg', function(req, res) {
+  axios.post('http://localhost:8002/users/complete-reg', req.body)
+    .then(dados => res.redirect('http://localhost:8002/users/auth/facebook'))
+    .catch(e => res.render('complete-reg-form', {error:e, user: req.body.username, email: req.body.email, fil: req.body.filiacao}))
+})
+
 
 
 

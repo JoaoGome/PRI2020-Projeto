@@ -85,11 +85,14 @@ router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'
   Caso a autenticação do FB falhe, redireciona o user para a página de login
   Caso o username esteja vazio significa que é o primeiro login do user, e redireciona-o para uma página para inserir a info em falta
 */
-router.get('/auth/facebook/callback', passport.authenticate('facebook', {failureRedirect: 'http://localhost:8001/login'}),
+router.get('/auth/facebook/callback', passport.authenticate('facebook', {failureRedirect: 'http://localhost:8001/index/login'}),
   function(req, res){
-    if(req.user.username == '')
-      res.send('Username não definido')
+    if(req.user.username == ''){
+      //res.send('Username não definido')
       // TODO: Redirecionar para uma página para introduzir username e filiação
+      var email = encodeURIComponent(req.user.email);
+      res.redirect('http://localhost:8001/complete-reg?email=' + email)
+    }
 
     /* 
       Criar token e adicionar-lo como cookie
@@ -112,6 +115,14 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', {failure
     }
   }
 );
+
+
+router.post('/complete-reg', function(req, res){
+  console.log(req)
+  User.alterarUnameFil(req.body.email, req.body.username, req.body.filiacao)
+    .then(res.status(201).send())
+    .catch(e => res.status(500).jsonp({error: "Error updating new username and filiação " + e}) )
+})
 
 
 module.exports = router;
