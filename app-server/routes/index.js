@@ -3,6 +3,7 @@ var router = express.Router();
 var axios = require('axios');
 var jwt = require('jsonwebtoken');
 const path = require('path');
+var passport = require('passport')
 
 var fs = require('fs')
 
@@ -10,6 +11,21 @@ var multer = require('multer')
 var upload = multer({dest: 'uploads/'})
 const StreamZip = require('node-stream-zip');
 
+// usar para proteger as rotas.
+function verificaAutenticacao(req, res, next){
+  if(req.isAuthenticated()){
+    next();
+  } else{
+  res.redirect('/');}
+}
+
+//usar apenas na pagina inicial para caso o user ainda esteja logged in ir diretamente para a MainPage
+function verificaInicial (req,res,next) {
+  if(req.isAuthenticated()){
+    res.redirect('/mainPage')
+  } else{
+    next();}
+}
 
 function defineFiltros(req, tab){
 
@@ -38,13 +54,13 @@ function defineFiltros(req, tab){
 
 
 // GETS
-router.get('/', function(req, res, next) {
+router.get('/', verificaInicial,function(req, res, next) {
     res.render('index');
 });
 
 
 
-router.get('/mainPage', function(req,res) {
+router.get('/mainPage', verificaAutenticacao,function(req,res) {
   var myToken = req.cookies.token;
 
   //abrir na tab correta
@@ -127,7 +143,7 @@ router.get('/mainPage', function(req,res) {
 
 
 // listar recursos determinada hashtag
-router.get('/recursos', function(req,res) {
+router.get('/recursos', verificaAutenticacao, function(req,res) {
   var myToken = req.cookies.token;
   if(req.query.hashtag){
     //filtros
@@ -149,7 +165,7 @@ router.get('/recursos', function(req,res) {
 })
 
 // procurar recursos com determinado texto
-router.get('/recursos/procurar', function(req,res) {
+router.get('/recursos/procurar', verificaAutenticacao, function(req,res) {
   var myToken = req.cookies.token;
   
   //filtros
@@ -183,12 +199,12 @@ router.get('/recursos/procurar', function(req,res) {
 })
 
 // procurar recursos com determinado texto
-router.post('/recursos/procurar', function(req,res) {
+router.post('/recursos/procurar', verificaAutenticacao, function(req,res) {
   res.redirect(`/recursos/procurar?titulo=${req.body.search}`)
 })
 
 // filtrar e ordenar recursos
-router.post('/recursos/filtrar', function(req,res) {
+router.post('/recursos/filtrar', verificaAutenticacao, function(req,res) {
   console.log(req.body)
   
   if (Array.isArray(req.body.filterBy)) var tipos = req.body.filterBy.join(',')
@@ -217,7 +233,7 @@ router.post('/recursos/filtrar', function(req,res) {
 
 
 // Eliminar um comentario 
-router.get('/comentario/remover/:c', function(req,res) {
+router.get('/comentario/remover/:c', verificaAutenticacao, function(req,res) {
   var myToken = req.cookies.token
   axios.delete('http://localhost:8000/comentarios/' + req.params.c + '?token=' + myToken)
     .then(dados =>{
@@ -235,7 +251,20 @@ router.get('/comentario/remover/:c', function(req,res) {
     .catch(e => res.render('error', {error:e}))
 })
 
+//logout
 
+router.get('/logout', verificaAutenticacao,function(req,res) {
+  req.logout();
+  req.session.destroy(function (err) {
+    if (!err) {
+      console.log("Req.session destroyed!");
+      res.redirect('/')
+    } else {
+      console.log("Destroy session error: " + err)
+      res.status(500).jsonp({error: err})
+    }
+  });
+})
 
 // Login and Register
 
@@ -247,8 +276,9 @@ router.get('/register', function(req,res) {
   res.render('register-form', {user: "", email: "", fil: ""})
 })
 
-router.post('/login', function(req, res) {
-  axios.post('http://localhost:8002/users/login', req.body)
+router.post('/login', passport.authenticate('local'), function(req, res) {
+  
+  axios.post('http://localhost:8002/users/login', req.user)
     .then(dados => {
       res.cookie('token', dados.data.token, {
         maxAge : new Date(Date.now() + 3600000),

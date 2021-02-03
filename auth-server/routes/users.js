@@ -41,10 +41,9 @@ router.put('/:uname', function(req, res) {
 
 
 //login
-router.post('/login', passport.authenticate('local'), function(req,res) {
-    console.log(req.user)
-    jwt.sign({username: req.user.username, 
-              level:  req.user.level,
+router.post('/login', function(req,res) {
+    jwt.sign({username: req.body.username, 
+              level:  req.body.level,
               sub: 'Projeto PRI2020'}, "PRI2020", function(e,token) {
                 if(e) res.status(500).jsonp({error: "Erro na geração do token: " + e}) 
                 else{
