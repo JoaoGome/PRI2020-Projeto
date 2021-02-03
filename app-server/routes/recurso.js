@@ -21,9 +21,7 @@ router.get('/:id', function(req, res, next) {
   if(req.query.vis) vis = req.query.vis
   var r = -1
   if(req.query.r) r = Number(req.query.r)
- // var retroceder = -1
-  //if(req.query.estado === "e1") retroceder = -2
-  //if(req.query.estado === "e2") retroceder = -3
+
   if(vis == 1)
     axios.get('http://localhost:8000/recurso/pessoal/' + req.params.id + '?token=' + myToken)
       .then(dados =>{
@@ -67,9 +65,17 @@ router.get('/:id/remover', function(req,res) {
   var tab = "main"
   if (req.query.tab) tab = req.query.tab
 
+  var r = -2
+  if(req.query.r) r = Number(req.query.r) - 1
+
   axios.delete('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
     .then(dados => {
-      if(req.query.ref) res.redirect(`${req.query.ref}`)
+      var ref = req.query.ref
+      if (ref.includes('user')){
+        if (ref.includes('?')) ref += '&r=' + r
+        else ref += '?r=' + r
+      }
+      if(ref) res.redirect(`${ref}`)
       else res.redirect(`/mainPage`)
     })  
     .catch(e => res.render('error', {error:e}))
