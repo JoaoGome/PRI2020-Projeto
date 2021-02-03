@@ -32,6 +32,9 @@ function defineFiltros(req, tab){
   if (req.query.visBy) visBy = `&visBy=${req.query.visBy}`
   if (req.query.filterBy) filterBy = `&filterBy=${filter}`
 
+  var r = -1
+  if (req.query.r) r = Number(req.query.r)
+
   return [sort, order, filter, filterVis, filterBy, visBy]
 }
 
@@ -55,12 +58,14 @@ router.get('/:id', function(req, res){
       var username = dados.data.username
       var user = dados.data.dados
       var cmts = dados.data.cmts.reverse()
-      console.log(dados.data)
+
+      var r = -1
+      if (req.query.r) r = Number(req.query.r)
       var vis = 4
       if (username === dados.data.dados.username) vis = 3
       else if (nivel === "admin") vis = 1
       
-      res.render('utilizador', {tab:req.query.tab, vis:vis, user:user, username:username, utilizador:req.params.id, comentarios:cmts})
+      res.render('utilizador', {tab:req.query.tab, vis:vis, user:user, username:username, utilizador:req.params.id, comentarios:cmts, r:r})
     })
     .catch(e => res.render('error', {error:e}))
 
@@ -72,7 +77,7 @@ router.get('/:id/recursos', function(req, res){
   
   //filtros
   var filtros = defineFiltros(req, "")
-  var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5]
+  var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5], r = filtros[6]
 
 
   axios.get("http://localhost:8000/recursos/user/" + req.params.id + "?sortBy="+sort+"&orderBy="+order+filterBy+visBy + "&token=" + myToken)
@@ -88,7 +93,7 @@ router.get('/:id/recursos', function(req, res){
       order = order.split(',')
       filter = filter.split(',')
 
-      res.render('utilizador', {tab:req.query.tab, tipos:tipos, vis:vis, user:user, username:user.username, utilizador:req.params.id, recursos:recs, sort:sort,order:order,filter:filter,filterVis:filterVis})
+      res.render('utilizador', {tab:req.query.tab, tipos:tipos, vis:vis, user:user, username:user.username, utilizador:req.params.id, recursos:recs, sort:sort,order:order,filter:filter,filterVis:filterVis, r:r})
     })
     .catch(e => res.render('error', {error:e}))
 })
@@ -133,10 +138,13 @@ router.get('/:user/remover/comentarios', function(req,res) {
   var myToken = req.cookies.token
   axios.delete('http://localhost:8000/comentarios/user/' + req.params.user +'?token=' + myToken)
     .then(dados =>{ 
+      var r = -2
+      if(req.query.r) r = Number(req.query.r) - 1
+
       if (req.query.eliminado)
         res.redirect('/mainPage')
       else
-        res.redirect(`/user/${req.params.user}`)})
+        res.redirect(`/user/${req.params.user}?r=${r}`)})
     .catch(e => res.render('error', {error:e}))
 })
 

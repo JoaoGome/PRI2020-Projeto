@@ -1,0 +1,12 @@
+doctype html
+html
+  head
+    script.
+      function load(r){
+        window.location.replace(`http://localhost:8001${r}`)
+      }
+      window.onload = load("#{ref}")
+
+  body
+    p oi
+    

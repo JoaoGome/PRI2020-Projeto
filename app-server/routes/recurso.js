@@ -19,9 +19,11 @@ router.get('/:id', function(req, res, next) {
   var myToken = req.cookies.token;
   var vis = 2
   if(req.query.vis) vis = req.query.vis
-  var retroceder = -1
-  if(req.query.estado === "e1") retroceder = -2
-  if(req.query.estado === "e2") retroceder = -3
+  var r = -1
+  if(req.query.r) r = Number(req.query.r)
+ // var retroceder = -1
+  //if(req.query.estado === "e1") retroceder = -2
+  //if(req.query.estado === "e2") retroceder = -3
   if(vis == 1)
     axios.get('http://localhost:8000/recurso/pessoal/' + req.params.id + '?token=' + myToken)
       .then(dados =>{
@@ -29,11 +31,12 @@ router.get('/:id', function(req, res, next) {
         var nivel = dados.data.level
         var cmt = dados.data.cmts.reverse()
         var user = dados.data.user
+        
         var permitir = 0
         if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
         else if (user === rec.owner) permitir = 1 
         if(dados.data == null) res.render('error', {error:"Não autorizado"})
-        else res.render('recurso', {r:retroceder, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+        else res.render('recurso', {r:r, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
       })
       .catch(e => res.render('error', {error:e})) 
       
@@ -47,7 +50,7 @@ router.get('/:id', function(req, res, next) {
         var permitir = 0
         if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
         else if (user === rec.owner) permitir = 1 
-        res.render('recurso', {r:retroceder, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+        res.render('recurso', {r:r, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
       })
       .catch(e => res.render('error', {error:e}))
 });
@@ -61,7 +64,7 @@ router.get('/:id', function(req, res, next) {
 // Eliminar um recurso
 router.get('/:id/remover', function(req,res) {
   var myToken = req.cookies.token;
-  var tab = 1
+  var tab = "main"
   if (req.query.tab) tab = req.query.tab
 
   axios.delete('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
@@ -73,14 +76,18 @@ router.get('/:id/remover', function(req,res) {
 // Editar um recurso
 router.get('/:id/editar', function(req,res) {
   var myToken = req.cookies.token;
+  // alterar visibilidade do recurso
   if(req.query.visibilidade){
+    var r = -2
+    if(req.query.r) r = Number(req.query.r) -1
     axios.get('http://localhost:8000/recurso/' + req.params.id + '/alterar?visibilidade=' + req.query.visibilidade + '&token=' + myToken)
-      .then(dados => res.redirect(`/user/${dados.data.username}/recursos`))
+      .then(dados => res.redirect(`/user/${dados.data.username}/recursos?r=${r}`))
       .catch(e => res.render('error', {error:e}))
   }
+  // ir para a pagina de editar recurso
   else{
-    var r = "e2"
-    if(req.query.r) r = req.query.r
+    var r = -2
+    if(req.query.r) r = Number(req.query.r) -2
     axios.get('http://localhost:8000/recurso/pessoal/' + req.params.id + '?token=' + myToken)
       .then(dados =>{
         var hashtags = dados.data.dados.hashtags[0]
@@ -100,7 +107,7 @@ router.post('/editar/:id', function(req,res){
   req.body.hashtags = newString.split(" ");
   req.body.tipo = req.body.tipo.toLowerCase();
   axios.put('http://localhost:8000/recurso?token=' + myToken, req.body)
-    .then(dados => res.redirect(`/recurso/${req.params.id}?estado=${req.query.r}&vis=1`))
+    .then(dados => res.redirect(`/recurso/${req.params.id}?r=${req.query.r}&vis=1`))
     .catch(e => res.render('error', {error:e})) 
 })
 
@@ -111,25 +118,30 @@ router.post('/editar/:id', function(req,res){
 // Adicionar comentário
 router.post('/:id/comentario', function(req,res) {
   var myToken = req.cookies.token;
+  var r = -2
+  if(req.query.r) r = Number(req.query.r) - 1
   axios.post('http://localhost:8000/comentarios/recurso/' + req.params.id + '?token=' + myToken, req.body)
     .then(dados =>{
       if(req.query.owner && (dados.data.username === req.query.owner || dados.data.level === "admin"))
-        res.redirect(`/recurso/${req.params.id}?vis=1`)
+        res.redirect(`/recurso/${req.params.id}?vis=1&r=${r}`)
       else 
-        res.redirect(`/recurso/${req.params.id}?vis=2`)
+        res.redirect(`/recurso/${req.params.id}?vis=2&r=${r}`)
     })
     .catch(e => res.render('error', {error:e}))
 })
 
 
 
-// Eliminar os comentarios de um recurso
+// Eliminar os comentarios de um recurso ----------------------------> modificar
 router.get('/:rec/remover/comentarios', function(req,res) {
   var myToken = req.cookies.token
+  var r = -2
+  if(req.query.r) r = Number(req.query.r) - 1
+
   axios.get('http://localhost:8000/recurso/' + req.params.rec + '/owner?token=' + myToken)
     .then( owner =>{
       axios.delete('http://localhost:8000/comentarios/recurso/' + req.params.rec +'/owner/' + owner.data.owner + '?token=' + myToken)
-        .then(dados => res.redirect(`/recurso/${req.params.rec}`))
+        .then(dados => res.redirect(`/recurso/${req.params.rec}?r=${r}`))
         .catch(e => res.render('error', {error:e}))
     })
     .catch(e => res.render('error', {error:e}))
@@ -139,7 +151,7 @@ router.get('/:rec/remover/comentarios', function(req,res) {
 
 
 
-//Files upload section
+//Files section
 
 
 function existe (a,b) {
@@ -149,7 +161,7 @@ function existe (a,b) {
 }
 
 
-
+//Upload File
 router.post('/upload', upload.single('myFile'), function(req,res,next) {
   good = 1
   manifestoExiste = 1
@@ -282,7 +294,7 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
   })
 })
 
-//Download
+//Download File
 router.get('/:recursoID/download', function(req,res) {
   axios.get('http://localhost:8000/recurso/' + req.params.recursoID + '?token=' + req.cookies.token)
     .then(dados => {

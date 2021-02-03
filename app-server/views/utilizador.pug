@@ -21,21 +21,23 @@ block content
         .w3-bar.w3-theme-d4
             span
                 if comentarios
+                    - var refR = Number(r) -1
                     button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d3 Perfil
                     if tab === "prods"
-                        a(href=`/user/${user.username}/recursos?tab=prods`)    
+                        a(href=`/user/${user.username}/recursos?tab=prods&r=${refR}`)    
                             button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4 Recursos
                     else if tab === "users"
-                        a(href=`/user/${user.username}/recursos?tab=users`)    
+                        a(href=`/user/${user.username}/recursos?tab=users&r=${refR}`)    
                             button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4 Recursos
                     else
                         a(href=`/user/${user.username}/recursos`)    
                             button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4 Recursos
                     - var retroceder = -1
                 else
-                    button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4(onclick="window.history.go(-1)") Perfil
+                    - var refR = Number(r) + 1
+                    button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d4(onclick=`window.history.go(${refR})`) Perfil
                     button.w3-bar-item.w3-hover-opacity.w3-padding.w3-theme-d3 Recursos
-                    - var retroceder = -2
+
                 if username === utilizador
                     button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="addConfirmacao()") Eliminar Conta     
                 else if vis == 1
@@ -94,7 +96,7 @@ block content
                                 
                                 if vis < 4
                                     td.w3-right.w3-margin-right.w3-hover-text-red
-                                        a(href=`/comentario/remover/${c._id}?user=${user.username}`) Eliminar
+                                        a(href=`/comentario/remover/${c._id}?user=${user.username}&r=${r}`) Eliminar
 
                                 td.w3-right.w3-margin-right #{c.data}
                                 
@@ -148,4 +150,4 @@ block content
                 else if tab === "prods"
                     a(href=`/mainPage?tab=prods`) Voltar
                 else
-                    span(onclick=`window.history.go(${retroceder})` style="text-decoration: underline; cursor:pointer;" ) Voltar
+                    span(onclick=`window.history.go(${r})` style="text-decoration: underline; cursor:pointer;" ) Voltar

@@ -61,13 +61,13 @@ if recursos.length
                                 td.w3-padding-large.w3-center 
                                     span.w3-dropdown-click(onclick="dropVis()") Privado 
                                         i.w3-opacity(class="fa fa-angle-down")
-                                        a.w3-dropdown-content.w3-light-grey.w3-border.w3-hover-blue-grey.w3-hover-opacity(id="dropVis" href=`/recurso/${r._id}/editar?visibilidade=2` style="cursor:pointer;") 
+                                        a.w3-dropdown-content.w3-light-grey.w3-border.w3-hover-blue-grey.w3-hover-opacity(id="dropVis" href=`/recurso/${r._id}/editar?visibilidade=2&r=${r}` style="cursor:pointer;") 
                                             .w3-left.w3-padding-small Tornar Público
                             else
                                 td.w3-padding-large.w3-center 
                                     span.w3-dropdown-click(onclick="dropVis()") Público 
                                         i.w3-opacity(class="fa fa-angle-down")
-                                        a.w3-dropdown-content.w3-light-grey.w3-border.w3-hover-blue-grey.w3-hover-opacity(id="dropVis" href=`/recurso/${r._id}/editar?visibilidade=1` style="cursor:pointer;") 
+                                        a.w3-dropdown-content.w3-light-grey.w3-border.w3-hover-blue-grey.w3-hover-opacity(id="dropVis" href=`/recurso/${r._id}/editar?visibilidade=1&r=${r}` style="cursor:pointer;") 
                                             .w3-left.w3-padding-small Tornar Privado
                         else
                             if r.visibilidade == 1
@@ -76,11 +76,11 @@ if recursos.length
                                 td.w3-padding-large.w3-center Público
                     
                         td
-                            button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('recurso', '/recurso/${r._id}/remover?tab=${tab}');`) 
+                            button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('recurso', '/recurso/${r._id}/remover?tab=${tab}&r=${r}');`) 
                                 u Eliminar
                             if vis == 2
                                 button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-blue-grey.w3-right.w3-margin-right 
-                                    a(href=`/recurso/${r._id}/editar?e1`) Editar
+                                    a(href=`/recurso/${r._id}/editar`) Editar
 
 else
     p.w3-margin-left Não existem recursos.

@@ -30,7 +30,10 @@ function defineFiltros(req, tab){
   if (req.query.visBy) visBy = `&visBy=${req.query.visBy}`
   if (req.query.filterBy) filterBy = `&filterBy=${filter}`
 
-  return [sort, order, filter, filterVis, filterBy, visBy]
+  var r = -1
+  if (req.query.r) r = Number(req.query.r)
+
+  return [sort, order, filter, filterVis, filterBy, visBy, r]
 }
 
 
@@ -66,7 +69,7 @@ router.get('/mainPage', function(req,res) {
           order = order.split(',')
           filter = filter.split(',')
 
-          res.render('main_recs', {nivel:nivel, produtor:"sim", vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:sort,order:order,filter:filter,filterVis:filterVis})
+          res.render('main_recs', {nivel:nivel, produtor:"sim", vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:sort,order:order,filter:filter,filterVis:filterVis,r:""})
       })
       .catch(e => res.render('error', {error:e}))
   }
@@ -82,7 +85,7 @@ router.get('/mainPage', function(req,res) {
           order = order.split(',')
           filter = filter.split(',')
           
-          res.render('main_meus', {nivel:nivel, vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:sort,order:order,filter:filter,filterVis:filterVis})
+          res.render('main_meus', {nivel:nivel, vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:sort,order:order,filter:filter,filterVis:filterVis,r:""})
       })
       .catch(e => res.render('error', {error:e}))
   }
@@ -129,7 +132,7 @@ router.get('/recursos', function(req,res) {
   if(req.query.hashtag){
     //filtros
     var filtros = defineFiltros(req, "")
-    var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5]
+    var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5], r = filtros[6]
 
     axios.get('http://localhost:8000/recursos?hashtag=' + req.query.hashtag + '&sortBy='+sort+"&orderBy="+order+filterBy+visBy + '&token=' + myToken)
       .then(dados =>{
@@ -137,7 +140,7 @@ router.get('/recursos', function(req,res) {
         order = order.split(',')
         filter = filter.split(',')
 
-        res.render('hashtag', {produtor:"sim", tipos:dados.data.tipos, hashtag: req.query.hashtag, recursos: dados.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis})
+        res.render('hashtag', {produtor:"sim", tipos:dados.data.tipos, hashtag: req.query.hashtag, recursos: dados.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis,r:r})
       })
       .catch(e => res.render('error', {error:e}))
   }
@@ -151,7 +154,7 @@ router.get('/recursos/procurar', function(req,res) {
   
   //filtros
   var filtros = defineFiltros(req, "")
-  var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5]
+  var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5], r = filtros[6]
 
   if(req.query.titulo){
     var ht = req.query.titulo.replace(/\s*/g,'');
@@ -161,7 +164,7 @@ router.get('/recursos/procurar', function(req,res) {
         order = order.split(',')
         filter = filter.split(',')
 
-        res.render('procurar', {tab:"titulo", produtor:"sim", procura:req.query.titulo, ht:ht, tipos:recTitulo.data.tipos, recursos:recTitulo.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis})
+        res.render('procurar', {tab:"titulo", produtor:"sim", procura:req.query.titulo, ht:ht, tipos:recTitulo.data.tipos, recursos:recTitulo.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis,r:r})
       })
       .catch(e => res.render('error', {error:e}))
   }
@@ -172,8 +175,8 @@ router.get('/recursos/procurar', function(req,res) {
         sort = sort.replace(/owner/,"produtor").split(',')
         order = order.split(',')
         filter = filter.split(',')
-
-        res.render('procurar', {tab:"hashtag", produtor:"sim", procura:ht, tipos:recHashtag.data.tipos, recursos:recHashtag.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis})
+      
+        res.render('procurar', {tab:"hashtag", produtor:"sim", procura:ht, tipos:recHashtag.data.tipos, recursos:recHashtag.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis,r:r})
       })
       .catch(e => res.render('error', {error:e}))
   }
@@ -187,20 +190,29 @@ router.post('/recursos/procurar', function(req,res) {
 // filtrar e ordenar recursos
 router.post('/recursos/filtrar', function(req,res) {
   console.log(req.body)
+  
   if (Array.isArray(req.body.filterBy)) var tipos = req.body.filterBy.join(',')
   else var tipos = req.body.filterBy
   if (Array.isArray(req.body.ordenar)) var ordenar = req.body.sortBy.join(',')
   else var ordenar = req.body.sortBy
   if (Array.isArray(req.body.ordem)) var ordem = req.body.orderBy.join(',')
   else var ordem = req.body.orderBy
+  
   var ref = req.query.ref
-  var filterBy = ""
-  if (req.body.filterBy) filterBy = `&filterBy=${tipos}`
-  var visBy = ""
-  if (req.body.visBy) visBy = `&visBy=${req.body.visBy}`
-  if (!ref.includes('?')) ref = ref + '?'
-  else ref = ref + '&'
-  res.redirect(`${ref}sortBy=${ordenar}&orderBy=${ordem}${filterBy}${visBy}`)
+  if (!ref.includes('?')) ref += '?'
+  else ref += '&'
+  if (req.body.filterBy) ref += `filterBy=${tipos}&`
+  if (req.body.sortBy) ref += `sortBy=${ordenar}&`
+  if (req.body.orderBy) ref += `orderBy=${ordem}&`
+  if (req.body.visBy) ref += `visBy=${req.body.visBy}&`
+  ref = ref.slice(0,-1)
+  
+  var r = -2
+  if(req.query.r) r = Number(req.query.r) - 1
+  if (req.query.r) ref += "&r=" + r
+  
+  
+  res.redirect(`${ref}`)
 })
 
 
@@ -209,12 +221,15 @@ router.get('/comentario/remover/:c', function(req,res) {
   var myToken = req.cookies.token
   axios.delete('http://localhost:8000/comentarios/' + req.params.c + '?token=' + myToken)
     .then(dados =>{
-      if (req.query.user) res.redirect(`/user/${req.query.user}`)
+      var r = -2
+      if(req.query.r) r = Number(req.query.r) - 1
+
+      if (req.query.user) res.redirect(`/user/${req.query.user}?r=${r}`)
       if (req.query.recurso){
         if(req.query.owner && (dados.data.username === req.query.owner || dados.data.level === "admin"))
-          res.redirect(`/recurso/${req.query.recurso}?vis=1`)
+          res.redirect(`/recurso/${req.query.recurso}?vis=1&r=${r}`)
         else 
-          res.redirect(`/recurso/${req.query.recurso}?vis=2`)
+          res.redirect(`/recurso/${req.query.recurso}?vis=2&r=${r}`)
       }
     })
     .catch(e => res.render('error', {error:e}))

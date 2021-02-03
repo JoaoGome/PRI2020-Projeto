@@ -1,6 +1,8 @@
         
 
 .w3-bar.w3-theme-d3
+    if r != ""
+        - var ref = ref + `&r=${r}` 
     form(action=`/recursos/filtrar?ref=${ref}` method='POST')
         h6.w3-margin-left Género: 
             each t in tipos

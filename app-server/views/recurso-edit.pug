@@ -15,7 +15,10 @@ block content
                 input.w3-input.w3-margin-left(type="text" name="titulo" value=`${recurso.titulo}` placeholder=`Introduza o título` required)
             h5.w3-cell-row.w3-padding
                 label.w3-cell(style="width:100px") Subtítulo
-                input.w3-input.w3-margin-left(type="text" name="subtitulo" value=`${recurso.subtitulo}` placeholder=`Introduza o subtítulo`)
+                if recurso.subtitulo
+                    input.w3-input.w3-margin-left(type="text" name="subtitulo" value=`${recurso.subtitulo}` placeholder=`Introduza o subtítulo`)
+                else    
+                    input.w3-input.w3-margin-left(type="text" name="subtitulo" value="" placeholder=`Introduza o subtítulo`)
             
             h5.w3-cell-row.w3-padding
                 label.w3-cell(style="width:100px") Tipo:
@@ -50,4 +53,4 @@ block content
         
         .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-margin-top.w3-padding-large
             address 
-                a(href=`/recurso/${recurso._id}`) Voltar
+                span(onclick=`window.history.go(-1)` style="text-decoration: underline; cursor:pointer;" ) Voltar
