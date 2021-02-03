@@ -11,7 +11,7 @@ block content
             h3.w3-margin-left Recurso: 
                 span.margin-left.w3-opacity #{recurso.titulo}              
                 if permitir > 0
-                    button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="addConfirmacao()") Eliminar
+                    button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="document.getElementById('removerRecurso').style.display='block'") Eliminar
                 if permitir == 2
                     a(href=`/recurso/${recurso._id}/editar?r=${r}`)
                         button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Editar
@@ -107,15 +107,15 @@ block content
         
 
         //- de certeza que queres eliminar o recurso?
-        div.w3-modal(id="confirmar" style="display:none")
+        div.w3-modal(id="confirmarRecurso" style="display:none")
             div.w3-modal-content.w3-theme-d3.w3-round-large(style="width:450px")
                 div.w3-container.w3-padding-16
                     h5.w3-center.w3-margin-bottom Tem a certeza que quer eliminar este recurso?
                     h5.w3-center
-                        a(href=`/recurso/${recurso._id}/remover?tab=${tab}`)
+                        a(href=`/recurso/${recurso._id}/remover`)
                             button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium
                                 i(class="fa fa-check")
-                        button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium.w3-margin-left(onclick="document.getElementById('confirmar').style.display='none'")
+                        button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium.w3-margin-left(onclick="document.getElementById('confirmarRecurso').style.display='none'")
                             i(class="fa fa-close")
 
         //- de certeza que queres eliminar os comentarios?

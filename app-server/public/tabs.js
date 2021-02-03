@@ -62,8 +62,13 @@ function addComentario(){
 }
 
 
-function addConfirmacao(s, ref){ 
-  document.getElementById("confirmar").style.display='block'
+function addConfirmacao(id, ref){ 
+  document.getElementById(id).style.display='block'
+  document.getElementById("ref").href = ref; 
+}
+
+/*function addConfirmacao(id, s, ref){ 
+  document.getElementById(id).style.display='block'
   if(s==="recurso"){
     document.getElementById("questao_recurso").style.display = 'block'
     document.getElementById("questao_user").style.display = 'none'
@@ -73,7 +78,7 @@ function addConfirmacao(s, ref){
     document.getElementById("questao_user").style.display = 'block'
   }
   document.getElementById("ref").href = ref; 
-}
+}*/
 
 
 function limparGeneros(event){
@@ -88,8 +93,8 @@ function limparGeneros(event){
 }
 
 
-function dropVis(){
-  var x = document.getElementById("dropVis");
+function dropVis(ind,i){
+  var x = document.getElementById(`dropVis${ind}${i}`);
   if (x.className.indexOf("w3-show") == -1) { 
     x.className += " w3-show";
   } else {

@@ -6,9 +6,7 @@ var axios = require('axios')
 /* GET home page. */
 
 function retiraFiltros (vis, req) {
-  for (i = 0; i < b.length; i++)
-    if (b[i] == a) return true
-  return false
+  return 0
 }
 
 // Listar todas os recursos
@@ -115,8 +113,8 @@ router.get('/user/:user', function(req, res) {
   else order[1] = -1
   
   var visBy = [2]
-  if(req.user.vis == 1) visBy = [1,2]
-  if(req.query.visBy === "privado" && req.user.vis == 1) visBy = [1]
+  if(vis == 1) visBy = [1,2]
+  if(req.query.visBy === "privado" && vis == 1) visBy = [1]
   if(req.query.visBy === "publico") visBy = [2]
   
   // Listar os tipos existentes

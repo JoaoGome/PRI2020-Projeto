@@ -35,7 +35,7 @@ function defineFiltros(req, tab){
   var r = -1
   if (req.query.r) r = Number(req.query.r)
 
-  return [sort, order, filter, filterVis, filterBy, visBy]
+  return [sort, order, filter, filterVis, filterBy, visBy, r]
 }
 
 
@@ -79,7 +79,6 @@ router.get('/:id/recursos', function(req, res){
   var filtros = defineFiltros(req, "")
   var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5], r = filtros[6]
 
-
   axios.get("http://localhost:8000/recursos/user/" + req.params.id + "?sortBy="+sort+"&orderBy="+order+filterBy+visBy + "&token=" + myToken)
     .then(dados =>{
       var tipos = dados.data.tipos
@@ -92,6 +91,7 @@ router.get('/:id/recursos', function(req, res){
       sort = sort.split(',')
       order = order.split(',')
       filter = filter.split(',')
+      console.log(r)
 
       res.render('utilizador', {tab:req.query.tab, tipos:tipos, vis:vis, user:user, username:user.username, utilizador:req.params.id, recursos:recs, sort:sort,order:order,filter:filter,filterVis:filterVis, r:r})
     })

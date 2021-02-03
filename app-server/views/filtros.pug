@@ -2,8 +2,8 @@
 
 .w3-bar.w3-theme-d3
     if r != ""
-        - var ref = ref + `&r=${r}` 
-    form(action=`/recursos/filtrar?ref=${ref}` method='POST')
+        - var ref2 = ref + `&r=${r}` 
+    form(action=`/recursos/filtrar?ref=${ref2}` method='POST')
         h6.w3-margin-left Género: 
             each t in tipos
                 input.w3-check.w3-opacity.w3-margin-left(style="height:20px" type="checkbox" name="filterBy" value=t checked=filter.includes(t))

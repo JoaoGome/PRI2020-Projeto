@@ -17,7 +17,7 @@ div.w3-display-container(class="users", id="consumidores", style=`display:${tab3
                     td.w3-padding-large.w3-center= c.filiacao
                     td.w3-padding-large= c.dataLastAcess 
                     td
-                        button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('utilizador', '/user/${c.username}/remover?tab=users');`) 
+                        button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('confirmarUser', '/user/${c.username}/remover?tab=users');`) 
                             u Eliminar
                         button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-blue-grey.w3-right.w3-margin-right
                             a(href=`/user/${c.username}/upgrade`) Upgrade
@@ -42,10 +42,23 @@ div.w3-display-container(class="users", id="produtores", style=`display:${tab32}
                     td.w3-padding-large.w3-center #{pr.filiacao}  
                     td.w3-padding-large= pr.dataLastAcess 
                     td
-                        button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('utilizador', '/user/${pr.username}/remover?tab=prods');`) 
+                        button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('confirmarUser', '/user/${pr.username}/remover?tab=prods');`) 
                             u Eliminar
                         button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-blue-grey.w3-right.w3-margin-right
                             a(href=`/user/${pr.username}/downgrade`) Downgrade
 
     else
         p.w3-margin-left Não existem produtores.
+
+
+//- de certeza que queres eliminar?
+div.w3-modal(id="confirmarUser" style="display:none")
+    div.w3-modal-content.w3-theme-d3.w3-round-large(style="width:450px")
+        div.w3-container.w3-padding-16
+            h5.w3-center.w3-margin-bottom(id="questao_user") Tem a certeza que quer eliminar este utilizador?
+            h5.w3-center
+                a(id="ref" href="")
+                    button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium
+                        i(class="fa fa-check")
+                button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium.w3-margin-left(onclick="document.getElementById('confirmarUser').style.display='none'")
+                    i(class="fa fa-close")

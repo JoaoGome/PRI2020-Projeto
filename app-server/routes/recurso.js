@@ -68,7 +68,10 @@ router.get('/:id/remover', function(req,res) {
   if (req.query.tab) tab = req.query.tab
 
   axios.delete('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
-    .then(dados => res.redirect(`/mainPage`))
+    .then(dados => {
+      if(req.query.ref) res.redirect(`${req.query.ref}`)
+      else res.redirect(`/mainPage`)
+    })  
     .catch(e => res.render('error', {error:e}))
 })  
 

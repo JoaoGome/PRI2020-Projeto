@@ -1,7 +1,6 @@
         
 //- Listar recursos
 include ./filtros.pug
-
 if recursos.length
 
     table.w3-table.w3-bordered
@@ -29,58 +28,73 @@ if recursos.length
                 th.w3-center 
 
 
-        each o in recursos
-            each r,i in o.recursos
-                tr.w3-hover-text-blue-grey(id="" class=`recurso ${r.tipo} ${r.visibilidade}` style="display:")
+        each o,ind in recursos
+            each rec,i in o.recursos
+                tr.w3-hover-text-blue-grey(id="" class=`recurso ${rec.tipo} ${rec.visibilidade}` style="display:")
                     if i == 0
                         if sort[0] === "produtor"
                             th.w3-text-blue-grey
                                 a(href=`/user/${o._id}` style="text-decoration:none;")= o._id
                         else if sort[0] === "titulo"
                             td.w3-padding-large
-                                a(href=`/recurso/${r._id}?vis=${r.visibilidade}`) #{r.titulo} 
+                                a(href=`/recurso/${rec._id}?vis=${rec.visibilidade}`) #{rec.titulo} 
                         else
                             td.w3-padding-large= o._id
                     else 
-                        td
+                        if sort[0] === "titulo"
+                            td.w3-padding-large
+                                a(href=`/recurso/${rec._id}?vis=${rec.visibilidade}`) #{rec.titulo}
                     if sort[0] != "titulo"
                         td.w3-padding-large
-                            a(href=`/recurso/${r._id}?vis=${r.visibilidade}`) #{r.titulo} 
+                            a(href=`/recurso/${rec._id}?vis=${rec.visibilidade}`) #{rec.titulo} 
                     if sort[0] != "autor"
-                        td.w3-padding-large #{r.autor}
+                        td.w3-padding-large #{rec.autor}
                     if sort[0] != "produtor"
                         td.w3-padding-large
-                            a(href=`/user/${r.owner}`) #{r.owner}
-                    td.w3-padding-large #{r.tipo}
+                            a(href=`/user/${rec.owner}`) #{rec.owner}
+                    td.w3-padding-large #{rec.tipo}
                     if sort[0] != "dataRegisto"
-                        td.w3-padding-large.w3-center #{r.dataRegisto}
+                        td.w3-padding-large.w3-center #{rec.dataRegisto}
 
                     if vis < 4
                         if vis == 3
-                            if r.visibilidade == 1
+                            if rec.visibilidade == 1
                                 td.w3-padding-large.w3-center 
-                                    span.w3-dropdown-click(onclick="dropVis()") Privado 
+                                    span.w3-dropdown-click(onclick=`dropVis(${ind},${i})`) Privado
                                         i.w3-opacity(class="fa fa-angle-down")
-                                        a.w3-dropdown-content.w3-light-grey.w3-border.w3-hover-blue-grey.w3-hover-opacity(id="dropVis" href=`/recurso/${r._id}/editar?visibilidade=2&r=${r}` style="cursor:pointer;") 
+                                        a.w3-dropdown-content.w3-light-grey.w3-borderec.w3-hover-blue-grey.w3-hover-opacity(id=`dropVis${ind}${i}` href=`/recurso/${rec._id}/editar?visibilidade=2&r=${r}` style="cursor:pointer;") 
                                             .w3-left.w3-padding-small Tornar Público
                             else
                                 td.w3-padding-large.w3-center 
-                                    span.w3-dropdown-click(onclick="dropVis()") Público 
+                                    span.w3-dropdown-click(onclick=`dropVis(${ind},${i})`) Público
                                         i.w3-opacity(class="fa fa-angle-down")
-                                        a.w3-dropdown-content.w3-light-grey.w3-border.w3-hover-blue-grey.w3-hover-opacity(id="dropVis" href=`/recurso/${r._id}/editar?visibilidade=1&r=${r}` style="cursor:pointer;") 
+                                        a.w3-dropdown-content.w3-light-grey.w3-borderec.w3-hover-blue-grey.w3-hover-opacity(id=`dropVis${ind}${i}` href=`/recurso/${rec._id}/editar?visibilidade=1&r=${r}` style="cursor:pointer;") 
                                             .w3-left.w3-padding-small Tornar Privado
                         else
-                            if r.visibilidade == 1
+                            if rec.visibilidade == 1
                                 td.w3-padding-large.w3-center Privado
                             else
                                 td.w3-padding-large.w3-center Público
                     
                         td
-                            button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('recurso', '/recurso/${r._id}/remover?tab=${tab}&r=${r}');`) 
+                            button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-red.w3-right.w3-margin-right(onclick=`addConfirmacao('confirmarRecurso', '/recurso/${rec._id}/remover?ref=${ref}&r=${r}');`) 
                                 u Eliminar
                             if vis == 2
                                 button.w3-button.w3-padding-small.w3-round.w3-meddium.w3-hover-blue-grey.w3-right.w3-margin-right 
-                                    a(href=`/recurso/${r._id}/editar`) Editar
+                                    a(href=`/recurso/${rec._id}/editar`) Editar
 
 else
     p.w3-margin-left Não existem recursos.
+
+
+//- de certeza que queres eliminar?
+div.w3-modal(id="confirmarRecurso" style="display:none")
+    div.w3-modal-content.w3-theme-d3.w3-round-large(style="width:450px")
+        div.w3-container.w3-padding-16
+            h5.w3-center.w3-margin-bottom(id="questao_recurso") Tem a certeza que quer eliminar este recurso?
+            h5.w3-center
+                a(id="ref" href="")
+                    button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium
+                        i(class="fa fa-check")
+                button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium.w3-margin-left(onclick="document.getElementById('confirmarRecurso').style.display='none'")
+                    i(class="fa fa-close")
