@@ -34,7 +34,7 @@ router.get('/:id', function(req, res, next) {
         if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
         else if (user === rec.owner) permitir = 1 
         if(dados.data == null) res.render('error', {error:"Não autorizado"})
-        else res.render('recurso', {r:r, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+        else res.render('recurso', {r:r, vis:vis, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
       })
       .catch(e => res.render('error', {error:e})) 
       
@@ -48,7 +48,7 @@ router.get('/:id', function(req, res, next) {
         var permitir = 0
         if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
         else if (user === rec.owner) permitir = 1 
-        res.render('recurso', {r:r, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+        res.render('recurso', {r:r, vis:vis, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
       })
       .catch(e => res.render('error', {error:e}))
 });
@@ -108,6 +108,18 @@ router.get('/:id/editar', function(req,res) {
   }
 })
 
+// Editar um recurso
+router.get('/:id/classificar/:c', function(req,res) {
+  var myToken = req.cookies.token;
+
+  var r = -2
+  if(req.query.r) r = Number(req.query.r) -1
+
+  axios.get('http://localhost:8000/recurso/' + req.params.id + '/classificar/' + req.params.c + '?token=' + myToken)
+    .then(dados => res.redirect(`/recurso/${req.params.id}?vis=${req.query.vis}&r=${r}`))
+    .catch(e => res.render('error', {error:e}))
+
+})
 
 // Alterar um recurso
 router.post('/editar/:id', function(req,res){
@@ -194,7 +206,7 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
         if (entry.name != "manifesto.txt" && entry.name != "information.json")
         {
           broken = entry.name.split('.')
-          if (broken[1] == "pdf" || broken[1] == "doc" || broken[1] == "png" || broken[1] == "jpg" || broken[1] == "jpeg") preview = "sim"
+          if (broken[1] == "pdf" || broken[1] == "doc" || broken[1] == "png" || broken[1] == "jpg" || broken[1] == "jpeg") preview = broken[1]
         }
       }
 
@@ -291,6 +303,8 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
     else{
       req.body.fileName = req.file.originalname
       req.body.tipo = req.body.tipo.toLowerCase();
+      req.body.classificacao = -1
+      req.body.classificacoes = []
       newString = req.body.hashtags.replace(/\s+/g,' ').trim();
       req.body.hashtags = newString.split(" ")
 

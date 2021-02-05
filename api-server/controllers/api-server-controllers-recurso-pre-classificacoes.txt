@@ -14,7 +14,7 @@ module.exports.listarRecPessoais = (v,u, f, s1, s2, o1, o2, c) => {
     return Recurso
         .aggregate([
             { $sort: sort2 },
-            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"owner":u}, {"classificacao": {$gte: c}} ]} },
+            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"owner":u} ]} },
             { $group: {
                 _id: "$"+s1,
                 recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
@@ -44,7 +44,7 @@ module.exports.listarRecUser = (v,u, f, s1, s2, o1, o2, c) => {
     return Recurso
         .aggregate([
             { $sort: sort2 },
-            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"owner":u}, {"classificacao": {$gte: c}} ]} },
+            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"owner":u} ]} },
             { $group: {
                 _id: "$"+s1,
                 recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
@@ -71,7 +71,7 @@ module.exports.listarRecBy = (v, f, s1, s2, o1, o2, c) => {
     return Recurso
         .aggregate([
             { $sort: sort2 },
-            { $match: {$and: [{"visibilidade": {$in: v}}, {"tipo": {$in: f}}, {"classificacao": {$gte: c}} ]} },
+            { $match: {$and: [{"visibilidade": {$in: v}}, {"tipo": {$in: f}} ]} },
             { $group: {
                 _id: "$"+s1,
                 recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
@@ -88,7 +88,7 @@ module.exports.listarRecursosTitulo = (v, t, f, s1, s2, o1, o2, c) => {
     return Recurso
         .aggregate([
             { $sort: sort2 },
-            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"titulo":{"$regex":t}}, {"classificacao": {$gte: c}} ]} },
+            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"titulo":{"$regex":t}} ]} },
             { $group: {
                 _id: "$"+s1,
                 recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
@@ -106,7 +106,7 @@ module.exports.listarRecursosTipo = (v,t, s1, s2, o1, o2, c) => {
     return Recurso
         .aggregate([
             { $sort: sort2 },
-            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo":t}, {"classificacao": {$gte: c}} ]} },
+            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo":t} ]} },
             { $group: {
                 _id: "$"+s1,
                 recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
@@ -150,7 +150,7 @@ module.exports.listarRecHashtags = (v,h, f, s1, s2, o1, o2, c) => {
     return Recurso
         .aggregate([
             { $sort: sort2 },
-            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"hashtags": h}, {"classificacao": {$gte: c}} ]} },
+            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"hashtags": h} ]} },
             { $group: {
                 _id: "$"+s1,
                 recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }

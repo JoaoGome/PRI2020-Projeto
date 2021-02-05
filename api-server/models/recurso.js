@@ -10,7 +10,12 @@ var recursoSchema = new mongoose.Schema({
     owner: String,
     hashtags: [String],
     fileName: String,
-    preview: String
+    preview: String,
+    classificacao: Number,
+    classificacoes:[{
+                      username: String,
+                      classificacao: Number
+                   }]
   });
 
 module.exports = mongoose.model('recurso', recursoSchema)

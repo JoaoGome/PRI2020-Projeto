@@ -92,4 +92,49 @@ router.delete('/:id', function(req,res,next) {
       .catch(e => res.status(500).jsonp({error: e}))
 });
 
+// alterar classificaçao de um recurso
+router.get('/:id/classificar/:c', function(req,res) {
+  var c = Number(req.params.c);
+  Recurso.consultar(req.user.vis, req.params.id)
+    .then(dados =>{
+      var teste = dados;
+      found = 0;
+      totalSum = 0;
+      for (r in teste.classificacoes) 
+      {
+        if (teste.classificacoes[r].username == req.user.username)
+        {
+          found = 1;
+          teste.classificacoes[r].classificacao = c;
+          totalSum += teste.classificacoes[r].classificacao;
+        } 
+        else totalSum += teste.classificacoes[r].classificacao;
+      }
+
+      if (!found)
+      {
+        console.log("TotalSum antes de somar: ", totalSum);
+        console.log("Valor do c: ", c);
+        teste.classificacoes.push({username:req.user.username, classificacao: c});
+        totalSum += c;
+        console.log("TotalSum depois de somar: ", totalSum)
+      }
+
+      media = totalSum / teste.classificacoes.length;
+      console.log(totalSum)
+      console.log(teste.classificacoes.length)
+      console.log(media)
+      teste.classificacao = media.toFixed(1)
+
+      Recurso.alterar(teste)
+      .then(dados => res.status(200).jsonp({dados:dados}))
+      .catch(e => res.status(502).jsonp({error:e}))
+
+    })
+
+    
+    
+    .catch(e => res.status(502).jsonp({error: e}))
+})
+
 module.exports = router;

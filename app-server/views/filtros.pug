@@ -2,13 +2,29 @@
 
 .w3-bar.w3-theme-d3
     if r != ""
-        - var ref2 = ref + `&r=${r}` 
+        - var ref2 = ref + `&r=${r}`
+    else
+        - var ref2 = ref 
     form(action=`/recursos/filtrar?ref=${ref2}` method='POST')
         h6.w3-margin-left Género: 
             each t in tipos
                 input.w3-check.w3-opacity.w3-margin-left(style="height:20px" type="checkbox" name="filterBy" value=t checked=filter.includes(t))
                 label  #{t}
             input.w3-margin-right.w3-opacity.w3-round.w3-button.w3-right.w3-padding-small(type="submit" value="Aplicar")
+            br
+            label.w3.margin-left.w3-margin-top Classificação: 
+            input.w3-opacity.w3-radio.w3-margin-top(style="height:20px" type="radio" name="classificarBy" value="5")
+            label  5  
+            input.w3-opacity.w3-radio(style="height:20px" type="radio" name="classificarBy" value="4")
+            label  4+  
+            input.w3-opacity.w3-radio(style="height:20px" type="radio" name="classificarBy" value="3")
+            label  3+  
+            input.w3-opacity.w3-radio(style="height:20px" type="radio" name="classificarBy" value="2")
+            label  2+  
+            input.w3-opacity.w3-radio(style="height:20px" type="radio" name="classificarBy" value="1")
+            label  1+  
+            input.w3-opacity.w3-radio(style="height:20px" type="radio" name="classificarBy" value="-1")
+            label.w3-margin-right  todos
             br
             if vis < 4
                 label.w3-margin-top Visibilidade:
@@ -34,6 +50,10 @@
                 if produtor
                     if sort[0] != "produtor"
                         option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="owner") Produtor
+                if sort[0] != "classificacao"
+                    option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="classificacao") Classificação
+                if sort[0] != "tipo"
+                    option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="tipo") Tipo
                 if sort[0] != "dataRegisto"
                     option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="dataRegisto") Data Registo
             select.w3-margin-top.w3-round.w3-theme-d3.w3-opacity.w3-border-light-grey(name="orderBy")
@@ -59,6 +79,10 @@
                 if produtor
                     if sort[1] != "produtor"
                         option.w3-hover-blue-grey.w3-hover-opacity(value="owner") Produtor
+                if sort[1] != "classificacao"
+                    option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="classificacao") Classificação
+                if sort[1] != "tipo"
+                    option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="tipo") Tipo
                 if sort[1] != "dataRegisto"
                     option.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(value="dataRegisto" class="dataRegisto") Data Registo
             select.w3-margin-top.w3-round.w3-theme-d3.w3-opacity.w3-border-light-grey(class="sort2" name="orderBy" style=`display:${dispSort}`)

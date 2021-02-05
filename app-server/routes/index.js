@@ -55,7 +55,7 @@ function defineFiltros(req, tab){
 
 // GETS
 router.get('/', verificaInicial,function(req, res, next) {
-    res.render('index');
+  res.render('index');
 });
 
 
@@ -125,18 +125,6 @@ router.get('/mainPage', verificaAutenticacao,function(req,res) {
       })
       .catch(e => res.render('error', {error:e}))  
   }
-/*  if(tab === "users"){
-    //Pedir lista de produtores
-    axios.get("http://localhost:8000/users?level=consumidor&token=" + myToken)
-      .then(cs => res.render('tab3', {nivel:nivel, consumidores:cs.data, sort:sort}))
-      .catch(e => res.render('error', {error:e}))    
-  }
-  if(tab === "prod"){
-    //Pedir lista de produtores
-    axios.get("http://localhost:8000/users?level=produtor&token=" + myToken)
-      .then(ps => res.render('tab3', {nivel:nivel, produtores:ps.data, sort:sort}))
-      .catch(e => res.render('error', {error:e}))                    
-  }*/
 });
 
 
@@ -221,6 +209,7 @@ router.post('/recursos/filtrar', verificaAutenticacao, function(req,res) {
   if (req.body.sortBy) ref += `sortBy=${ordenar}&`
   if (req.body.orderBy) ref += `orderBy=${ordem}&`
   if (req.body.visBy) ref += `visBy=${req.body.visBy}&`
+  if (req.body.classificarBy) ref += `classificarBy=${req.body.classificarBy}&`
   ref = ref.slice(0,-1)
   
   var r = -2
@@ -285,12 +274,19 @@ router.post('/login', passport.authenticate('local'), function(req, res) {
         secure: false, // set to true if your using https
         httpOnly: true
       });
+      console.log("here")
       res.redirect('/mainPage')
+      console.log("here1")
     })
     .catch(e => res.render('login-form', {erro: e, user: req.body.username}))
 });
 
 router.post('/register', function(req,res) {
+  if (req.body.username == "[deleted]")
+  {
+    res.render('register-form', {error:"erro username", user: req.body.username, email: req.body.email, fil: req.body.filiacao})
+  }
+
   axios.post('http://localhost:8002/users/registar', req.body)
     .then(dados => res.redirect('/'))
     .catch(e => res.render('register-form', {error:e, user: req.body.username, email: req.body.email, fil: req.body.filiacao}))
