@@ -40,6 +40,9 @@ module.exports.alterarLastAcess = (uname,date) => {
     return User.findOneAndUpdate({username: uname}, {$set: {dataLastAcess: date}});
 }
 
-
+// alterar a data de last last acesso de um user
+module.exports.alterarLastLastAcess = (uname,date) => {
+    return User.findOneAndUpdate({username: uname}, {$set: {dataLastLastAcess: date}});
+}
 
 

@@ -7,7 +7,9 @@ var userSchema = new mongoose.Schema({
     email: String,
     filiacao: String,
     dataRegisto: String,
-    dataLastAcess: String
+    dataLastAcess: String,
+    dataLastLastAcess: String,
+    pedido: String
   });
 
 module.exports = mongoose.model('user', userSchema)

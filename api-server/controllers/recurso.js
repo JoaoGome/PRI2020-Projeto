@@ -17,7 +17,7 @@ module.exports.listarRecPessoais = (v,u, f, s1, s2, o1, o2, c) => {
             { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"owner":u}, {"classificacao": {$gte: c}} ]} },
             { $group: {
                 _id: "$"+s1,
-                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
+                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", classificacao: "$classificacao", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
             }},
             { $sort: {"_id":o1} }
             
@@ -47,7 +47,7 @@ module.exports.listarRecUser = (v,u, f, s1, s2, o1, o2, c) => {
             { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"owner":u}, {"classificacao": {$gte: c}} ]} },
             { $group: {
                 _id: "$"+s1,
-                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
+                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", classificacao: "$classificacao", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
             }},
             { $sort: {"_id":o1} }
             
@@ -74,7 +74,7 @@ module.exports.listarRecBy = (v, f, s1, s2, o1, o2, c) => {
             { $match: {$and: [{"visibilidade": {$in: v}}, {"tipo": {$in: f}}, {"classificacao": {$gte: c}} ]} },
             { $group: {
                 _id: "$"+s1,
-                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
+                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", classificacao: "$classificacao", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
             }},
             { $sort: {"_id":o1} }
             
@@ -91,7 +91,7 @@ module.exports.listarRecursosTitulo = (v, t, f, s1, s2, o1, o2, c) => {
             { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"titulo":{"$regex":t}}, {"classificacao": {$gte: c}} ]} },
             { $group: {
                 _id: "$"+s1,
-                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
+                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", classificacao: "$classificacao", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
             }},
             { $sort: {"_id":o1} }
             
@@ -109,7 +109,7 @@ module.exports.listarRecursosTipo = (v,t, s1, s2, o1, o2, c) => {
             { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo":t}, {"classificacao": {$gte: c}} ]} },
             { $group: {
                 _id: "$"+s1,
-                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
+                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", classificacao: "$classificacao", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
             }},
             { $sort: {"_id":o1} }
             
@@ -153,13 +153,29 @@ module.exports.listarRecHashtags = (v,h, f, s1, s2, o1, o2, c) => {
             { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"hashtags": h}, {"classificacao": {$gte: c}} ]} },
             { $group: {
                 _id: "$"+s1,
-                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
+                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", classificacao: "$classificacao", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
             }},
             { $sort: {"_id":o1} }
             
         ])
 }
 
+// Devolve recursos desde data X
+module.exports.consultarRecursoAfterData = (v,data, f, s1, s2, o1, o2, c) => {
+    var sort2 = {}
+    sort2[s2] = o2
+    return Recurso
+        .aggregate([
+            { $sort: sort2 },
+            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"hashtags": h}, {"classificacao": {$gte: c}}, {"dataRegisto": {$gt: data}} ]} },
+            { $group: {
+                _id: "$"+s1,
+                recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", classificacao: "$classificacao", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }
+            }},
+            { $sort: {"_id":o1} }
+            
+        ])
+}
 
 
 //////////////////////////////////////////// Alterar bd

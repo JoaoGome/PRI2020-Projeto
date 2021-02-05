@@ -47,19 +47,32 @@ router.post('/login', function(req,res) {
               sub: 'Projeto PRI2020'}, "PRI2020", function(e,token) {
                 if(e) res.status(500).jsonp({error: "Erro na geração do token: " + e}) 
                 else{
-                  var d = new Date().toISOString().slice(0, 10)
-                  User.alterarLastAcess(req.body.username, d)
-                    .then(res.status(201).jsonp({token: token}))
-                    .catch(e => res.status(500).jsonp({error: "Erro updating last acess: " + e}) )
+                  var d = new Date().toISOString().slice(0, 16).split('T').join(' ')
+                  User.consultar(req.body.username)
+                    .then(dados => {
+                      data = dados.dataLastAcess;
+                      User.alterarLastAcess(req.body.username, d)
+                        .then(dados => {
+                          User.alterarLastLastAcess(req.body.username,data)
+                            .then(res.status(201).jsonp({token: token}))
+                            .catch(e => res.status(500).jsonp({error: "Erro no updaling last last acess " + e}))
+                        })
+                        .catch(e => res.status(500).jsonp({error: "Erro updating last acess: " + e}) )
+                    })
+                    .catch(e => res.status(500).jsonp({error: "Erro no consultar: " + e}))
+                  
                 }
               })
 })
 
+
+
 //criar user
 router.post('/registar', function(req,res) {
     console.log(req.body)
-    req.body.dataRegisto = new Date().toISOString().slice(0, 10)
+    req.body.dataRegisto = new Date().toISOString().slice(0, 16).split('T').join(' ')
     req.body.dataLastAcess = ''
+    req.body.pedido = "nao"
     User.consultar(req.body.username)
       .then(dados => {
         if (dados == null)

@@ -14,7 +14,7 @@ if recursos.length
             else if sort[0] === "dataRegisto"
                 th(style="width:250px;")  Data Registo
             else if sort[0] === "classificacao"
-                th
+                th.w3-center
                     i(class="fa fa-star")
             else if sort[0] === "tipo"
                 th Tipo
@@ -26,7 +26,7 @@ if recursos.length
             if sort[0] != "produtor"
                 th(style="width:200px;") Produtor
             if sort[0] != "classificacao"
-                th
+                th.w3-center
                     i(class="fa fa-star")
             if sort[0] != "tipo"
                 th Tipo
@@ -47,6 +47,11 @@ if recursos.length
                         else if sort[0] === "titulo"
                             td.w3-padding-large
                                 a(href=`/recurso/${rec._id}?vis=${rec.visibilidade}`) #{rec.titulo} 
+                        else if sort[0] === "classificacao"
+                            if o._id == -1
+                                td.w3-padding-large.w3-center --
+                            else
+                                td.w3-padding-large.w3-center= o._id
                         else
                             td.w3-padding-large= o._id
                     else 
@@ -64,7 +69,10 @@ if recursos.length
                         td.w3-padding-large
                             a(href=`/user/${rec.owner}`) #{rec.owner}
                     if sort[0] != "classificacao"
-                        td.w3-padding-large #{rec.classificacao}
+                        if rec.classificacao == -1
+                            td.w3-padding-large.w3-center --
+                        else
+                            td.w3-padding-large.w3-center #{rec.classificacao}
                     if sort[0] != "tipo"
                         td.w3-padding-large #{rec.tipo}
                     if sort[0] != "dataRegisto"

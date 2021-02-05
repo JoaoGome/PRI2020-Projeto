@@ -130,4 +130,7 @@ router.get('/user/:user', function(req, res) {
     .catch(e => res.status(500).jsonp({error: e}))
 });
 
+// Consultar todos os recursos uploaded apos uma certa data
+router.get('/')
+
 module.exports = router;
