@@ -16,12 +16,6 @@ router.get('/:id', function(req, res) {
     .catch(e => res.status(502).jsonp({error: e}))
 });
 
-// Consultar o recurso owner de um recurso          ---------------->eliminar mas not yet
-router.get('/:id/owner', function(req, res) {
-  Recurso.consultarOwner(req.params.id)
-    .then(dados => res.status(200).jsonp(dados))
-    .catch(e =>  res.status(500).jsonp({error: e}))
-});
 
 // Alterar visibilidade recurso
 router.get('/:id/alterar', function(req, res) {

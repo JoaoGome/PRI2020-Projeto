@@ -161,18 +161,14 @@ router.post('/:id/comentario', verificaAutenticacao, function(req,res) {
 
 
 
-// Eliminar os comentarios de um recurso ----------------------------> modificar
+// Eliminar os comentarios de um recurso
 router.get('/:rec/remover/comentarios', verificaAutenticacao, function(req,res) {
   var myToken = req.cookies.token
   var r = -2
   if(req.query.r) r = Number(req.query.r) - 1
 
-  axios.get('http://localhost:8000/recurso/' + req.params.rec + '/owner?token=' + myToken)
-    .then( owner =>{
-      axios.delete('http://localhost:8000/comentarios/recurso/' + req.params.rec +'/owner/' + owner.data.owner + '?token=' + myToken)
-        .then(dados => res.redirect(`/recurso/${req.params.rec}?r=${r}`))
-        .catch(e => res.render('error', {error:e}))
-    })
+  axios.delete('http://localhost:8000/comentarios/recurso/' + req.params.rec + '?token=' + myToken)
+    .then(dados => res.redirect(`/recurso/${req.params.rec}?r=${r}`))
     .catch(e => res.render('error', {error:e}))
 })
 

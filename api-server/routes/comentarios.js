@@ -8,7 +8,7 @@ const Comentario = require('../controllers/comentarios');
 // Comment Section
 
 
-// Consultar os comentários de um recurso                   -----------------------> eliminar?
+// Consultar os comentários de um recurso                   -----------------------> nao usado
 router.get('/recurso/:rec', function(req, res) {
   Comentario.listarByRecurso(req.params.rec)
     .then(dados => res.status(200).jsonp({dados:dados, nivel:req.user.level, user:req.user.username}))
@@ -38,9 +38,9 @@ router.delete('/:c', function(req,res){
 })
 
 
-// Remover comentarios do recurso     -----------------------------------> alterar?
-router.delete('/recurso/:rec/owner/:owner', function(req,res,next) {
-  if (req.user.username === req.params.owner || req.user.level === "admin") next();
+// Remover comentarios do recurso
+router.delete('/recurso/:rec', function(req,res,next) {
+  if (req.user.level === "admin") next()
   else res.status(401).jsonp({error: "Não autorizado"})
 }, function(req, res){
 
@@ -50,7 +50,7 @@ router.delete('/recurso/:rec/owner/:owner', function(req,res,next) {
 })
 
 
-// Consultar user comentarios                                         -------------> eliminar?
+// Consultar user comentarios                                         -------------> nao usado
 router.get('/user/:user', function(req, res){
   Comentario.listarByUser(req.params.user)
     .then(dados => res.status(200).jsonp(dados))
@@ -68,7 +68,7 @@ router.delete('/user/:user',function(req,res,next) {
       .catch(e => res.status(501).jsonp({error: e}))
 })
 
-// Passar user a [deleted] nos comentarios              -----> not used yet
+// Passar user a [deleted] nos comentarios
 router.put('/user/:user', function(req, res){
   Comentario.deletedUser(req.params.user)
     .then(dados => res.status(200).jsonp(dados))
