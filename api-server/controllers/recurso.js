@@ -164,10 +164,11 @@ module.exports.listarRecHashtags = (v,h, f, s1, s2, o1, o2, c) => {
 module.exports.consultarRecursoAfterData = (v,data, f, s1, s2, o1, o2, c) => {
     var sort2 = {}
     sort2[s2] = o2
+
     return Recurso
         .aggregate([
             { $sort: sort2 },
-            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"hashtags": h}, {"classificacao": {$gte: c}}, {"dataRegisto": {$gt: data}} ]} },
+            { $match: {$and: [ {"visibilidade":{$in: v}}, {"tipo": {$in: f}}, {"classificacao": {$gte: c}}, {"dataRegisto": {$gt: data}} ]} },
             { $group: {
                 _id: "$"+s1,
                 recursos: { $push: { titulo: "$titulo", _id: "$_id", dataRegisto: "$dataRegisto", classificacao: "$classificacao", tipo: "$tipo", visibilidade: "$visibilidade", autor:"$autor", owner:"$owner"} }

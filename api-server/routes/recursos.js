@@ -130,7 +130,51 @@ router.get('/user/:user', function(req, res) {
     .catch(e => res.status(500).jsonp({error: e}))
 });
 
+
 // Consultar todos os recursos uploaded apos uma certa data
-router.get('/')
+router.get('/new', function(req, res) {
+  
+  // Listar os tipos existentes
+  Recurso.listarTipos()
+    .then(tipos =>{
+      var sort = "titulo,titulo"
+      if(req.query.sortBy) sort = req.query.sortBy
+      sort = sort.split(",")
+      var order = "asc,asc"
+      if(req.query.orderBy) order = req.query.orderBy
+      order = order.split(",")
+      if(order[0] === "asc" ) order[0] = 1
+      else order[0] = -1
+      if(order[1] === "asc" ) order[1] = 1
+      else order[1] = -1
+      var filter = tipos
+      if(req.query.filterBy) filter = req.query.filterBy.split(',')
+      var classificacao = -1
+      if(req.query.classificarBy) classificacao = Number(req.query.classificarBy)
+      
+      var visBy = [2]
+      if(req.user.vis == 1) visBy = [1,2]
+      if(req.query.visBy === "privado" && req.user.vis == 1) visBy = [1]
+      if(req.query.visBy === "publico") visBy = [2]
+
+      var data = ""
+
+      //ir buscar a data
+      axios.get('http://localhost:8002/users/' + req.user.username)
+        .then(dados => {
+          data = dados.data.dataLastLastAcess 
+          console.log(data)
+          if(data === "") res.status(200).jsonp({info:"utilizador novo", dados:"", level:req.user.level, tipos:tipos})
+          else
+            Recurso.consultarRecursoAfterData(visBy, data, filter, sort[0], sort[1], order[0], order[1], classificacao)
+              .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
+              .catch(e => res.status(500).jsonp({error: e}))
+        })
+        .catch(e => res.status(500).jsonp({error:e}))
+
+    })
+    .catch(e => res.status(500).jsonp({error: e}))
+});
+
 
 module.exports = router;

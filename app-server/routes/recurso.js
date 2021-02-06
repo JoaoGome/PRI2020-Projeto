@@ -10,12 +10,20 @@ var multer = require('multer')
 var upload = multer({dest: 'uploads/'})
 const StreamZip = require('node-stream-zip');
 
-router.get('/upload', function(req,res) {
+// usar para proteger as rotas.
+function verificaAutenticacao(req, res, next){
+  if(req.isAuthenticated()){
+    next();
+  } else{
+  res.redirect('/');}
+}
+
+router.get('/upload', verificaAutenticacao, function(req,res) {
   res.render('upload', {tipo:"", hashtags:"", vis:"3"})
 })
 
 // consultar recurso
-router.get('/:id', function(req, res, next) {
+router.get('/:id', verificaAutenticacao, function(req, res, next) {
   var myToken = req.cookies.token;
   var vis = 2
   if(req.query.vis) vis = req.query.vis
@@ -60,7 +68,7 @@ router.get('/:id', function(req, res, next) {
 
 
 // Eliminar um recurso
-router.get('/:id/remover', function(req,res) {
+router.get('/:id/remover', verificaAutenticacao, function(req,res) {
   var myToken = req.cookies.token;
   var tab = "main"
   if (req.query.tab) tab = req.query.tab
@@ -83,7 +91,7 @@ router.get('/:id/remover', function(req,res) {
 
 
 // Editar um recurso
-router.get('/:id/editar', function(req,res) {
+router.get('/:id/editar', verificaAutenticacao, function(req,res) {
   var myToken = req.cookies.token;
   // alterar visibilidade do recurso
   if(req.query.visibilidade){
@@ -109,7 +117,7 @@ router.get('/:id/editar', function(req,res) {
 })
 
 // Editar um recurso
-router.get('/:id/classificar/:c', function(req,res) {
+router.get('/:id/classificar/:c', verificaAutenticacao, function(req,res) {
   var myToken = req.cookies.token;
 
   var r = -2
@@ -122,7 +130,7 @@ router.get('/:id/classificar/:c', function(req,res) {
 })
 
 // Alterar um recurso
-router.post('/editar/:id', function(req,res){
+router.post('/editar/:id', verificaAutenticacao, function(req,res){
   var myToken = req.cookies.token;
   newString = req.body.hashtags.replace(/\s+/g,' ').trim();
   req.body.hashtags = newString.split(" ");
@@ -137,7 +145,7 @@ router.post('/editar/:id', function(req,res){
 
 
 // Adicionar comentário
-router.post('/:id/comentario', function(req,res) {
+router.post('/:id/comentario', verificaAutenticacao, function(req,res) {
   var myToken = req.cookies.token;
   var r = -2
   if(req.query.r) r = Number(req.query.r) - 1
@@ -154,7 +162,7 @@ router.post('/:id/comentario', function(req,res) {
 
 
 // Eliminar os comentarios de um recurso ----------------------------> modificar
-router.get('/:rec/remover/comentarios', function(req,res) {
+router.get('/:rec/remover/comentarios', verificaAutenticacao, function(req,res) {
   var myToken = req.cookies.token
   var r = -2
   if(req.query.r) r = Number(req.query.r) - 1
@@ -183,7 +191,7 @@ function existe (a,b) {
 
 
 //Upload File
-router.post('/upload', upload.single('myFile'), function(req,res,next) {
+router.post('/upload',  verificaAutenticacao, upload.single('myFile'), function(req,res,next) {
   good = 1
   manifestoExiste = 1
   informationExiste = 1
@@ -318,7 +326,7 @@ router.post('/upload', upload.single('myFile'), function(req,res,next) {
 })
 
 //Download File
-router.get('/:recursoID/download', function(req,res) {
+router.get('/:recursoID/download',  verificaAutenticacao, function(req,res) {
   axios.get('http://localhost:8000/recurso/' + req.params.recursoID + '?token=' + req.cookies.token)
     .then(dados => {
       res.download(path.normalize(__dirname+"/..") + '/public/fileStore/' + dados.data.dados.fileName)

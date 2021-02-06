@@ -27,7 +27,10 @@ block content
                     a(href='/recurso/upload').w3-right
                         button.w3-right.w3-button.w3-round-xxlarge.w3-text-white.w3-large.w3-margin-right.w3-theme-d3.w3-hover-opacity
                             span + Novo Recurso  
-       
+                
+                a(href="/mainPage?tab=news")
+                    button.w3-bar-item.w3-hover-opacity.w3-padding(class="w3-theme-d4 tablink", onclick="openDiv(event, 'recursos', 'sim');") Novidades
+
 
         - var ref = "/mainPage?tab=meus"
         include ./listaRecursos.pug

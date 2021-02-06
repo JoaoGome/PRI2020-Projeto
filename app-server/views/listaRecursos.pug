@@ -8,30 +8,30 @@ if recursos.length
         //- Ordenado por grupos
         tr.w3-theme-d2
             if sort[0] === "produtor"
-                th(style="width:200px;") Produtor
+                th(style="width:150px;") Produtor
             else if sort[0] === "autor"
                 th(style="width:250px;")  Autor
             else if sort[0] === "dataRegisto"
-                th(style="width:250px;")  Data Registo
+                th(style="width:150px;")  Data Registo
             else if sort[0] === "classificacao"
-                th.w3-center
+                th.w3-center(style="width:70px;")
                     i(class="fa fa-star")
             else if sort[0] === "tipo"
                 th Tipo
             
-            th(style="width:500px;") Título
+            th(style="width:450px;") Título
             
             if sort[0] != "autor"
-                th(style="width:250px;") Autor
+                th Autor
             if sort[0] != "produtor"
-                th(style="width:200px;") Produtor
+                th Produtor
             if sort[0] != "classificacao"
-                th.w3-center
+                th.w3-center(style="width:70px;")
                     i(class="fa fa-star")
             if sort[0] != "tipo"
-                th Tipo
+                th &nbsp;&nbsp;&nbsp;Tipo
             if sort[0] != "dataRegisto"
-                th.w3-center Data Registo
+                th.w3-center(style="width:150px;") Data Registo
             if vis < 4
                 th.w3-center Visibilidade
                 th.w3-center 
@@ -52,6 +52,8 @@ if recursos.length
                                 td.w3-padding-large.w3-center --
                             else
                                 td.w3-padding-large.w3-center= o._id
+                        else if sort[0] === "dataRegisto"
+                            td.w3-padding-large= o._id.substr(0, 10)
                         else
                             td.w3-padding-large= o._id
                     else 
@@ -76,7 +78,7 @@ if recursos.length
                     if sort[0] != "tipo"
                         td.w3-padding-large #{rec.tipo}
                     if sort[0] != "dataRegisto"
-                        td.w3-padding-large.w3-center #{rec.dataRegisto}
+                        td.w3-padding-large.w3-center #{rec.dataRegisto.substr(0, 10)} 
 
                     if vis < 4
                         if vis == 3
@@ -106,7 +108,13 @@ if recursos.length
                                     a(href=`/recurso/${rec._id}/editar`) Editar
 
 else
-    p.w3-margin-left Não existem recursos.
+    if news 
+        if news === "info"
+            p.w3-margin-left Não existem novidades desde a sua última visita.
+        else
+            p.w3-margin-left Para um novo utilizador, tudo é novidade! Explore a lista de recursos!
+    else
+        p.w3-margin-left Não existem recursos.
 
 
 //- de certeza que queres eliminar?

@@ -29,6 +29,11 @@ module.exports.alterarLevel = (uname,l) => {
     return User.findOneAndUpdate({username: uname},{$set: {level:l} });
 }
 
+// alterar o pedido de um user
+module.exports.alterarPedido = (uname,p) => {
+    return User.findOneAndUpdate({username: uname},{$set: {pedido:p} });
+}
+
 
 // alterar a password de um user
 module.exports.alterarPwd = (uname,pwd) => {

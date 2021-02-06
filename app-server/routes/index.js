@@ -46,10 +46,15 @@ function defineFiltros(req, tab){
   if (req.query.visBy) visBy = `&visBy=${req.query.visBy}`
   if (req.query.filterBy) filterBy = `&filterBy=${filter}`
 
+  var classificar = -1
+  if(req.query.classificarBy) classificar = Number(req.query.classificarBy)
+  var classificarBy = ""
+  if(req.query.classificarBy) classificarBy = `&classificarBy=${req.query.classificarBy}`
+
   var r = -1
   if (req.query.r) r = Number(req.query.r)
 
-  return [sort, order, filter, filterVis, filterBy, visBy, r]
+  return [sort, order, filter, filterVis, filterBy, visBy, classificar, classificarBy, r]
 }
 
 
@@ -69,11 +74,11 @@ router.get('/mainPage', verificaAutenticacao,function(req,res) {
 
   //filtros
   var filtros = defineFiltros(req, tab)
-  var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5]
+  var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5], classificar = filtros[6], classificarBy = filtros[7]
 
   if(tab === "main"){
     //Pedir lista de recursos
-    axios.get("http://localhost:8000/recursos?sortBy="+sort+"&orderBy="+order+filterBy+visBy  + "&token=" + myToken)
+    axios.get("http://localhost:8000/recursos?sortBy="+sort+"&orderBy="+order+filterBy+visBy+classificarBy  + "&token=" + myToken)
       .then(r  =>{
           var dados = r.data.dados
           var tipos = r.data.tipos
@@ -85,13 +90,13 @@ router.get('/mainPage', verificaAutenticacao,function(req,res) {
           order = order.split(',')
           filter = filter.split(',')
 
-          res.render('main_recs', {nivel:nivel, produtor:"sim", vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:sort,order:order,filter:filter,filterVis:filterVis,r:""})
+          res.render('main_recs', {nivel:nivel, produtor:"sim", vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar,r:""})
       })
       .catch(e => res.render('error', {error:e}))
   }
   if(tab === "meus"){
     //Pedir lista de recursos pessoais
-    axios.get("http://localhost:8000/recursos/pessoais?sortBy="+sort+"&orderBy="+order+filterBy+visBy + "&token=" + myToken)
+    axios.get("http://localhost:8000/recursos/pessoais?sortBy="+sort+"&orderBy="+order+filterBy+visBy+classificarBy + "&token=" + myToken)
       .then(r  =>{
           var nivel = r.data.level
           var dados = r.data.dados
@@ -101,7 +106,7 @@ router.get('/mainPage', verificaAutenticacao,function(req,res) {
           order = order.split(',')
           filter = filter.split(',')
           
-          res.render('main_meus', {nivel:nivel, vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:sort,order:order,filter:filter,filterVis:filterVis,r:""})
+          res.render('main_meus', {nivel:nivel, vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar,r:""})
       })
       .catch(e => res.render('error', {error:e}))
   }
@@ -112,18 +117,36 @@ router.get('/mainPage', verificaAutenticacao,function(req,res) {
     if(tab === "prods") tab31 = "none"
 
     //Pedir lista de produtores
-    axios.get("http://localhost:8000/users?level=consumidor&sortBy=" + req.query.sortBy + "&token=" + myToken)
-      .then(cs =>{
-        var nivel = cs.data.nivel
-        var cons = cs.data.dados
-        //Pedir lista de produtores
-        axios.get("http://localhost:8000/users?level=produtor&sortBy=" + req.query.sortBy + "&token=" + myToken)
-          .then(ps =>{
+    axios.get("http://localhost:8002/users?sortBy=" + sort + "&token=" + myToken)
+        .then(dados =>{
+            var consumidores = dados.data.consumidores
+            var produtores = dados.data.produtores
+
             if(sort === "dataLastAcess") sort = "ultimoAcesso"
-            res.render('main_users', {nivel:nivel, tab:tab,tab31:tab31,tab32:tab32, produtores:ps.data.dados, consumidores:cons, sort:sort})
-          }).catch(e => res.render('error', {error:e}))    
+
+            res.render('main_users', {nivel:"admin", tab:tab,tab31:tab31,tab32:tab32, produtores:produtores, consumidores:consumidores, sort:sort})
+        })
+        .catch(e => res.render('error', {error:e}))  
+  }
+  if(tab === "news"){
+    //Pedir lista de recursos novos
+    axios.get("http://localhost:8000/recursos/new?sortBy="+sort+"&orderBy="+order+filterBy+visBy+classificarBy + "&token=" + myToken)
+      .then(r  =>{
+          var nivel = r.data.level
+          var dados = r.data.dados
+          var tipos = r.data.tipos
+          var info = "info"
+          if (r.data.info) info = r.data.info
+          var vis = 4
+          if(nivel === "admin") vis = 1
+
+          sort = sort.replace(/owner/,"produtor").split(',')
+          order = order.split(',')
+          filter = filter.split(',')
+
+          res.render('main_news', {news:info, nivel:nivel, vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar,r:""})
       })
-      .catch(e => res.render('error', {error:e}))  
+      .catch(e => res.render('error', {error:e}))
   }
 });
 
@@ -136,15 +159,15 @@ router.get('/recursos', verificaAutenticacao, function(req,res) {
   if(req.query.hashtag){
     //filtros
     var filtros = defineFiltros(req, "")
-    var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5], r = filtros[6]
+    var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5], classificar = filtros[6], classificarBy = filtros[7], r = filtros[8]
 
-    axios.get('http://localhost:8000/recursos?hashtag=' + req.query.hashtag + '&sortBy='+sort+"&orderBy="+order+filterBy+visBy + '&token=' + myToken)
+    axios.get('http://localhost:8000/recursos?hashtag=' + req.query.hashtag + '&sortBy='+sort+"&orderBy="+order+filterBy+visBy+classificarBy + '&token=' + myToken)
       .then(dados =>{
         sort = sort.replace(/owner/,"produtor").split(',')
         order = order.split(',')
         filter = filter.split(',')
 
-        res.render('hashtag', {produtor:"sim", tipos:dados.data.tipos, hashtag: req.query.hashtag, recursos: dados.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis,r:r})
+        res.render('hashtag', {produtor:"sim", tipos:dados.data.tipos, hashtag: req.query.hashtag, recursos: dados.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar,r:r})
       })
       .catch(e => res.render('error', {error:e}))
   }
@@ -158,29 +181,29 @@ router.get('/recursos/procurar', verificaAutenticacao, function(req,res) {
   
   //filtros
   var filtros = defineFiltros(req, "")
-  var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5], r = filtros[6]
+  var sort = filtros[0], order = filtros[1], filter = filtros[2], filterVis = filtros[3], filterBy = filtros[4], visBy = filtros[5], classificar = filtros[6], classificarBy = filtros[7], r = filtros[8]
 
   if(req.query.titulo){
     var ht = req.query.titulo.replace(/\s*/g,'');
-    axios.get("http://localhost:8000/recursos?procurar=" + req.query.titulo + '&sortBy='+sort+"&orderBy="+order+filterBy+visBy + "&token=" + myToken)
+    axios.get("http://localhost:8000/recursos?procurar=" + req.query.titulo + '&sortBy='+sort+"&orderBy="+order+filterBy+visBy+classificarBy + "&token=" + myToken)
       .then(recTitulo =>{
         sort = sort.replace(/owner/,"produtor").split(',')
         order = order.split(',')
         filter = filter.split(',')
 
-        res.render('procurar', {tab:"titulo", produtor:"sim", procura:req.query.titulo, ht:ht, tipos:recTitulo.data.tipos, recursos:recTitulo.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis,r:r})
+        res.render('procurar', {tab:"titulo", produtor:"sim", procura:req.query.titulo, ht:ht, tipos:recTitulo.data.tipos, recursos:recTitulo.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar,r:r})
       })
       .catch(e => res.render('error', {error:e}))
   }
   if(req.query.hashtag){
     var ht = req.query.hashtag
-    axios.get('http://localhost:8000/recursos?hashtag=' + ht + '&sortBy='+sort+"&orderBy="+order+filterBy+visBy + '&token=' + myToken)
+    axios.get('http://localhost:8000/recursos?hashtag=' + ht + '&sortBy='+sort+"&orderBy="+order+filterBy+visBy+classificarBy + '&token=' + myToken)
       .then(recHashtag => {
         sort = sort.replace(/owner/,"produtor").split(',')
         order = order.split(',')
         filter = filter.split(',')
       
-        res.render('procurar', {tab:"hashtag", produtor:"sim", procura:ht, tipos:recHashtag.data.tipos, recursos:recHashtag.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis,r:r})
+        res.render('procurar', {tab:"hashtag", produtor:"sim", procura:ht, tipos:recHashtag.data.tipos, recursos:recHashtag.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar, r:r})
       })
       .catch(e => res.render('error', {error:e}))
   }
@@ -193,7 +216,6 @@ router.post('/recursos/procurar', verificaAutenticacao, function(req,res) {
 
 // filtrar e ordenar recursos
 router.post('/recursos/filtrar', verificaAutenticacao, function(req,res) {
-  console.log(req.body)
   
   if (Array.isArray(req.body.filterBy)) var tipos = req.body.filterBy.join(',')
   else var tipos = req.body.filterBy
@@ -258,28 +280,29 @@ router.get('/logout', verificaAutenticacao,function(req,res) {
 // Login and Register
 
 router.get('/login', function(req,res) {
-  res.render('login-form', {user: ""})
+  if (req.query.erro) res.render('login-form', {erro: "erro", user: ""})
+  else res.render('login-form', {user: ""})
 });
 
 router.get('/register', function(req,res) {
   res.render('register-form', {user: "", email: "", fil: ""})
 })
 
-router.post('/login', passport.authenticate('local'), function(req, res) {
-  
+router.post('/login', passport.authenticate('local', { failureRedirect: '/login?erro=autenticacao' }),
+function(req, res) {
   axios.post('http://localhost:8002/users/login', req.user)
     .then(dados => {
+      
       res.cookie('token', dados.data.token, {
         maxAge : new Date(Date.now() + 3600000),
         secure: false, // set to true if your using https
         httpOnly: true
       });
-      console.log("here")
       res.redirect('/mainPage')
-      console.log("here1")
     })
     .catch(e => res.render('login-form', {erro: e, user: req.body.username}))
-});
+})
+
 
 router.post('/register', function(req,res) {
   if (req.body.username == "[deleted]")

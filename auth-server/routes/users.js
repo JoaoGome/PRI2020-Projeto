@@ -6,6 +6,39 @@ var passport = require('passport')
 var jwt = require('jsonwebtoken')
 
 
+
+function verificaToken(req, res, next){
+  var myToken = req.query.token || req.body.token;
+  jwt.verify(myToken, 'PRI2020', function(e, payload){
+    if(e) res.status(401).jsonp({error: 'Erro na verificação do token: ' + e})
+    else{
+      if(payload.level === "admin")
+        req.user = { level: payload.level, username: payload.username, vis:1 }
+      else
+        req.user = { level: payload.level, username: payload.username, vis:2 }
+
+      console.log("token good verificado")
+      next()
+    } 
+  })
+}
+
+
+// Listar users
+router.get('/', verificaToken, function(req,res,next) {
+  if (req.user.level === "admin") next();
+  else res.status(401).jsonp({error: "Não autorizado"})
+}, function(req, res){
+  
+  User.listarLevel("consumidor", req.query.sortBy)
+      .then(cs =>{
+          User.listarLevel("produtor", req.query.sortBy)
+            .then(ps => res.status(200).jsonp({consumidores:cs, produtores:ps}))
+            .catch(e => res.status(500).jsonp({error: e}))
+      } )
+      .catch(e => res.status(500).jsonp({error: e}))
+})
+
 //consultar user
 router.get('/:id', function(req, res) {
   User.consultar(req.params.id)
@@ -24,16 +57,27 @@ router.get('/nivel/:level', function(req, res) {
 
 
 //remover user
-router.delete('/:uname', function(req, res) {
+router.delete('/:uname', verificaToken, function(req,res,next) {
+  if (req.user.level === "admin") next();
+  else res.status(401).jsonp({error: "Não autorizado"})
+}, function(req, res) {
   User.remove(req.params.uname)
     .then(dados => res.status(200).jsonp(dados))
     .catch(e => res.status(500).jsonp({error: e}))
 })
 
-//alterar nivel user
-router.put('/:uname', function(req, res) {
-  if(req.query.level)
+//alterar nivel ou pedido user
+router.put('/:uname', verificaToken, function(req,res,next) {
+  if (req.user.level === "admin") next();
+  else if (req.query.pedido && (req.user.username===req.params.uname) && (req.user.level === "consumidor")) next();
+  else res.status(401).jsonp({error: "Não autorizado"})
+}, function(req, res) {
+  if (req.query.level)
     User.alterarLevel(req.params.uname, req.query.level)
+      .then(dados => res.status(200).jsonp(dados))
+      .catch(e => res.status(500).jsonp({error: e}))
+  if (req.query.pedido)
+    User.alterarPedido(req.params.uname, req.query.pedido)
       .then(dados => res.status(200).jsonp(dados))
       .catch(e => res.status(500).jsonp({error: e}))
 })
@@ -54,7 +98,7 @@ router.post('/login', function(req,res) {
                       User.alterarLastAcess(req.body.username, d)
                         .then(dados => {
                           User.alterarLastLastAcess(req.body.username,data)
-                            .then(res.status(201).jsonp({token: token}))
+                            .then(dados => res.status(201).jsonp({token: token}))
                             .catch(e => res.status(500).jsonp({error: "Erro no updaling last last acess " + e}))
                         })
                         .catch(e => res.status(500).jsonp({error: "Erro updating last acess: " + e}) )

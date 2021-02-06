@@ -6,20 +6,23 @@ var Comentario = require('../controllers/comentarios');
 
 /* GET home page. */
 
-// Listar users de nivel X
-router.get('/', function(req,res,next) {
-  if (req.user.level === "admin") next();
-  else res.status(401).jsonp({error: "Não autorizado"})
-}, function(req, res){
+// Consultar user
+router.get('/meuPerfil', function(req, res){
+  axios.get("http://localhost:8002/users/" + req.user.username)
+    .then(dados =>{
 
-  axios.get("http://localhost:8002/users/nivel/" + req.query.level + "?sortBy=" + req.query.sortBy)
-    .then(dados => res.status(200).jsonp({nivel: req.user.level, dados:dados.data}))
-    .catch(e => res.status(501).jsonp({error: e}))
-})
-
-// Consultar username do user ---------------------------------> eliminar
-router.get('/user', function(req, res){
-  res.status(200).jsonp(req.user.username)
+      var cmts = []
+      Comentario.listarByUser(req.user.username)
+        .then(comentarios =>{
+          for (c in comentarios)
+            cmts.push({data: comentarios[c].data, text: comentarios[c].text, recursoID: comentarios[c].recursoID, recursoTitulo: comentarios[c].recursoTitulo,_id: comentarios[c]._id})
+          
+            res.status(200).jsonp({nivel:req.user.level, username:req.user.username, dados:dados.data, cmts:cmts})    
+        }).catch(e => res.status(501).jsonp({error: e}))
+      
+      
+    })
+    .catch(e => res.status(500).jsonp({error: e}))
 })
 
 // Consultar user
@@ -40,6 +43,8 @@ router.get('/:id', function(req, res){
     })
     .catch(e => res.status(500).jsonp({error: e}))
 })
+
+
 
 
 
@@ -73,27 +78,7 @@ router.delete('/:id', function(req,res,next) {
     .catch(e => res.status(501).jsonp({error: e}))
 })
 
-// Upgrade user: Consumidor -> Produtor
-router.put('/:uname/upgrade', function(req,res,next) {
-  if (req.user.level === "admin") next();
-  else res.status(401).jsonp({error: "Não autorizado"})
-}, function(req, res){
 
-  axios.put("http://localhost:8002/users/" + req.params.uname + "?level=produtor")
-    .then(dados => res.status(200).jsonp(dados.data))
-    .catch(e => res.status(501).jsonp({error: e}))
-})
-
-// Downgrade user: Produtor -> Consumidor
-router.put('/:uname/downgrade', function(req,res,next) {
-  if (req.user.level === "admin") next();
-  else res.status(401).jsonp({error: "Não autorizado"})
-}, function(req, res){
-
-  axios.put("http://localhost:8002/users/" + req.params.uname + "?level=consumidor")
-    .then(dados => res.status(200).jsonp(dados.data))
-    .catch(e => res.status(501).jsonp({error: e}))
-})
 
 
 module.exports = router;
