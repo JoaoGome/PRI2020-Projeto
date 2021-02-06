@@ -39,29 +39,35 @@ router.get('/:id', function(req, res, next) {
         var user = dados.data.user
         
         var permitir = 0
-        if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
-        else if (user === rec.owner) permitir = 1 
-        if(dados.data == null) res.render('error', {error:"Não autorizado"})
-        else res.render('recurso', {r:r, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
 
         const zip = new StreamZip({
-          file: rec.originalname,
+          file: 'public/fileStore/' + rec.fileName,
           storeEntries: true
         });
       
         zip.on('ready', () => {
             var filename
-            const entries = await zip.entries();
+            const entries = zip.entries();
             for (const entry of Object.values(entries)) {
-              if (["pdf,doc,png,jpg,jpeg"].includes(entry.name.spit('.')[1]))
-                filename = entry.name.split('.')
+              if (["pdf","doc","png","jpg","jpeg"].includes(entry.name.split('.')[1]))
+                filename = entry.name
             }
-    
-            zip.extract(filename, 'tmp' + rec.preview, err => {
+            console.log(filename)
+            
+            zip.extract(filename, './public/fileStore/tmp.' + rec.preview, err => {
                 console.log(err ? 'Extract error' : 'Extracted');
                 zip.close();
             });
+            
         });
+
+        if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
+        else if (user === rec.owner) permitir = 1 
+        if(dados.data == null) res.render('error', {error:"Não autorizado"})
+        else res.render('recurso', {r:r, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+        
+
+
         
       })
       .catch(e => res.render('error', {error:e})) 
@@ -74,28 +80,31 @@ router.get('/:id', function(req, res, next) {
         var cmt = dados.data.cmts.reverse()
         var user = dados.data.user
         var permitir = 0
-        if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
-        else if (user === rec.owner) permitir = 1 
-        res.render('recurso', {r:r, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
 
         const zip = new StreamZip({
-          file: rec.originalname,
+          file: 'public/fileStore/' + rec.fileName,
           storeEntries: true
         });
       
         zip.on('ready', () => {
             var filename
-            const entries = await zip.entries();
+            const entries = zip.entries();
             for (const entry of Object.values(entries)) {
-              if (["pdf,doc,png,jpg,jpeg"].includes(entry.name.spit('.')[1]))
-                filename = entry.name.split('.')
+              if (["pdf","doc","png","jpg","jpeg"].includes(entry.name.split('.')[1]))
+                filename = entry.name
             }
-    
-            zip.extract(filename, 'tmp' + rec.preview, err => {
+            console.log(filename)
+            
+            zip.extract(filename, './public/fileStore/tmp.' + rec.preview, err => {
                 console.log(err ? 'Extract error' : 'Extracted');
                 zip.close();
             });
+            
         });
+
+        if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
+        else if (user === rec.owner) permitir = 1 
+        res.render('recurso', {r:r, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
 
       })
       .catch(e => res.render('error', {error:e}))
