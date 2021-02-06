@@ -74,7 +74,11 @@ router.get('/:id', function(req, res, next) {
       
   if(vis == 2 )
     axios.get('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
-      .then(dados =>{ 
+      .then(dados =>{
+        fs.readdirSync('public/fileStore/').forEach(file => {
+          if (["pdf","doc","png","jpg","jpeg"].includes(file.split('.')[1]))
+            fs.unlinkSync('public/fileStore/' + file)
+        });
         var rec = dados.data.dados
         var nivel = dados.data.level
         var cmt = dados.data.cmts.reverse()
