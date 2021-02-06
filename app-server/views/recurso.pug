@@ -19,10 +19,17 @@ block content
                 a(href=`/recurso/${recurso._id}/download`)
                     button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Download
                 if recurso.preview != "nao"
-                    button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Preview
+                    if recurso.preview == "pdf" || recurso.preview == 'doc'
+                        a(href=`/ViewerJS/#../fileStore/tmp.${recurso.preview}`)
+                            button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Preview
+                    else
+                        button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity(onclick=`show(${recurso.tipo});`) Preview
                     
 
         .w3-container
+
+            div.w3-modal(id="preview")
+
             if recurso.subtitulo
                 h5
                     b.w3-text-blue-grey Subtítulo:

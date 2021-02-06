@@ -23,7 +23,7 @@ router.get('/upload', verificaAutenticacao, function(req,res) {
 })
 
 // consultar recurso
-router.get('/:id', verificaAutenticacao, function(req, res, next) {
+router.get('/:id', function(req, res, next) {
   var myToken = req.cookies.token;
   var vis = 2
   if(req.query.vis) vis = req.query.vis
@@ -42,7 +42,27 @@ router.get('/:id', verificaAutenticacao, function(req, res, next) {
         if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
         else if (user === rec.owner) permitir = 1 
         if(dados.data == null) res.render('error', {error:"Não autorizado"})
-        else res.render('recurso', {r:r, vis:vis, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+        else res.render('recurso', {r:r, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+
+        const zip = new StreamZip({
+          file: rec.originalname,
+          storeEntries: true
+        });
+      
+        zip.on('ready', () => {
+            var filename
+            const entries = await zip.entries();
+            for (const entry of Object.values(entries)) {
+              if (["pdf,doc,png,jpg,jpeg"].includes(entry.name.spit('.')[1]))
+                filename = entry.name.split('.')
+            }
+    
+            zip.extract(filename, 'tmp' + rec.preview, err => {
+                console.log(err ? 'Extract error' : 'Extracted');
+                zip.close();
+            });
+        });
+        
       })
       .catch(e => res.render('error', {error:e})) 
       
@@ -56,9 +76,30 @@ router.get('/:id', verificaAutenticacao, function(req, res, next) {
         var permitir = 0
         if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
         else if (user === rec.owner) permitir = 1 
-        res.render('recurso', {r:r, vis:vis, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+        res.render('recurso', {r:r, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+
+        const zip = new StreamZip({
+          file: rec.originalname,
+          storeEntries: true
+        });
+      
+        zip.on('ready', () => {
+            var filename
+            const entries = await zip.entries();
+            for (const entry of Object.values(entries)) {
+              if (["pdf,doc,png,jpg,jpeg"].includes(entry.name.spit('.')[1]))
+                filename = entry.name.split('.')
+            }
+    
+            zip.extract(filename, 'tmp' + rec.preview, err => {
+                console.log(err ? 'Extract error' : 'Extracted');
+                zip.close();
+            });
+        });
+
       })
       .catch(e => res.render('error', {error:e}))
+
 });
 
 
