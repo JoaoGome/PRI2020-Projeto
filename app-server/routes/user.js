@@ -118,6 +118,7 @@ router.get('/:id/recursos', verificaAutenticacao, function(req, res){
       sort = sort.split(',')
       order = order.split(',')
       filter = filter.split(',')
+      tipos.sort()
 
       res.render('utilizador', {tab:req.query.tab, tipos:tipos, vis:vis, user:user, username:user.username, utilizador:req.params.id, recursos:recs, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar, r:r})
     })

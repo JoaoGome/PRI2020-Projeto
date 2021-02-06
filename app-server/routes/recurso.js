@@ -19,7 +19,19 @@ function verificaAutenticacao(req, res, next){
 }
 
 router.get('/upload', verificaAutenticacao, function(req,res) {
-  res.render('upload', {tipo:"", hashtags:"", vis:"3"})
+  var myToken = req.cookies.token;
+  axios.get('http://localhost:8000/recursos/tipos?token=' + myToken)
+    .then(tps =>{
+      var tipos = tps.data
+      if (!tipos.includes("artigo")) tipos.push("artigo")
+      if (!tipos.includes("relatorio")) tipos.push("relatorio")
+      if (!tipos.includes("ficha")) tipos.push("ficha")
+      if (!tipos.includes("livro")) tipos.push("livro")
+      if (!tipos.includes("teste")) tipos.push("teste")
+      tipos.sort()
+      res.render('upload', {tipos:tipos, tipo:"", hashtags:"", vis:"3"})
+    })
+    .catch(e => res.render('error', {error:e})) 
 })
 
 // consultar recurso
@@ -251,6 +263,9 @@ router.post('/upload',  verificaAutenticacao, upload.single('myFile'), function(
   listaFicheiros = []
   obj = {}
 
+  if(req.body.tipo[0] != "") req.body.tipo = req.body.tipo[0]
+  else if(req.body.tipo[1] != "") req.body.tipo = req.body.tipo[1]
+
   if(req.file.mimetype === 'application/zip' || req.file.mimetype === "application/x-zip-compressed"){
     const zip = new StreamZip({
       file:req.file.path,
@@ -327,8 +342,8 @@ router.post('/upload',  verificaAutenticacao, upload.single('myFile'), function(
         } catch(err) {
           console.error(err)
         }
-
-        res.render('upload', {tipo:req.body.tipo, hashtags:req.body.hashtags, aviso:aviso, vis:req.body.visibilidade, })
+        var tipos = req.query.tipos.split(',')
+        res.render('upload', {tipos:tipos, tipo:req.body.tipo, hashtags:req.body.hashtags, aviso:aviso, vis:req.body.visibilidade, })
       } // por aqui codigo quando zip for invalido
 
     });
@@ -343,7 +358,8 @@ router.post('/upload',  verificaAutenticacao, upload.single('myFile'), function(
     }
 
     var aviso = ["O ficheiro tem de ser um zip."]
-    res.render('upload', {tipo:req.body.tipo, hashtags:req.body.hashtags, aviso:aviso, vis:req.body.visibilidade, })
+    var tipos = req.query.tipos.split(',')
+    res.render('upload', {tipos:tipos, tipo:req.body.tipo, hashtags:req.body.hashtags, aviso:aviso, vis:req.body.visibilidade, })
   }
 }, function(req,res){
 

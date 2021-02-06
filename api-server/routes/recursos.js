@@ -176,5 +176,11 @@ router.get('/new', function(req, res) {
     .catch(e => res.status(500).jsonp({error: e}))
 });
 
+// Listar os tipos existentes
+router.get('/tipos', function(req, res) {
+  Recurso.listarTipos()
+    .then(tipos => res.status(200).jsonp(tipos))
+    .catch(e => res.status(500).jsonp({error: e}))
+})
 
 module.exports = router;

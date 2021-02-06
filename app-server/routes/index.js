@@ -89,6 +89,7 @@ router.get('/mainPage', verificaAutenticacao,function(req,res) {
           sort = sort.replace(/owner/,"produtor").split(',')
           order = order.split(',')
           filter = filter.split(',')
+          tipos.sort()
 
           res.render('main_recs', {nivel:nivel, produtor:"sim", vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar,r:""})
       })
@@ -105,6 +106,7 @@ router.get('/mainPage', verificaAutenticacao,function(req,res) {
           sort = sort.replace(/owner/,"produtor").split(',')
           order = order.split(',')
           filter = filter.split(',')
+          tipos.sort()
           
           res.render('main_meus', {nivel:nivel, vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar,r:""})
       })
@@ -143,6 +145,7 @@ router.get('/mainPage', verificaAutenticacao,function(req,res) {
           sort = sort.replace(/owner/,"produtor").split(',')
           order = order.split(',')
           filter = filter.split(',')
+          tipos.sort()
 
           res.render('main_news', {news:info, nivel:nivel, vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar,r:""})
       })
@@ -166,8 +169,10 @@ router.get('/recursos', verificaAutenticacao, function(req,res) {
         sort = sort.replace(/owner/,"produtor").split(',')
         order = order.split(',')
         filter = filter.split(',')
+        var tipos = dados.data.tipos
+        tipos.sort()
 
-        res.render('hashtag', {produtor:"sim", tipos:dados.data.tipos, hashtag: req.query.hashtag, recursos: dados.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar,r:r})
+        res.render('hashtag', {produtor:"sim", tipos:tipos, hashtag: req.query.hashtag, recursos: dados.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar,r:r})
       })
       .catch(e => res.render('error', {error:e}))
   }
@@ -190,8 +195,10 @@ router.get('/recursos/procurar', verificaAutenticacao, function(req,res) {
         sort = sort.replace(/owner/,"produtor").split(',')
         order = order.split(',')
         filter = filter.split(',')
+        var tipos = recTitulo.data.tipos
+        tipos.sort()
 
-        res.render('procurar', {tab:"titulo", produtor:"sim", procura:req.query.titulo, ht:ht, tipos:recTitulo.data.tipos, recursos:recTitulo.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar,r:r})
+        res.render('procurar', {tab:"titulo", produtor:"sim", procura:req.query.titulo, ht:ht, tipos:tipos, recursos:recTitulo.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar,r:r})
       })
       .catch(e => res.render('error', {error:e}))
   }
@@ -202,8 +209,10 @@ router.get('/recursos/procurar', verificaAutenticacao, function(req,res) {
         sort = sort.replace(/owner/,"produtor").split(',')
         order = order.split(',')
         filter = filter.split(',')
+        var tipos = recHashtag.data.tipos
+        tipos.sort()
       
-        res.render('procurar', {tab:"hashtag", produtor:"sim", procura:ht, tipos:recHashtag.data.tipos, recursos:recHashtag.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar, r:r})
+        res.render('procurar', {tab:"hashtag", produtor:"sim", procura:ht, tipos:tipos, recursos:recHashtag.data.dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar, r:r})
       })
       .catch(e => res.render('error', {error:e}))
   }
