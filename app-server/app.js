@@ -48,7 +48,8 @@ passport.use(
       const email = profile.emails[0].value
       axios.get('http://localhost:8002/users/email/' + email)
         .then(dados => {
-          const user = dados
+          const user = dados.data
+
           /*
             Caso o email não esteja registado na base de dados cria um novo user
           */
@@ -73,12 +74,13 @@ passport.use(
 
 // Serialize/Deserialize by email
 passport.serializeUser(function(user, done) {
+  console.log('Serialize: ' + user.email)
   done(null, user.email);
 });
 
 passport.deserializeUser(function(email, done) {
-  User.consultarByEmail(email)
-    .then(dados => done(null, dados))
+  axios.get('http://localhost:8002/users/email/' + email)
+    .then(dados => {console.log('Deserialize: ' + dados.data); done(null, dados.data)})
     .catch(erro => done(erro, false))
 });
 

@@ -313,6 +313,103 @@ function(req, res) {
 })
 
 
+// Facebook login
+router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+
+/*
+  Callback chamada depois do login do FB ser autenticado
+  Caso a autenticação do FB falhe, redireciona o user para a página de login
+  Caso o username esteja vazio significa que é o primeiro login do user, e redireciona-o para uma página para inserir a info em falta
+*/
+router.get('/auth/facebook/callback', passport.authenticate('facebook', {failureRedirect: 'http://localhost:8001/index/login'}),
+  function(req, res){
+
+    const email = req.user.email
+
+    /*
+      Se o email não estiver registado na base de dados cria um novo utilizador
+    */
+    axios.request('http://localhost:8002/users/email/' + email)
+      .then(dados => {
+        const user = dados.data
+
+        if(!user) {
+          var newUser = {
+            "username": '',
+            "level": "consumidor",
+            "email": email,
+            "filiacao": '',
+            "dataRegisto": new Date().toISOString().slice(0, 16).split('T').join(' '),
+            "dataLastAcess": ''
+          }
+          // Registar um novo utilizador (username e filiação vazios)
+          axios.post('http://localhost:8002/users/registar', newUser)
+        }
+      })
+
+    /*
+      Se username for vazio significa que é o primeiro login depois de
+      entrar com uma rede social
+    */
+    if(req.user.username == ''){
+      // Redirecionar para uma página para introduzir username e filiação
+      res.redirect('http://localhost:8001/complete-reg?email=' + encodeURIComponent(email))
+    }
+
+    /* 
+      Criar token e adicionar-lo como cookie
+      Redirecionar para a mainPage
+    */
+
+    else{
+      axios.post('http://localhost:8002/users/login', req.user)
+        .then(dados => {
+          
+          res.cookie('token', dados.data.token, {
+            maxAge : new Date(Date.now() + 3600000),
+            secure: false, // set to true if your using https
+            httpOnly: true
+          });
+          res.redirect('/mainPage')
+        })
+        .catch(e => res.render('login-form', {erro: e, user: req.body.username}))
+    }
+
+    /*
+    else{
+      console.log('JWT LOGIN')
+      jwt.sign({username: req.user.username, 
+                level:  req.user.level,
+                sub: 'Projeto PRI2020'},
+                "PRI2020",
+                function(e,token) {
+                  if(e) res.status(500).jsonp({error: "Erro na geração do token: " + e}) 
+                  else{
+                    res.status(201).cookie('token', token).redirect('http://localhost:8001/mainPage')
+                  }
+                  /*else{
+                    var d = new Date().toISOString().slice(0, 16).split('T').join(' ')
+                    User.alterarLastAcess(req.body.username, d)
+                      .then(res.status(201).cookie('token', token).redirect('http://localhost:8001/mainPage'))
+                      .catch(e => res.status(500).jsonp({error: "Erro updating last acess: " + e}) )
+                  }
+                })
+    }*/
+  }
+);
+
+/*
+  Adicionar username e filiação de um utilizador registado
+  através de uma rede social
+*/
+router.post('/complete-reg', function(req, res){
+  console.log(req)
+  User.alterarUnameFil(req.body.email, req.body.username, req.body.filiacao)
+    .then(res.status(201).send())
+    .catch(e => res.status(500).jsonp({error: "Error updating new username and filiação " + e}) )
+})
+
+
 router.post('/register', function(req,res) {
   if (req.body.username == "[deleted]")
   {
@@ -323,8 +420,6 @@ router.post('/register', function(req,res) {
     .then(dados => res.redirect('/'))
     .catch(e => res.render('register-form', {error:e, user: req.body.username, email: req.body.email, fil: req.body.filiacao}))
 })
-
-
 
 
 
