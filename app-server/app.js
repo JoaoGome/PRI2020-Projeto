@@ -13,6 +13,7 @@ const FileStore = require('session-file-store')(session);
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
 var FacebookStrategy = require('passport-facebook').Strategy
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 dotenv.config();
 
@@ -72,6 +73,43 @@ passport.use(
   )
 )
 
+/*
+  Google OAuth Strategy
+*/
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: process.env.GOOGLE_CALLBACK_URL
+},
+function(token, tokenSecret, profile, done) {
+  console.log(profile)
+  const email = profile.emails[0].value
+  axios.get('http://localhost:8002/users/email/' + email + '?secret=supersegredoPRI')
+    .then(dados => {
+      const user = dados.data
+
+      /*
+        Caso o email não esteja registado na base de dados cria um novo user
+      */
+      if(!user) {
+        var newUser = {
+          "username": '',
+          "level": "consumidor",
+          "email": email,
+          "dataRegisto": new Date().toISOString().slice(0, 10),
+          "dataLastAcess": ''
+        }
+
+        done(null, newUser)
+      }
+      else
+        done(null, user)
+    })
+    .catch(erro => { console.log('Google Strategy: ' + erro); done(erro)})
+}
+));
+
+
 // Serialize/Deserialize by email
 passport.serializeUser(function(user, done) {
   console.log('Serialize: ' + user.email)
@@ -83,6 +121,7 @@ passport.deserializeUser(function(email, done) {
     .then(dados => {console.log('Deserialize: ' + dados); done(null, dados)})
     .catch(erro => done(erro, false))
 });
+
 
 /*
 // Indica-se ao passport como serializar o utilizador
