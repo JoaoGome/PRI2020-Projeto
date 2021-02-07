@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var axios = require('axios')
+var dotenv = require('dotenv')
 
 var { v4: uuidv4 } = require('uuid');
 var session = require('express-session');
@@ -11,7 +12,9 @@ const FileStore = require('session-file-store')(session);
 
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
+var FacebookStrategy = require('passport-facebook').Strategy
 
+dotenv.config();
 
 // Configuração da estratégia local
 passport.use(new LocalStrategy(
@@ -27,6 +30,61 @@ passport.use(new LocalStrategy(
     })
 )
 
+/*
+  Facebook OAuth Strategy
+*/
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+      callbackURL: process.env.FACEBOOK_CALLBACK_URL,
+      profileFields: ["emails", "name"]
+    },
+    function(accessToken, refreshToken, profile, done) {
+      //console.log("TOKEN = " + accessToken);
+      //console.log("REFRESH TOKEN = " + refreshToken);
+      //console.log("PROFILE = "+JSON.stringify(profile));
+      const email = profile.emails[0].value
+      axios.get('http://localhost:8002/users/email/' + email)
+        .then(dados => {
+          const user = dados.data
+
+          /*
+            Caso o email não esteja registado na base de dados cria um novo user
+          */
+          if(!user) {
+            var newUser = {
+              "username": '',
+              "level": "consumidor",
+              "email": email,
+              "dataRegisto": new Date().toISOString().slice(0, 10),
+              "dataLastAcess": ''
+            }
+
+            done(null, newUser)
+          }
+          else
+            done(null, user)
+        })
+        .catch(erro => { console.log('Facebook Strategy: ' + erro); done(erro)})
+    }
+  )
+)
+
+// Serialize/Deserialize by email
+passport.serializeUser(function(user, done) {
+  console.log('Serialize: ' + user.email)
+  done(null, user.email);
+});
+
+passport.deserializeUser(function(email, done) {
+  axios.get('http://localhost:8002/users/email/' + email)
+    .then(dados => {console.log('Deserialize: ' + dados); done(null, dados.data)})
+    .catch(erro => done(erro, false))
+});
+
+/*
 // Indica-se ao passport como serializar o utilizador
 passport.serializeUser((user,done) => {
   console.log('Serielização, id: ' + user.username)
@@ -39,7 +97,7 @@ passport.deserializeUser((uname, done) => {
   axios.get('http://localhost:8002/users/' + uname)
     .then(dados => done(null, dados))
     .catch(erro => done(erro, false))
-})
+})*/
 
 
 var indexRouter = require('./routes/index');

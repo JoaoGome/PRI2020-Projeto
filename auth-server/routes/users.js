@@ -46,6 +46,13 @@ router.get('/:id', function(req, res) {
     .catch(e => res.status(500).jsonp({error: e}))
 })
 
+// Consultar user pelo email
+router.get('/email/:email', function(req, res){
+  User.consultarByEmail(req.params.email)
+    .then(dados => res.status(200).jsonp(dados))
+    .catch(e => res.status(500).jsonp({error: e}))
+})
+
 //listar users nivel X
 router.get('/nivel/:level', function(req,res,next) {
   if (req.user.level === "admin") next();
@@ -133,7 +140,14 @@ router.post('/registar', function(req,res) {
     
 })
 
-
+/*
+  Modificar username e filiação de um utilizador
+*/
+router.post('/modUnameFil', function(req, res) {
+  User.alterarUnameFil(req.body.email, req.body.username, req.body.filiacao)
+    .then(res.status(201).send())
+    .catch(e => res.status(500).jsonp({error: "Error updating new username and filiação " + e}) )
+})
 
 module.exports = router;
 

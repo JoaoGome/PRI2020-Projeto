@@ -313,6 +313,87 @@ function(req, res) {
 })
 
 
+// Facebook login
+router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+
+/*
+  Callback chamada depois do login do FB ser autenticado
+  Caso a autenticação do FB falhe, redireciona o user para a página de login
+  Caso o username esteja vazio significa que é o primeiro login do user, e redireciona-o para uma página para inserir a info em falta
+*/
+router.get('/auth/facebook/callback', passport.authenticate('facebook', {failureRedirect: 'http://localhost:8001/index/login'}),
+  function(req, res){
+
+    const email = req.user.email
+
+    /*
+      Se o email não estiver registado na base de dados cria um novo utilizador
+    */
+    axios.request('http://localhost:8002/users/email/' + email)
+      .then(dados => {
+        const user = dados.data
+
+        if(!user) {
+          var newUser = {
+            "username": '',
+            "level": "consumidor",
+            "email": email,
+            "filiacao": '',
+            "dataRegisto": new Date().toISOString().slice(0, 16).split('T').join(' '),
+            "dataLastAcess": ''
+          }
+          // Registar um novo utilizador (username e filiação vazios)
+          axios.post('http://localhost:8002/users/registar', newUser)
+        }
+      })
+
+    /*
+      Se username for vazio significa que é o primeiro login depois de
+      entrar com uma rede social
+    */
+    if(req.user.username == ''){
+      // Redirecionar para uma página para introduzir username e filiação
+      res.redirect('http://localhost:8001/complete-reg?email=' + encodeURIComponent(email))
+    }
+
+    /* 
+      Criar token e adicionar-lo como cookie
+      Redirecionar para a mainPage
+    */
+
+    else{
+      axios.post('http://localhost:8002/users/login', req.user)
+        .then(dados => {
+          
+          res.cookie('token', dados.data.token, {
+            maxAge : new Date(Date.now() + 3600000),
+            secure: false, // set to true if your using https
+            httpOnly: true
+          });
+          res.redirect('/mainPage')
+        })
+        .catch(e => res.render('login-form', {erro: e, user: req.body.username}))
+    }
+  }
+);
+
+/*
+  Adicionar username e filiação de um utilizador registado
+  através de uma rede social
+  TODO: Corrigir request para completar registo
+*/
+router.post('/complete-reg', function(req, res){
+  console.log(req)
+  axios.post('http://localhost:8002/users/modUnameFil', req.body)
+    .then(dados => res.redirect('/'))
+    .catch(e => res.render('complete-reg-form', {error: e}))
+})
+
+router.get('/complete-reg', function(req, res){
+  console.log(req)
+  res.render('complete-reg-form', {user: "", email: req.query.email, fil: ""})
+})
+
 router.post('/register', function(req,res) {
   if (req.body.username == "[deleted]")
   {
@@ -323,8 +404,6 @@ router.post('/register', function(req,res) {
     .then(dados => res.redirect('/'))
     .catch(e => res.render('register-form', {error:e, user: req.body.username, email: req.body.email, fil: req.body.filiacao}))
 })
-
-
 
 
 

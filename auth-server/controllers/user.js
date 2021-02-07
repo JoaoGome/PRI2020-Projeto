@@ -6,6 +6,12 @@ module.exports.consultar = uname => {
     .exec();
 }
 
+// Devolve informação referente a um user a partir do email
+module.exports.consultarByEmail = email => {
+    return User.findOne({email: email})
+    .exec();
+}
+
 //listar utilizadores nivel X
 module.exports.listarLevel = (l,o) => {
     return User.find({level: l})
@@ -50,4 +56,8 @@ module.exports.alterarLastLastAcess = (uname,date) => {
     return User.findOneAndUpdate({username: uname}, {$set: {dataLastLastAcess: date}});
 }
 
+// alterar username e filiação a um utilizador a partir do seu email
+module.exports.alterarUnameFil = (email, uname, fil) => {
+    return User.findOneAndUpdate({email: email}, {$set: {username: uname, filiacao: fil}})
+}
 
