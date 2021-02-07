@@ -163,7 +163,6 @@ router.get('/new', function(req, res) {
       axios.get('http://localhost:8002/users/' + req.user.username)
         .then(dados => {
           data = dados.data.dataLastLastAcess 
-          console.log(data)
           if(data === "") res.status(200).jsonp({info:"utilizador novo", dados:"", level:req.user.level, tipos:tipos})
           else
             Recurso.consultarRecursoAfterData(visBy, data, filter, sort[0], sort[1], order[0], order[1], classificacao)
@@ -179,7 +178,7 @@ router.get('/new', function(req, res) {
 // Listar os tipos existentes
 router.get('/tipos', function(req, res) {
   Recurso.listarTipos()
-    .then(tipos => res.status(200).jsonp(tipos))
+    .then(tipos => res.status(200).jsonp({tipos:tipos, level:req.user.level}))
     .catch(e => res.status(500).jsonp({error: e}))
 })
 

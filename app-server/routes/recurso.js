@@ -19,23 +19,29 @@ function verificaAutenticacao(req, res, next){
 }
 
 router.get('/upload', verificaAutenticacao, function(req,res) {
+
   var myToken = req.cookies.token;
   axios.get('http://localhost:8000/recursos/tipos?token=' + myToken)
     .then(tps =>{
-      var tipos = tps.data
-      if (!tipos.includes("artigo")) tipos.push("artigo")
-      if (!tipos.includes("relatorio")) tipos.push("relatorio")
-      if (!tipos.includes("ficha")) tipos.push("ficha")
-      if (!tipos.includes("livro")) tipos.push("livro")
-      if (!tipos.includes("teste")) tipos.push("teste")
-      tipos.sort()
-      res.render('upload', {tipos:tipos, tipo:"", hashtags:"", vis:"3"})
+      var tipos = tps.data.tipos
+      var nivel = tps.data.level
+
+      if (nivel != "consumidor"){
+        if (!tipos.includes("artigo")) tipos.push("artigo")
+        if (!tipos.includes("relatorio")) tipos.push("relatorio")
+        if (!tipos.includes("ficha")) tipos.push("ficha")
+        if (!tipos.includes("livro")) tipos.push("livro")
+        if (!tipos.includes("teste")) tipos.push("teste")
+        tipos.sort()
+        res.render('upload', {tipos:tipos, tipo:"", hashtags:"", vis:"3"})
+      }
+      else res.render('error')
     })
     .catch(e => res.render('error', {error:e})) 
 })
 
 // consultar recurso
-router.get('/:id', function(req, res, next) {
+router.get('/:id', verificaAutenticacao, function(req, res, next) {
   var myToken = req.cookies.token;
   var vis = 2
   if(req.query.vis) vis = req.query.vis
@@ -52,12 +58,14 @@ router.get('/:id', function(req, res, next) {
         
         var permitir = 0
 
-        const zip = new StreamZip({
-          file: 'public/fileStore/' + rec.fileName,
-          storeEntries: true
-        });
-      
-        zip.on('ready', () => {
+        if (fs.existsSync('public/fileStore/' + rec.fileName)){
+
+          const zip = new StreamZip({
+            file: 'public/fileStore/' + rec.fileName,
+            storeEntries: true
+          });
+          
+          zip.on('ready', () => {
             var filename
             const entries = zip.entries();
             for (const entry of Object.values(entries)) {
@@ -69,18 +77,17 @@ router.get('/:id', function(req, res, next) {
             zip.extract(filename, './public/fileStore/tmp.' + rec.preview, err => {
                 console.log(err ? 'Extract error' : 'Extracted');
                 zip.close();
-            });
-            
-        });
+                res.render('error')
+            });          
+          });
 
-        if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
-        else if (user === rec.owner) permitir = 1 
-        if(dados.data == null) res.render('error', {error:"Não autorizado"})
-        else res.render('recurso', {r:r, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
-        
+          if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
+          else if (user === rec.owner) permitir = 1 
+          if(dados.data == null) res.render('error', {error:"Não autorizado"})
+          else res.render('recurso', {r:r, vis:vis, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+        }
+        else res.render('error', {erro: "falta recurso bd"})
 
-
-        
       })
       .catch(e => res.render('error', {error:e})) 
       
@@ -97,31 +104,34 @@ router.get('/:id', function(req, res, next) {
         var user = dados.data.user
         var permitir = 0
 
-        const zip = new StreamZip({
-          file: 'public/fileStore/' + rec.fileName,
-          storeEntries: true
-        });
-      
-        zip.on('ready', () => {
-            var filename
-            const entries = zip.entries();
-            for (const entry of Object.values(entries)) {
-              if (["pdf","doc","png","jpg","jpeg"].includes(entry.name.split('.')[1]))
-                filename = entry.name
-            }
-            console.log(filename)
-            
-            zip.extract(filename, './public/fileStore/tmp.' + rec.preview, err => {
-                console.log(err ? 'Extract error' : 'Extracted');
-                zip.close();
-            });
-            
-        });
+        if (fs.existsSync('public/fileStore/' + rec.fileName)){
 
-        if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
-        else if (user === rec.owner) permitir = 1 
-        res.render('recurso', {r:r, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+          const zip = new StreamZip({
+            file: 'public/fileStore/' + rec.fileName,
+            storeEntries: true
+          });
+          
+          zip.on('ready', () => {
+              var filename
+              const entries = zip.entries();
+              for (const entry of Object.values(entries)) {
+                if (["pdf","doc","png","jpg","jpeg"].includes(entry.name.split('.')[1]))
+                  filename = entry.name
+              }
+              console.log(filename)
+              
+              zip.extract(filename, './public/fileStore/tmp.' + rec.preview, err => {
+                  console.log(err ? 'Extract error' : 'Extracted');
+                  zip.close();
+              });
+              
+          })
 
+          if (nivel === "admin" || (user === rec.owner && nivel === "produtor")) permitir = 2
+          else if (user === rec.owner) permitir = 1 
+          res.render('recurso', {r:r, vis:vis, permitir:permitir, nivel:nivel, user:user, recurso:rec, comentarios: cmt})
+        }
+        else res.render('error', {erro: "falta recurso bd"})
       })
       .catch(e => res.render('error', {error:e}))
 
@@ -158,12 +168,13 @@ router.get('/:id/remover', verificaAutenticacao, function(req,res) {
 
 // Editar um recurso
 router.get('/:id/editar', verificaAutenticacao, function(req,res) {
+
   var myToken = req.cookies.token;
   // alterar visibilidade do recurso
   if(req.query.visibilidade){
     var r = -2
     if(req.query.r) r = Number(req.query.r) -1
-    axios.get('http://localhost:8000/recurso/' + req.params.id + '/alterar?visibilidade=' + req.query.visibilidade + '&token=' + myToken)
+    axios.put('http://localhost:8000/recurso/' + req.params.id + '/alterar?visibilidade=' + req.query.visibilidade + '&token=' + myToken)
       .then(dados => res.redirect(`/user/${dados.data.username}/recursos?r=${r}`))
       .catch(e => res.render('error', {error:e}))
   }
@@ -182,7 +193,7 @@ router.get('/:id/editar', verificaAutenticacao, function(req,res) {
   }
 })
 
-// Editar um recurso
+// Classificar um recurso
 router.get('/:id/classificar/:c', verificaAutenticacao, function(req,res) {
   var myToken = req.cookies.token;
 
@@ -197,6 +208,7 @@ router.get('/:id/classificar/:c', verificaAutenticacao, function(req,res) {
 
 // Alterar um recurso
 router.post('/editar/:id', verificaAutenticacao, function(req,res){
+
   var myToken = req.cookies.token;
   newString = req.body.hashtags.replace(/\s+/g,' ').trim();
   req.body.hashtags = newString.split(" ");
@@ -229,6 +241,7 @@ router.post('/:id/comentario', verificaAutenticacao, function(req,res) {
 
 // Eliminar os comentarios de um recurso
 router.get('/:rec/remover/comentarios', verificaAutenticacao, function(req,res) {
+
   var myToken = req.cookies.token
   var r = -2
   if(req.query.r) r = Number(req.query.r) - 1
@@ -253,7 +266,8 @@ function existe (a,b) {
 
 
 //Upload File
-router.post('/upload',  verificaAutenticacao, upload.single('myFile'), function(req,res,next) {
+router.post('/upload', verificaAutenticacao, upload.single('myFile'), function(req,res,next) {
+
   good = 1
   manifestoExiste = 1
   informationExiste = 1

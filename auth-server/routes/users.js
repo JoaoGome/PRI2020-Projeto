@@ -47,7 +47,10 @@ router.get('/:id', function(req, res) {
 })
 
 //listar users nivel X
-router.get('/nivel/:level', function(req, res) {
+router.get('/nivel/:level', function(req,res,next) {
+  if (req.user.level === "admin") next();
+  else res.status(401).jsonp({error: "Não autorizado"})
+}, function(req, res) {
   User.listarLevel(req.params.level, req.query.sortBy)
     .then(dados => res.status(200).jsonp(dados))
     .catch(e => res.status(500).jsonp({error: e}))
@@ -69,7 +72,7 @@ router.delete('/:uname', verificaToken, function(req,res,next) {
 //alterar nivel ou pedido user
 router.put('/:uname', verificaToken, function(req,res,next) {
   if (req.user.level === "admin") next();
-  else if (req.query.pedido && (req.user.username===req.params.uname) && (req.user.level === "consumidor")) next();
+  else if (req.query.pedido && !req.query.level && (req.user.username===req.params.uname) && (req.user.level === "consumidor")) next();
   else res.status(401).jsonp({error: "Não autorizado"})
 }, function(req, res) {
   if (req.query.level)

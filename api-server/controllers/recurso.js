@@ -212,3 +212,8 @@ module.exports.alterarRecPessoalVis = function(u, id, new_v){
 module.exports.alterar = function(r){
     return Recurso.findOneAndUpdate({_id: r.id}, r, {new: true})
 }
+
+// Altera recurso pessoal da bd
+module.exports.alterar = function(r, u){
+    return Recurso.findOneAndUpdate({_id: r.id, owner:u}, r, {new: true})
+}

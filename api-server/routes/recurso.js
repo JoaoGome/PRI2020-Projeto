@@ -18,7 +18,7 @@ router.get('/:id', function(req, res) {
 
 
 // Alterar visibilidade recurso
-router.get('/:id/alterar', function(req, res) {
+router.put('/:id/alterar', function(req, res) {
   Recurso.alterarRecPessoalVis(req.user.username, req.params.id, req.query.visibilidade)
     .then(dados => res.status(200).jsonp({dados:dados, username:req.user.username}))
     .catch(e =>  res.status(500).jsonp({error: e}))
@@ -44,7 +44,11 @@ router.get('/pessoal/:id', function(req,res,next) {
 
 
 // Inserir um recurso
-router.post('/', function(req, res){
+router.post('/', function(req,res,next) {
+  if (req.user.level != "consumidor") next();
+  else res.status(401).jsonp({error: "Não autorizado"})
+}, function(req, res){
+  
   req.body.owner = req.user.username;
   Recurso.inserir(req.body)
     .then(dados => res.status(201).jsonp({dados: dados}))
@@ -52,11 +56,21 @@ router.post('/', function(req, res){
 })
 
 // Alterar um recurso
-router.put('/', function(req, res){
+router.put('/', function(req,res,next) {
+  if (req.user.level != "consumidor") next();
+  else res.status(401).jsonp({error: "Não autorizado"})
+}, function(req, res){
   console.log(req.body)
-  Recurso.alterar(req.body)
-    .then(dados => res.status(201).jsonp({dados: dados}))
-    .catch(e => res.status(500).jsonp({error: e}))
+
+  if(req.user.level === "admin")
+    Recurso.alterar(req.body)
+      .then(dados => res.status(201).jsonp({dados: dados}))
+      .catch(e => res.status(500).jsonp({error: e}))
+
+  if(req.user.level === "produtor")
+    Recurso.alterarPessoal(req.body, req.user.username)
+      .then(dados => res.status(201).jsonp({dados: dados}))
+      .catch(e => res.status(500).jsonp({error: e}))
 })
 
 // Remover um recurso 

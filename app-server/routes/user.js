@@ -129,6 +129,7 @@ router.get('/:id/recursos', verificaAutenticacao, function(req, res){
 
 //Eliminar um user
 router.get('/:id/remover', verificaAutenticacao, function(req,res) {
+  
     var myToken = req.cookies.token
     var tab = "users"
     if (req.query.tab) tab = req.query.tab
@@ -156,6 +157,7 @@ router.get('/:id/alterar', verificaAutenticacao, function(req,res) {
 
 //consumidor -> produtor
 router.get('/:id/upgrade', verificaAutenticacao, function(req,res) {
+
   var myToken = req.cookies.token;
   axios.put("http://localhost:8002/users/" + req.params.id + "?level=produtor&pedido=nao&token=" + myToken)
     .then(d => res.redirect('/mainPage?tab=users'))
@@ -164,6 +166,7 @@ router.get('/:id/upgrade', verificaAutenticacao, function(req,res) {
 
 //produtor -> consumidor
 router.get('/:id/downgrade', verificaAutenticacao, function(req,res) {
+  
   var myToken = req.cookies.token;
   axios.put("http://localhost:8002/users/" + req.params.id + "?level=consumidor&token=" + myToken)
     .then(d => res.redirect('/mainPage?tab=prods'))
