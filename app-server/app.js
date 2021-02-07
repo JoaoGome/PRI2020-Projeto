@@ -80,7 +80,7 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(email, done) {
   axios.get('http://localhost:8002/users/email/' + email)
-    .then(dados => {console.log('Deserialize: ' + dados); done(null, dados.data)})
+    .then(dados => {console.log('Deserialize: ' + dados); done(null, dados)})
     .catch(erro => done(erro, false))
 });
 
