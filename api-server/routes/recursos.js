@@ -132,7 +132,7 @@ router.get('/user/:user', function(req, res) {
 
 
 // Consultar todos os recursos uploaded apos uma certa data
-router.get('/new', function(req, res) {
+router.get('/new/:data', function(req, res) {
   
   // Listar os tipos existentes
   Recurso.listarTipos()
@@ -157,19 +157,12 @@ router.get('/new', function(req, res) {
       if(req.query.visBy === "privado" && req.user.vis == 1) visBy = [1]
       if(req.query.visBy === "publico") visBy = [2]
 
-      var data = ""
-
-      //ir buscar a data
-      axios.get('http://localhost:8002/users/' + req.user.username)
-        .then(dados => {
-          data = dados.data.dataLastLastAcess 
-          if(data === "") res.status(200).jsonp({info:"utilizador novo", dados:"", level:req.user.level, tipos:tipos})
-          else
-            Recurso.consultarRecursoAfterData(visBy, data, filter, sort[0], sort[1], order[0], order[1], classificacao)
-              .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
-              .catch(e => res.status(500).jsonp({error: e}))
-        })
-        .catch(e => res.status(500).jsonp({error:e}))
+      var data = req.params.data
+      if(data === "new") res.status(200).jsonp({info:"utilizador novo", dados:"", level:req.user.level, tipos:tipos})
+      else
+        Recurso.consultarRecursoAfterData(visBy, data, filter, sort[0], sort[1], order[0], order[1], classificacao)
+          .then(dados => res.status(200).jsonp({dados:dados, level:req.user.level, tipos:tipos}))
+          .catch(e => res.status(500).jsonp({error: e}))
 
     })
     .catch(e => res.status(500).jsonp({error: e}))

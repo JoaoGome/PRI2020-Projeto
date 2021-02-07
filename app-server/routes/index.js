@@ -131,25 +131,31 @@ router.get('/mainPage', verificaAutenticacao,function(req,res) {
         .catch(e => res.render('error', {error:e}))  
   }
   if(tab === "news"){
-    //Pedir lista de recursos novos
-    axios.get("http://localhost:8000/recursos/new?sortBy="+sort+"&orderBy="+order+filterBy+visBy+classificarBy + "&token=" + myToken)
-      .then(r  =>{
-          var nivel = r.data.level
-          var dados = r.data.dados
-          var tipos = r.data.tipos
-          var info = "info"
-          if (r.data.info) info = r.data.info
-          var vis = 4
-          if(nivel === "admin") vis = 1
+    // pedir ao user o seu ultimo acesso
+    axios.get('http://localhost:8002/users/meuPerfil?token=' + myToken)
+      .then(user => {
+        var data = user.data.dataLastLastAcess 
+        if (data === "") data = "new"
+        //Pedir lista de recursos novos
+        axios.get("http://localhost:8000/recursos/new/" + data + "?sortBy="+sort+"&orderBy="+order+filterBy+visBy+classificarBy + "&token=" + myToken)
+          .then(r  =>{
+              var nivel = r.data.level
+              var dados = r.data.dados
+              var tipos = r.data.tipos
+              var info = "info"
+              if (r.data.info) info = r.data.info
+              var vis = 4
+              if(nivel === "admin") vis = 1
 
-          sort = sort.replace(/owner/,"produtor").split(',')
-          order = order.split(',')
-          filter = filter.split(',')
-          tipos.sort()
+              sort = sort.replace(/owner/,"produtor").split(',')
+              order = order.split(',')
+              filter = filter.split(',')
+              tipos.sort()
 
-          res.render('main_news', {news:info, nivel:nivel, vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar,r:""})
+              res.render('main_news', {news:info, nivel:nivel, vis:vis, tab:tab, tipos:tipos, recursos:dados, sort:sort,order:order,filter:filter,filterVis:filterVis,classificar:classificar,r:""})
+          })
+          .catch(e => res.render('error', {error:e}))
       })
-      .catch(e => res.render('error', {error:e}))
   }
 });
 

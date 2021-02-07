@@ -39,22 +39,45 @@ router.get('/', verificaToken, function(req,res,next) {
       .catch(e => res.status(500).jsonp({error: e}))
 })
 
+//consultar proprio perfil
+router.get('/meuPerfil', verificaToken, function(req, res) {
+  User.consultar(req.user.username)
+    .then(dados => res.status(200).jsonp(dados))
+    .catch(e => res.status(500).jsonp({error: e}))
+})
+
+
 //consultar user
-router.get('/:id', function(req, res) {
+router.get('/:id', verificaToken, function(req, res) {
+  User.consultar(req.params.id)
+    .then(dados => res.status(200).jsonp(dados))
+    .catch(e => res.status(500).jsonp({error: e}))
+})
+
+//consultar user
+router.get('/username/:id', function(req,res,next) {
+  if (req.query.secret && req.query.secret === "supersegredoPRI") next();
+  else res.status(401).jsonp({error: "Não autorizado"})
+}, function(req, res) {
+  
   User.consultar(req.params.id)
     .then(dados => res.status(200).jsonp(dados))
     .catch(e => res.status(500).jsonp({error: e}))
 })
 
 // Consultar user pelo email
-router.get('/email/:email', function(req, res){
+router.get('/email/:email', function(req,res,next) {
+  if (req.query.secret && req.query.secret === "supersegredoPRI") next();
+  else res.status(401).jsonp({error: "Não autorizado"})
+}, function(req, res){
+
   User.consultarByEmail(req.params.email)
     .then(dados => res.status(200).jsonp(dados))
     .catch(e => res.status(500).jsonp({error: e}))
 })
 
 //listar users nivel X
-router.get('/nivel/:level', function(req,res,next) {
+router.get('/nivel/:level', verificaToken, function(req,res,next) {
   if (req.user.level === "admin") next();
   else res.status(401).jsonp({error: "Não autorizado"})
 }, function(req, res) {

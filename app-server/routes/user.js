@@ -56,46 +56,49 @@ function defineFiltros(req, tab){
 //Consultar próprio perfil
 router.get('/meuPerfil', verificaAutenticacao, function(req,res) {
   var myToken = req.cookies.token;
-  axios.get("http://localhost:8000/users/meuPerfil?token=" + myToken)
-    .then(dados =>{
-      var nivel = dados.data.nivel
-      var username = dados.data.username
-      var user = dados.data.dados
-      var cmts = dados.data.cmts.reverse()
+  axios.get("http://localhost:8002/users/meuPerfil?token=" + myToken)
+    .then(u =>{
+      var user = u.data
+      axios.get("http://localhost:8000/users/" + user.username + "/comentarios?token=" + myToken)
+        .then(dados =>{
+          var nivel = dados.data.nivel
+          var username = dados.data.username
+          var cmts = dados.data.cmts.reverse()
 
-      var r = -1
-      if (req.query.r) r = Number(req.query.r)
-      var vis = 4
-      if (username === dados.data.dados.username) vis = 3
-      else if (nivel === "admin") vis = 1
-      
-      res.render('utilizador', {tab:req.query.tab, vis:vis, user:user, username:username, utilizador:username, comentarios:cmts, r:r})
+          var r = -1
+          if (req.query.r) r = Number(req.query.r)
+          var vis = 3
+          
+          res.render('utilizador', {tab:req.query.tab, vis:vis, user:user, username:username, utilizador:req.params.id, comentarios:cmts, r:r})
+        })
+        .catch(e => res.render('error', {error:e}))
     })
     .catch(e => res.render('error', {error:e}))
-
 })
-
 
 //Consultar um user
 router.get('/:id', verificaAutenticacao, function(req, res){
   var myToken = req.cookies.token;
-  axios.get("http://localhost:8000/users/" + req.params.id + "?token=" + myToken)
-    .then(dados =>{
-      var nivel = dados.data.nivel
-      var username = dados.data.username
-      var user = dados.data.dados
-      var cmts = dados.data.cmts.reverse()
+  axios.get("http://localhost:8002/users/" + req.params.id + "?token=" + myToken)
+  .then(u =>{
+    axios.get("http://localhost:8000/users/" + req.params.id + "/comentarios?token=" + myToken)
+      .then(dados =>{
+        var nivel = dados.data.nivel
+        var username = dados.data.username
+        var user = u.data
+        var cmts = dados.data.cmts.reverse()
 
-      var r = -1
-      if (req.query.r) r = Number(req.query.r)
-      var vis = 4
-      if (username === dados.data.dados.username) vis = 3
-      else if (nivel === "admin") vis = 1
-      
-      res.render('utilizador', {tab:req.query.tab, vis:vis, user:user, username:username, utilizador:req.params.id, comentarios:cmts, r:r})
-    })
-    .catch(e => res.render('error', {error:e}))
-
+        var r = -1
+        if (req.query.r) r = Number(req.query.r)
+        var vis = 4
+        if (username === user.username) vis = 3
+        else if (nivel === "admin") vis = 1
+        
+        res.render('utilizador', {tab:req.query.tab, vis:vis, user:user, username:username, utilizador:req.params.id, comentarios:cmts, r:r})
+      })
+      .catch(e => res.render('error', {error:e}))
+  })
+  .catch(e => res.render('error', {error:e}))
 })
 
 //Consultar os recursos de um user
@@ -130,19 +133,35 @@ router.get('/:id/recursos', verificaAutenticacao, function(req, res){
 //Eliminar um user
 router.get('/:id/remover', verificaAutenticacao, function(req,res) {
   
-    var myToken = req.cookies.token
-    var tab = "users"
-    if (req.query.tab) tab = req.query.tab
-    axios.delete("http://localhost:8000/users/" + req.params.id + "?token=" + myToken)
-      .then(d =>{
-        // fazer logout do user com id
-        if (req.query.conta){
-          res.redirect('/')
-        }
-        else
-          res.redirect(`/mainPage?tab=users`)
-      })
-      .catch(e => res.render('error', {error:e}))
+  var myToken = req.cookies.token
+  var tab = "users"
+  if (req.query.tab) tab = req.query.tab
+  //eliminar comentarios e recursos do user
+  axios.delete("http://localhost:8000/users/" + req.params.id + "?token=" + myToken)
+    .then(d =>{
+      // eliminar o user
+      axios.delete("http://localhost:8002/users/" + req.params.id + "?token=" + myToken)
+        .then(dados =>{
+
+          if (req.query.conta){
+            // logout
+            req.logout();
+            req.session.destroy(function (err) {
+              if (!err) {
+                console.log("Req.session destroyed!");
+                res.redirect('/')
+              } else {
+                console.log("Destroy session error: " + err)
+                res.status(500).jsonp({error: err})
+              }
+            })
+          }
+          else
+            res.redirect(`/mainPage?tab=users`)
+        })
+        .catch(e => res.status(500).jsonp({error: e})) 
+    })
+    .catch(e => res.render('error', {error:e}))
 })
 
 //alterar pedido do utilizador

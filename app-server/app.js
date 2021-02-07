@@ -19,7 +19,7 @@ dotenv.config();
 // Configuração da estratégia local
 passport.use(new LocalStrategy(
   {usernameField: 'username'}, (username, password, done) => {
-    axios.get('http://localhost:8002/users/' + username)
+    axios.get('http://localhost:8002/users/username/' + username + '?secret=supersegredoPRI')
       .then(dados => {
         const user = dados.data
         if(!user) {  return done(null, false, {message: 'Utilizador inexistente!\n'})}
@@ -46,7 +46,7 @@ passport.use(
       //console.log("REFRESH TOKEN = " + refreshToken);
       //console.log("PROFILE = "+JSON.stringify(profile));
       const email = profile.emails[0].value
-      axios.get('http://localhost:8002/users/email/' + email)
+      axios.get('http://localhost:8002/users/email/' + email + '?secret=supersegredoPRI')
         .then(dados => {
           const user = dados.data
 
@@ -79,7 +79,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(email, done) {
-  axios.get('http://localhost:8002/users/email/' + email)
+  axios.get('http://localhost:8002/users/email/' + email + '?secret=supersegredoPRI')
     .then(dados => {console.log('Deserialize: ' + dados); done(null, dados)})
     .catch(erro => done(erro, false))
 });
