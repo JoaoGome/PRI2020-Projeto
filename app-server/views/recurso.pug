@@ -1,0 +1,148 @@
+extends layout
+
+block content
+
+    .w3-light-grey
+        header.w3-container.w3-theme-d4.w3-text-white
+            a(href="/mainPage" style="text-decoration: none")
+                h1.w3-opacity Gestor de Recursos
+
+        .w3-bar.w3-theme-d4
+            h3.w3-margin-left Recurso: 
+                span.margin-left.w3-opacity #{recurso.titulo}              
+                if permitir > 0
+                    button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-red(onclick="document.getElementById('removerRecurso').style.display='block'") Eliminar
+                if permitir == 2
+                    a(href=`/recurso/${recurso._id}/editar?r=${r}`)
+                        button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Editar
+
+                a(href=`/recurso/${recurso._id}/download`)
+                    button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Download
+                if recurso.preview != "nao"
+                    if recurso.preview == "pdf" || recurso.preview == 'doc'
+                        a(href=`/ViewerJS/#../fileStore/tmp.${recurso.preview}`)
+                            button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Preview
+                    else
+                        button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity(onclick=`show(${recurso.tipo});`) Preview
+                    
+
+        .w3-container
+
+            div.w3-modal(id="preview")
+
+            if recurso.subtitulo
+                h5
+                    b.w3-text-blue-grey Subtítulo:
+                    span  #{recurso.subtitulo}
+                    include ./estrelas.pug
+
+            h5
+                b.w3-text-blue-grey Tipo:
+                span  #{recurso.tipo}
+                if !recurso.subtitulo
+                    include ./estrelas.pug
+                       
+            h5
+                b.w3-text-blue-grey Visibilidade:
+                if recurso.visibilidade == 1
+                    - var helpRef = `owner=${recurso.owner}`
+                    span  Privado
+                else
+                    - var helpRef = ""
+                    span  Público
+
+            h5
+                b.w3-text-blue-grey Autor:
+                span  #{recurso.autor}
+            h5
+                b.w3-text-blue-grey Data de Registo:
+                span  #{recurso.dataRegisto}
+            h5
+                b.w3-text-blue-grey Data de Criação:
+                span  #{recurso.dataCriacao}
+
+            h5
+                if recurso.hashtags.length
+                    b.w3-text-blue-grey Hashtags:
+                    each h in recurso.hashtags
+                        span  
+                        a(href=`/recursos?hashtag=${h}`)
+                            span #{h}
+
+            h5.w3-text-blue-grey
+                b Comentários:
+                if nivel === "admin"
+                    button.w3-right.w3-button.w3-round-large.w3-text-blue-grey.w3-medium(onclick="document.getElementById('removerComentarios').style.display='block'") 
+                        b - Remover Comentários
+                button.w3-right.w3-button.w3-round-large.w3-text-blue-grey.w3-medium(onclick="addComentario()") 
+                    b + Adicionar Comentário
+                
+            div(id="comentar" style="display:none")                    
+                form(action=`/recurso/${recurso._id}/comentario?${helpRef}&r=${r}` method='POST')
+                    span.w3-cell-row
+                        input.w3-input.w3-round.w3-cell(style="width:1300px" type="text" name="text" placeholder=`Introduza o seu comentário` required)
+                        input.w3-input(type="hidden" name="recursoTitulo" value=`${recurso.titulo}`)  
+                        input.w3-btn.w3-blue-grey.w3-round.w3-cell(type="submit" value="Enviar")
+
+            table.w3-table.w3-border.w3-bordered
+                if comentarios.length
+                    each c in comentarios
+                        tr
+                            td
+                                if c.userID === "[deleted]"
+                                    b #{c.userID}:
+                                    span  #{c.text}
+                                else
+                                    a(href=`/user/${c.userID}` style="text-decoration: none")
+                                        b #{c.userID}:
+                                    span  #{c.text}
+                            
+                            
+
+                            if c.userID === user
+                                td.w3-right.w3-margin-right.w3-hover-text-red
+                                    a(href=`/comentario/remover/${c._id}?recurso=${recurso._id}&${helpRef}&r=${r}`) Eliminar
+
+                            else 
+                                if nivel == "admin"
+                                    td.w3-right.w3-margin-right.w3-hover-text-red
+                                        a(href=`/comentario/remover/${c._id}?recurso=${recurso._id}&${helpRef}&r=${r}`) Eliminar
+
+                            td.w3-right.w3-margin-right #{c.data}
+                            
+                            
+                else
+                    span Não existem comentários
+
+            br     
+        
+
+        //- de certeza que queres eliminar o recurso?
+        div.w3-modal(id="confirmarRecurso" style="display:none")
+            div.w3-modal-content.w3-theme-d3.w3-round-large(style="width:450px")
+                div.w3-container.w3-padding-16
+                    h5.w3-center.w3-margin-bottom Tem a certeza que quer eliminar este recurso?
+                    h5.w3-center
+                        a(href=`/recurso/${recurso._id}/remover`)
+                            button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium
+                                i(class="fa fa-check")
+                        button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium.w3-margin-left(onclick="document.getElementById('confirmarRecurso').style.display='none'")
+                            i(class="fa fa-close")
+
+        //- de certeza que queres eliminar os comentarios?
+        div.w3-modal(id="removerComentarios" style="display:none")
+            div.w3-modal-content.w3-theme-d3.w3-round-large(style="width:450px")
+                div.w3-container.w3-padding-16
+                    h5.w3-center.w3-margin-bottom Tem a certeza que quer eliminar todos os comentários deste recurso?
+                    h5.w3-center
+                        a(href=`/recurso/${recurso._id}/remover/comentarios?r=${r}`)
+                            button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium
+                                i(class="fa fa-check")
+                        button.w3-button.w3-round.w3-white.w3-text-blue-grey.w3-medium.w3-margin-left(onclick="document.getElementById('removerComentarios').style.display='none'")
+                            i(class="fa fa-close")
+        
+        .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-margin-top.w3-padding-large
+            address 
+                span(onclick=`window.history.go(${r})` style="text-decoration: underline; cursor:pointer;" ) Voltar
+                span.w3-right Produtor: 
+                    a(href=`/user/${recurso.owner}`) #{recurso.owner}

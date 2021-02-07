@@ -1,0 +1,37 @@
+if recurso.classificacao == -1
+    b.w3-right.w3-text-blue-grey.w3-margin-right --  
+        i(class="fa fa-star")
+else
+    b.w3-right.w3-text-blue-grey.w3-margin-right #{recurso.classificacao}  
+        i(class="fa fa-star")
+br
+if recurso.visibilidade != 1
+    - var classificado = "nao"
+    if recurso.classificacoes
+        each c in recurso.classificacoes
+            if c.username == user
+                span.w3-right.w3-margin-right A sua classificação:  
+                    span.w3-dropdown-hover.w3-light-grey #{c.classificacao}
+                        div.w3-dropdown-content.w3-bar-block.w3-border(style="width:30px")
+                            if c.classificacao != 5
+                                a.w3-bar-item.w3-button.w3-padding-small.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(href=`/recurso/${recurso._id}/classificar/5?vis=${vis}&r=${r}` style="cursor:pointer; width:30px") 5
+                            if c.classificacao != 4
+                                a.w3-bar-item.w3-button.w3-padding-small.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(href=`/recurso/${recurso._id}/classificar/4?vis=${vis}&r=${r}` style="cursor:pointer; width:30px") 4
+                            if c.classificacao != 3
+                                a.w3-bar-item.w3-button.w3-padding-small.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(href=`/recurso/${recurso._id}/classificar/3?vis=${vis}&r=${r}` style="cursor:pointer; width:30px") 3
+                            if c.classificacao != 2
+                                a.w3-bar-item.w3-button.w3-padding-small.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(href=`/recurso/${recurso._id}/classificar/2?vis=${vis}&r=${r}` style="cursor:pointer; width:30px") 2
+                            if c.classificacao != 1
+                                a.w3-bar-item.w3-button.w3-padding-small.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(href=`/recurso/${recurso._id}/classificar/1?vis=${vis}&r=${r}` style="cursor:pointer; width:30px") 1
+                - classificado = "sim"      
+
+    if classificado === "nao"
+        span.w3-right.w3-margin-right Classifique este recurso:  
+            span.w3-dropdown-hover.w3-light-grey -- 
+                div.w3-dropdown-content.w3-bar-block.w3-border(style="width:30px")
+                    a.w3-bar-item.w3-button.w3-padding-small.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(href=`/recurso/${recurso._id}/classificar/5?vis=${vis}&r=${r}` style="cursor:pointer; width:30px") 5
+                    a.w3-bar-item.w3-button.w3-padding-small.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(href=`/recurso/${recurso._id}/classificar/4?vis=${vis}&r=${r}` style="cursor:pointer; width:30px") 4
+                    a.w3-bar-item.w3-button.w3-padding-small.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(href=`/recurso/${recurso._id}/classificar/3?vis=${vis}&r=${r}` style="cursor:pointer; width:30px") 3
+                    a.w3-bar-item.w3-button.w3-padding-small.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(href=`/recurso/${recurso._id}/classificar/2?vis=${vis}&r=${r}` style="cursor:pointer; width:30px") 2
+                    a.w3-bar-item.w3-button.w3-padding-small.w3-theme-d3.w3-hover-blue-grey.w3-hover-opacity(href=`/recurso/${recurso._id}/classificar/1?vis=${vis}&r=${r}` style="cursor:pointer; width:30px") 1
+        

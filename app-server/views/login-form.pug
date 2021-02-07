@@ -1,0 +1,24 @@
+extends layout
+
+block content
+
+    .w3-light-grey
+        header.w3-container.w3-theme-d4.w3-text-white.w3-margin-bottom
+            h1 Login
+        form.w3-container.w3-padding-large(action='/login' method='POST')
+
+            h5.w3-cell-row.w3-padding
+                label.w3-cell(style="width:100px") Username:
+                input.w3-input.w3-margin-left.w3-round.w3-cell(style="width:500px" type="text" name="username" value=`${user}` placeholder=`Introduza o seu username`)
+            h5.w3-cell-row.w3-padding
+                label.w3-cell(style="width:100px") Password
+                input.w3-input.w3-margin-left(style="width:500px" type="password" name="password" placeholder=`Introduza a sua password`)
+
+            h5.w3-cell-row.w3-padding.w3-margin-top
+                input.w3-btn.w3-blue-grey.w3-round(type="submit" value="Enviar")
+                if erro
+                    span.w3-padding.w3-cell-middle.w3-opacity - Username ou password incorretos -
+        
+        .w3-container.w3-theme-d4.w3-text-white.w3-padding.w3-margin-top.w3-padding-large
+            address 
+                a(href="/") Voltar
