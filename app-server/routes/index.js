@@ -374,41 +374,25 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', {failure
         })
         .catch(e => res.render('login-form', {erro: e, user: req.body.username}))
     }
-
-    /*
-    else{
-      console.log('JWT LOGIN')
-      jwt.sign({username: req.user.username, 
-                level:  req.user.level,
-                sub: 'Projeto PRI2020'},
-                "PRI2020",
-                function(e,token) {
-                  if(e) res.status(500).jsonp({error: "Erro na geração do token: " + e}) 
-                  else{
-                    res.status(201).cookie('token', token).redirect('http://localhost:8001/mainPage')
-                  }
-                  /*else{
-                    var d = new Date().toISOString().slice(0, 16).split('T').join(' ')
-                    User.alterarLastAcess(req.body.username, d)
-                      .then(res.status(201).cookie('token', token).redirect('http://localhost:8001/mainPage'))
-                      .catch(e => res.status(500).jsonp({error: "Erro updating last acess: " + e}) )
-                  }
-                })
-    }*/
   }
 );
 
 /*
   Adicionar username e filiação de um utilizador registado
   através de uma rede social
+  TODO: Corrigir request para completar registo
 */
 router.post('/complete-reg', function(req, res){
   console.log(req)
-  User.alterarUnameFil(req.body.email, req.body.username, req.body.filiacao)
-    .then(res.status(201).send())
-    .catch(e => res.status(500).jsonp({error: "Error updating new username and filiação " + e}) )
+  axios.post('http://localhost:8002/users/modUnameFil', req.body)
+    .then(dados => res.redirect('/'))
+    .catch(e => res.render('complete-reg-form', {error: e}))
 })
 
+router.get('/complete-reg', function(req, res){
+  console.log(req)
+  res.render('complete-reg-form', {user: "", email: req.query.email, fil: ""})
+})
 
 router.post('/register', function(req,res) {
   if (req.body.username == "[deleted]")

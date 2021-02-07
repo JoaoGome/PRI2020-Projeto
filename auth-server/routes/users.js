@@ -140,6 +140,14 @@ router.post('/registar', function(req,res) {
     
 })
 
+/*
+  Modificar username e filiação de um utilizador
+*/
+router.post('/modUnameFil', function(req, res) {
+  User.alterarUnameFil(req.body.email, req.body.username, req.body.filiacao)
+    .then(res.status(201).send())
+    .catch(e => res.status(500).jsonp({error: "Error updating new username and filiação " + e}) )
+})
 
 module.exports = router;
 
