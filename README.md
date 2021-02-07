@@ -1,3 +1,6 @@
+[![Contributors][contributors-shield]][contributors-url]
+
+
 <!-- LOGO Escola Engenharia -->
 <br />
 <p align="center">
@@ -105,3 +108,7 @@
     <li>http://localhost:8000/recursos?vis=1&tipo=tese -> recursos com determinado tipo</li>
     <li>http://localhost:8000/recurso/06?vis=1 -> determinado recurso</li>
 </ul>
+
+
+[contributors-shield]: https://img.shields.io/github/contributors/JoaoGome/PRI2020-Projeto?style=for-the-badge
+[contributors-url]: https://github.com/JoaoGome/PRI2020-Projeto/graphs/contributors
