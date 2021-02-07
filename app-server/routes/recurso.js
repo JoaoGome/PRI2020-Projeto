@@ -51,6 +51,10 @@ router.get('/:id', verificaAutenticacao, function(req, res, next) {
   if(vis == 1)
     axios.get('http://localhost:8000/recurso/pessoal/' + req.params.id + '?token=' + myToken)
       .then(dados =>{
+        fs.readdirSync('public/fileStore/').forEach(file => {
+          if (["pdf","doc","png","jpg","jpeg","html","xml"].includes(file.split('.')[1]))
+            fs.unlinkSync('public/fileStore/' + file)
+        });
         var rec = dados.data.dados
         var nivel = dados.data.level
         var cmt = dados.data.cmts.reverse()
@@ -66,15 +70,18 @@ router.get('/:id', verificaAutenticacao, function(req, res, next) {
             file: 'public/fileStore/' + rec.fileName,
             storeEntries: true
           });
-          
           zip.on('ready', () => {
             var filename
             const entries = zip.entries();
+            
             for (const entry of Object.values(entries)) {
-              if (["pdf","doc","png","jpg","jpeg"].includes(entry.name.split('.')[1]))
+              
+              if (["pdf","doc","png","jpg","jpeg","html","xml"].includes(entry.name.split('.')[1]))
+              {
                 filename = entry.name
+              }
+                
             }
-            console.log(filename)
             
             zip.extract(filename, './public/fileStore/tmp.' + rec.preview, err => {
                 console.log(err ? 'Extract error' : 'Extracted');
@@ -96,7 +103,7 @@ router.get('/:id', verificaAutenticacao, function(req, res, next) {
     axios.get('http://localhost:8000/recurso/' + req.params.id + '?token=' + myToken)
       .then(dados =>{
         fs.readdirSync('public/fileStore/').forEach(file => {
-          if (["pdf","doc","png","jpg","jpeg"].includes(file.split('.')[1]))
+          if (["pdf","doc","png","jpg","jpeg","html","xml"].includes(file.split('.')[1]))
             fs.unlinkSync('public/fileStore/' + file)
         });
         var rec = dados.data.dados
@@ -118,7 +125,7 @@ router.get('/:id', verificaAutenticacao, function(req, res, next) {
               var filename
               const entries = zip.entries();
               for (const entry of Object.values(entries)) {
-                if (["pdf","doc","png","jpg","jpeg"].includes(entry.name.split('.')[1]))
+                if (["pdf","doc","png","jpg","jpeg","html","xml"].includes(entry.name.split('.')[1]))
                   filename = entry.name
               }
               console.log(filename)
@@ -296,7 +303,7 @@ router.post('/upload', verificaAutenticacao, upload.single('myFile'), function(r
         if (entry.name != "manifesto.txt" && entry.name != "information.json")
         {
           broken = entry.name.split('.')
-          if (broken[1] == "pdf" || broken[1] == "doc" || broken[1] == "png" || broken[1] == "jpg" || broken[1] == "jpeg") preview = broken[1]
+          if (broken[1] == "pdf" || broken[1] == "doc" || broken[1] == "png" || broken[1] == "jpg" || broken[1] == "jpeg" || broken[1] == "html" || broken[1] == "xml") preview = broken[1]
         }
       }
 

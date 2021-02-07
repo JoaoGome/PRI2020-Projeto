@@ -67,7 +67,7 @@ router.delete('/:id', function(req,res,next) {
             Comentario.removerRecurso(req.params.id)
               .then(r =>{
                 // eliminar o user
-                axios.delete("http://localhost:8002/users/" + req.params.id )
+                axios.delete("http://localhost:8002/users/" + req.params.id + "?token=" + req.cookies.token )
                   .then(dados => res.status(200).jsonp(dados.data))
                   .catch(e => res.status(500).jsonp({error: e}))      
                 })

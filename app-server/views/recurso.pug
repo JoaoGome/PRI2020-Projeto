@@ -19,7 +19,10 @@ block content
                 a(href=`/recurso/${recurso._id}/download`)
                     button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Download
                 if recurso.preview != "nao"
-                    if recurso.preview == "pdf" || recurso.preview == 'doc'
+                    if recurso.preview == "html" || recurso.preview == "xml"
+                        a(href=`/fileStore/tmp.html`)
+                            button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Preview
+                    else if recurso.preview == "pdf" || recurso.preview == 'doc'
                         a(href=`/ViewerJS/#../fileStore/tmp.${recurso.preview}`)
                             button.w3-right.w3-button.w3-round-large.w3-text-white.w3-medium.w3-hover-opacity Preview
                     else

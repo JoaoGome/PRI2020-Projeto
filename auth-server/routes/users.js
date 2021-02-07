@@ -68,7 +68,8 @@ router.get('/nivel/:level', function(req,res,next) {
 
 //remover user
 router.delete('/:uname', verificaToken, function(req,res,next) {
-  if (req.user.level === "admin") next();
+  console.log(req.user)
+  if (req.user.level === "admin" || req.user.username === req.params.uname) next();
   else res.status(401).jsonp({error: "Não autorizado"})
 }, function(req, res) {
   User.remove(req.params.uname)
