@@ -200,7 +200,7 @@ module.exports.removerPessoal = function(id, a){
 
 // Elimina todos os recursos de um User
 module.exports.removerRecUser = function(u){
-    return Recurso.remove({userID: u})
+    return Recurso.remove({owner: u})
 }
 
 // Elimina todos os comentarios de um determinado user da bd

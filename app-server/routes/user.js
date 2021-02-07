@@ -69,7 +69,7 @@ router.get('/meuPerfil', verificaAutenticacao, function(req,res) {
           if (req.query.r) r = Number(req.query.r)
           var vis = 3
           
-          res.render('utilizador', {tab:req.query.tab, vis:vis, user:user, username:username, utilizador:req.params.id, comentarios:cmts, r:r})
+          res.render('utilizador', {tab:req.query.tab, vis:vis, user:user, username:user.username, utilizador:user.username, comentarios:cmts, r:r})
         })
         .catch(e => res.render('error', {error:e}))
     })

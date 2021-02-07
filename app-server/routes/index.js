@@ -335,7 +335,7 @@ router.get('/auth/facebook/callback', passport.authenticate('facebook', {failure
     /*
       Se o email não estiver registado na base de dados cria um novo utilizador
     */
-    axios.request('http://localhost:8002/users/email/' + email)
+    axios.request('http://localhost:8002/users/email/' + email + '?secret=supersegredoPRI')
       .then(dados => {
         const user = dados.data
 
