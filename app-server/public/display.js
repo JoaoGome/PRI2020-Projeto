@@ -1,9 +1,8 @@
 function show (type){
 
-	var img = $(`<img src="./public/fileStore/tmp.${type}" />`)
+	var img = $('<img src="/fileStore/tmp.' + type + '" width="80%"/>')
 
 	$("#preview").empty()
 	$("#preview").append(img)
 	$("#preview").modal()
-
 }
